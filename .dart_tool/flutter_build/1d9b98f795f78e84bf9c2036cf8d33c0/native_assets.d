@@ -1,0 +1,1 @@
+ /media/nightwind/NightWind/workspace/nonebot-flutter-gui/.dart_tool/flutter_build/1d9b98f795f78e84bf9c2036cf8d33c0/native_assets.yaml: 

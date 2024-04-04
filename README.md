@@ -1,5 +1,3 @@
-# nonebot-flutter-gui
-_✨基于Fluttet的Nonebot GUI✨_
+# Nonebot-Flutter-GUI
 
-
-# 在做了在做了😭😭😭
+在做了在做了😭😭😭
