@@ -7,10 +7,12 @@ import 'ui/more.dart';
 import 'ui/manage_bot.dart';
 import 'package:flutter/material.dart';
 
+
 void main() {
   runApp(
     MyApp(),
   );
+
 }
 class MyApp extends StatelessWidget {
   @override
@@ -21,13 +23,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
+
+
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final String configFolder = '${create_main_folder()}/bots/';
+  final String configFolder = '${create_main_folder_bots()}';
 
   @override
   void initState() {
@@ -90,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
 
- body: configFileContents_name.isEmpty
+        body: configFileContents_name.isEmpty
           ? const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -152,10 +157,11 @@ class _HomeScreenState extends State<HomeScreen> {
                        }));
               },
           tooltip: '添加一个bot',
-          child: Icon(Icons.add),
+          child: Icon(Icons.add,color: Colors.white,),
           backgroundColor: Color.fromRGBO(238, 109, 109, 1),
           shape: CircleBorder(),
           ),
     );
   }
 }
+

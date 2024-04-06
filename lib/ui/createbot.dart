@@ -147,6 +147,7 @@ class _MyCustomFormState extends State<CreateBot> {
   }
   String name = 'Nonebot';
 
+
   void _no(bool newValue){
     print("我还没写，不许关😡😡😡");
   }
@@ -179,7 +180,7 @@ class _MyCustomFormState extends State<CreateBot> {
             }},
             icon: const Icon(Icons.arrow_forward),
             color: Colors.white,
-            tooltip: "准备好的话就开始吧",
+            tooltip: "下一步",
             ),
         ],
       ),
@@ -285,7 +286,7 @@ class _MyCustomFormState extends State<CreateBot> {
             color: Colors.grey,
             ),
             Center(
-              child: Text("请选择乐曲"),
+              child: Text("选择驱动器"),
             ),
             const SizedBox(height: 3,),
             Column(
@@ -300,7 +301,7 @@ class _MyCustomFormState extends State<CreateBot> {
             color: Colors.grey,
             ),
             Center(
-              child: Text("请选择难度"),
+              child: Text("选择适配器"),
             ),
             const SizedBox(height: 3,),
             Column(

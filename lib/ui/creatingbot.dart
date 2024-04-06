@@ -37,13 +37,14 @@ class _MyCustomFormState extends State<creatingbot> {
     List<String> arg = cfg.split(',');
     String name = arg[0];
     String path = arg[1];
-    String venv = arg[2];
-    String dep = arg[3];
+    //保留备用
+    //String venv = arg[2];
+    //String dep = arg[3];
 
     
     _outputController.clear();
 
-    List<String> commands = ['echo 开始创建Bot：${name}', 'echo 读取配置...','echo 在${path}/${name}/.venv中创建虚拟环境',createvenv(path, name),'echo 开始安装依赖...',installbot(path,name),writepyproject(path, name),writeenv(path, name),writebot(name, path),'echo 安装完成，可退出'];
+    List<String> commands = ['echo 开始创建Bot：${name}', 'echo 读取配置...',createvenv_echo(path, name),createvenv(path, name),'echo 开始安装依赖...',installbot(path,name),writepyproject(path, name),writeenv(path, name),writebot(name, path),'echo 安装完成，可退出'];
 
     for (String command in commands) {
       List<String> args = command.split(' ');
@@ -51,14 +52,14 @@ class _MyCustomFormState extends State<creatingbot> {
       String executable = args.removeAt(0);
       Process process = await Process.start(executable, args, runInShell: true);
 
-      process.stdout.transform(utf8.decoder).listen((data) {
+      process.stdout.transform(systemEncoding.decoder).listen((data) {
         _outputController.text += data;
         _outputController.selection = TextSelection.fromPosition(TextPosition(offset: _outputController.text.length));
         // 更新UI
         setState(() {});
       });
 
-      process.stderr.transform(utf8.decoder).listen((data) {
+      process.stderr.transform(systemEncoding.decoder).listen((data) {
         _outputController.text += data;
         _outputController.selection = TextSelection.fromPosition(TextPosition(offset: _outputController.text.length));
         setState(() {});
@@ -245,7 +246,7 @@ class _MyCustomFormState extends State<creatingbot> {
           const SizedBox(height: 4),
           Expanded(
             child: Card(
-              color: Colors.black,
+              color: const Color.fromARGB(255, 31, 28, 28),
               child: SingleChildScrollView(
                 child: RichText(
                   text: TextSpan(

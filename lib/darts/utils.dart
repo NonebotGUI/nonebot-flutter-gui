@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:core';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:Nonebot_GUI/ui/manage_bot.dart';
 
 
 
@@ -36,12 +36,26 @@ create_main_folder(){
   }
 }
 
+create_main_folder_bots(){
+  if (Platform.isLinux){
+    String dir = "${create_main_folder()}/bots/";
+    return dir;
+  }
+  else if (Platform.isMacOS){
+    String dir = "${create_main_folder()}/bots/";
+    return dir;
+  }
+  else if (Platform.isWindows){
+    String dir = "${create_main_folder()}\\bots\\";
+    return dir;
+  }
+}
 
 
 //检查py
 Future<String> getpyver() async {
   try {
-    final ProcessResult results = await Process.run('python3', ['--version']);
+    final ProcessResult results = await Process.run('python', ['--version']);
     return results.stdout;
   } catch (error) {
     return '你似乎还没有安装Python？';
@@ -136,13 +150,29 @@ installbot(path,name){
     String installbot = '${path}/${name}/.venv/bin/pip install -r requirements.txt';
     return installbot;
   } else if (Platform.isWindows){
-    String installbot = '${path}\\${name}\.venv\\Scripts\\pip install -r requirements.txt';
+    String installbot = '${path}\\${name}\\.venv\\Scripts\\pip.exe install -r requirements.txt';
     return installbot;
   } else if (Platform.isMacOS){
     String installbot = '${path}/${name}/.venv/bin/pip install -r requirements.txt';
     return installbot;
   }
 }
+
+createvenv_echo(path,name){
+if (Platform.isLinux){
+  String echo = "echo 在${path}/${name}/.venv/中创建虚拟环境";
+  return echo;
+}
+else if (Platform.isWindows){
+  String echo = "echo 在${path}\\${name}\\.venv\\中创建虚拟环境";
+  return echo;
+}
+else if (Platform.isMacOS){
+  String echo = "echo 在${path}/${name}/.venv/中创建虚拟环境";
+  return echo;
+}
+}
+
 
 createvenv(path,name){
   if (Platform.isLinux){
@@ -217,17 +247,51 @@ writebot(name,path){
   DateTime now = DateTime.now();
   String time = "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}";
   File cfgfile = File('${create_main_folder()}/bots/${name}.${time}.json');
+  
+  if (Platform.isWindows){
   String bot_info = '''
 {
   "name": "${name}",
-  "path": "${path}/${name}",
+  "path": "${path.replaceAll('\\','\\\\')}\\\\${name}",
   "time": "${time}",
-  "isrunning": "false"
+  "isrunning": "false",
+  "pid": "Null"
 }
 ''';
 cfgfile.writeAsStringSync(bot_info);
 String echo = "echo 写入json";
 return echo;
+  };
+
+  if (Platform.isLinux){
+  String bot_info = '''
+{
+  "name": "${name}",
+  "path": "${path}/${name}",
+  "time": "${time}",
+  "isrunning": "false",
+  "pid": "Null"
+}
+''';
+cfgfile.writeAsStringSync(bot_info);
+String echo = "echo 写入json";
+return echo;
+  }
+
+  if (Platform.isMacOS){
+  String bot_info = '''
+{
+  "name": "${name}",
+  "path": "${path}/${name}",
+  "time": "${time}",
+  "isrunning": "false",
+  "pid": "Null"
+}
+''';
+cfgfile.writeAsStringSync(bot_info);
+String echo = "echo 写入json";
+return echo;
+  }
 }
 
 
@@ -271,6 +335,16 @@ manage_bot_readcfg_status(){
   return jsonMap['isrunning'].toString();
 }
 
+manage_bot_readcfg_pid(){
+  File cfgfile = File('${create_main_folder()}/on_open.txt');
+  String cfg = cfgfile.readAsStringSync();
+  File botcfg = File('${create_main_folder()}/bots/${cfg}.json');
+  Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
+  return jsonMap['pid'].toString();
+}
+
+
+
 
 Future openfolder(path) async{
   if(Platform.isWindows){
@@ -282,4 +356,122 @@ Future openfolder(path) async{
   else if(Platform.isMacOS){
     await Process.run('open', [path]);
   }
+}
+
+
+//唤起Bot进程
+Future run_bot(path) async{
+  String name = manage_bot_readcfg_name();
+  String time = manage_bot_readcfg_time();
+  Directory.current = Directory(path);
+  File cfgfile = File('${create_main_folder()}/bots/${name}.${time}.json');
+  final stdout = File('${path}/nbgui_stdout.log');
+  final stderr = File('${path}/nbgui_stderr.log');
+  Process process = await Process.start('nb', ['run'],workingDirectory: path);
+  int pid = process.pid;
+  //重写配置文件来更新状态
+  Map<String, dynamic> jsonMap = jsonDecode(cfgfile.readAsStringSync());
+  jsonMap['pid'] = pid;
+  jsonMap['isrunning'] = 'true';
+  cfgfile.writeAsStringSync(jsonEncode(jsonMap));
+
+final outputSink = stdout.openWrite();
+final errorSink = stderr.openWrite();
+
+
+process.stdout.transform(systemEncoding.decoder).listen((data) {
+    outputSink.write(data);
+  });
+
+process.stderr.transform(systemEncoding.decoder).listen((data) {
+    errorSink.write(data);
+  });
+}
+
+
+
+//结束bot进程
+Future stop_bot() async{
+  //读取配置文件
+  String name = manage_bot_readcfg_name();
+  String time = manage_bot_readcfg_time();
+  File cfgfile = File('${create_main_folder()}/bots/${name}.${time}.json');
+  Map bot_info = json.decode(cfgfile.readAsStringSync());
+  String pidString = bot_info['pid'].toString();
+  int pid = int.parse(pidString);
+  Process.killPid(pid);
+  //更新配置文件
+  bot_info['isrunning'] = 'false';
+  bot_info['pid'] = 'Null';
+  cfgfile.writeAsStringSync(json.encode(bot_info));
+}
+
+
+//删除bot
+Future delete_bot() async{
+  String name = manage_bot_readcfg_name();
+  String time = manage_bot_readcfg_time();
+  File cfgfile = File('${create_main_folder()}/bots/${name}.${time}.json');
+  String path = manage_bot_readcfg_path();
+  Directory(path).delete(recursive: true);
+  cfgfile.delete();
+}
+
+
+clear_log() async{
+  String path = manage_bot_readcfg_path();
+  File stdout = File('${path}/nbgui_stdout.log');
+  stdout.delete();
+  String info = "[I]Welcome to Nonebot GUI!\n";
+  stdout.writeAsString(info);
+}
+
+
+manage_cli_plugin(manage,plugin_name) {
+  if(manage == 'install'){
+    String cmd = 'nb plugin install ${plugin_name}';
+    return cmd;
+  }
+  if(manage == 'uninstall'){
+    String cmd = 'nb plugin uninstall ${plugin_name} -y';
+    return cmd;
+  }
+}
+
+
+manage_cli_adapter(manage,adapter_name) {
+  if(manage == 'install'){
+    String cmd = 'nb adapter install ${adapter_name}';
+    return cmd;
+  }
+  if(manage == 'uninstall'){
+    String cmd = 'nb adapter uninstall ${adapter_name} -y';
+    return cmd;
+  }
+}
+
+manage_cli_driver(manage,driver_name){
+  if(manage == 'install'){
+    String cmd = 'nb driver install ${driver_name}';
+    return cmd;
+}
+  if(manage == 'uninstall'){
+    String cmd = 'nb driver uninstall ${driver_name} -y';
+    return cmd;
+}
+}
+
+manage_cli_self(manage,package_name){
+  if(manage == 'install'){
+    String cmd = 'nb self install ${package_name}';
+    return cmd;
+}
+  if(manage == 'uninstall'){
+    String cmd = 'nb self uninstall ${package_name} -y';
+    return cmd;
+}
+  if(manage == 'update'){
+    String cmd = 'nb self update';
+    return cmd;
+}
 }

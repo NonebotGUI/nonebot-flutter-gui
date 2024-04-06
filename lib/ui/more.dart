@@ -41,6 +41,7 @@ class More extends StatelessWidget {
             ),
 
 
+
             Center(
               child: Text("_✨基于Flutter的Nonebot GUI✨_",
               style: TextStyle(color: Colors.black),),
@@ -53,8 +54,20 @@ class More extends StatelessWidget {
               color: Colors.grey,
             ),
 
-
-            SizedBox(height: 8,),
+          SizedBox(height: 8,),
+          Row(children: <Widget> [
+          Expanded(child: Align(alignment: Alignment.centerLeft,
+          child: Text('软件版本',
+          style: TextStyle(fontWeight: FontWeight.bold),),
+          )
+          ),
+          Expanded(child: Align(alignment: Alignment.centerRight,
+          child: Text('0.1.0'),
+        )
+        )
+        ]
+        ),
+            SizedBox(height: 16,),
             Row(children: <Widget>[
              Expanded(child: Align(alignment: Alignment.centerLeft,
              child: Text('平台',style: TextStyle(fontWeight: FontWeight.bold),),)
