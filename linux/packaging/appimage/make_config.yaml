@@ -1,20 +1,17 @@
-display_name: Nya LoCyanFrp!
-app_binary_name: nyanana
+display_name: NonebotGUI
+app_binary_name: NonebotGUI
 
 icon: asset/icon/icon.png
 
 keywords:
-  - NyaLCF
-  - Nya LoCyanFrp!
-  - nyanana
-  - LoCyanFrp
+  - Nonebot
 
-generic_name: NyaLCF
+generic_name: NonebotGUI
 
 actions: []
 
 categories:
-  - Network
+  - Utility
 
 startup_notify: true
 

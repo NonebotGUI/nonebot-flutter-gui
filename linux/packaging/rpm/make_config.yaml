@@ -1,24 +1,21 @@
 icon: asset/icon/icon.png
-summary: Nya LoCyanFrp! 乐青映射启动器
-group: Application/Network
-vendor: Muska_Ami
-packager: Muska_Ami
-packagerEmail: xmcn@1l1.icu
-license: MIT
-url: https://github.com/Muska-Ami/NyaLCF
+summary: 新一代Nonebot图形化界面
+group: Application/Utility
+vendor: 【夜风】NightWind
+packager: 【夜风】NightWind
+packagerEmail: HT30332@126.com
+license: GPL3
+url: https://github.com/XTxiaoting14332/nonebot-flutter-gui
 build_arch: x86_64
 
-display_name: Nya LoCyanFrp!
+display_name: NonebotGUI
 
 keywords:
-  - NyaLCF
-  - Nya LoCyanFrp!
-  - nyanana
-  - LoCyanFrp
+  - Nonebot
 
-generic_name: NyaLCF
+generic_name: NonebotGUI
 
 categories:
-  - Network
+  - Utility
 
 startup_notify: true

@@ -1,11 +1,11 @@
-display_name: Nya LoCyanFrp!
-package_name: nyanana
+display_name: NonebotGUI
+package_name: NonebotGUI
 maintainer:
-  name: Muska-Ami
-  email: xmcn@1l1.icu
+  name: 【夜风】NightWind
+  email: HT30332@126.com
 co_authors:
-  - name: 夏沫花火zzz
-    email: xmcn@1l1.icu
+  - name: 【夜风】NightWind
+    email: HT30332@126.com
 priority: optional
 section: x11
 installed_size: 6604
@@ -14,17 +14,14 @@ icon: asset/icon/icon.png
 
 postinstall_scripts: []
 postuninstall_scripts:
-  - 'rm -rf ~/.share/moe.xmcn.nyanana'
+  - 'rm -rf ~/.nbgui'
 
 keywords:
-  - NyaLCF
-  - Nya LoCyanFrp!
-  - nyanana
-  - LoCyanFrp
+  - Nonebot
 
-generic_name: NyaLCF
+generic_name: NonebotGUI
 
 categories:
-  - Network
+  - Utility
 
 startup_notify: true
