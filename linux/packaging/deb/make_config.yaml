@@ -1,0 +1,30 @@
+display_name: Nya LoCyanFrp!
+package_name: nyanana
+maintainer:
+  name: Muska-Ami
+  email: xmcn@1l1.icu
+co_authors:
+  - name: 夏沫花火zzz
+    email: xmcn@1l1.icu
+priority: optional
+section: x11
+installed_size: 6604
+essential: false
+icon: asset/icon/icon.png
+
+postinstall_scripts: []
+postuninstall_scripts:
+  - 'rm -rf ~/.share/moe.xmcn.nyanana'
+
+keywords:
+  - NyaLCF
+  - Nya LoCyanFrp!
+  - nyanana
+  - LoCyanFrp
+
+generic_name: NyaLCF
+
+categories:
+  - Network
+
+startup_notify: true
