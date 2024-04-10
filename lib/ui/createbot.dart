@@ -71,7 +71,7 @@ class _MyCustomFormState extends State<CreateBot> {
     'Telegram(nonebot-adapter-telegram)': false,
     'QQ(nonebot-adapter-qq)': false,
     'mirai2(nonebot_adapter_mirai2)': false,
-    'console(nonebot-adapter-console)': false,
+    //'console(nonebot-adapter-console)': false,
     'Github(nonebot-adapter-github)': false,
     'NtChat(nonebot-adapter-ntchat)': false,
     'Minecraft(nonebot-adapter-minecraft)': false,
@@ -237,7 +237,7 @@ class _MyCustomFormState extends State<CreateBot> {
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Text("是否开启虚拟环境(不许关😡😡😡)"),
+                    child: Text("是否开启虚拟环境"),
                   ),
                 ),
                 Expanded(
@@ -245,7 +245,7 @@ class _MyCustomFormState extends State<CreateBot> {
                     alignment: Alignment.centerRight,
                     child: Switch(
                       value: isvenv,
-                      onChanged: _no,
+                      onChanged: _toggleVenv,
                       activeColor: Color.fromRGBO(238, 109, 109, 1),
                       focusColor: Colors.black,
                       inactiveTrackColor: Colors.grey,
@@ -261,7 +261,7 @@ class _MyCustomFormState extends State<CreateBot> {
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Text("是否安装依赖(不许关😡😡😡)"),
+                    child: Text("是否安装依赖"),
                   ),
                 ),
                 Expanded(
@@ -269,7 +269,7 @@ class _MyCustomFormState extends State<CreateBot> {
                     alignment: Alignment.centerRight,
                     child: Switch(
                       value: isdep,
-                      onChanged: _no,
+                      onChanged: _toggledep,
                       activeColor: Color.fromRGBO(238, 109, 109, 1),
                       focusColor: Colors.black,
                       inactiveTrackColor: Colors.grey,

@@ -63,7 +63,7 @@
     },
     {
       "name": "flutter",
-      "rootUri": "file:///media/nightwind/1DDA52C8685DBF4F/flutter/packages/flutter",
+      "rootUri": "file:///media/nightwind/NightWind/workspace/flutter_project/flutter/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -81,13 +81,13 @@
     },
     {
       "name": "flutter_test",
-      "rootUri": "file:///media/nightwind/1DDA52C8685DBF4F/flutter/packages/flutter_test",
+      "rootUri": "file:///media/nightwind/NightWind/workspace/flutter_project/flutter/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "flutter_web_plugins",
-      "rootUri": "file:///media/nightwind/1DDA52C8685DBF4F/flutter/packages/flutter_web_plugins",
+      "rootUri": "file:///media/nightwind/NightWind/workspace/flutter_project/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -189,7 +189,7 @@
     },
     {
       "name": "sky_engine",
-      "rootUri": "file:///media/nightwind/1DDA52C8685DBF4F/flutter/bin/cache/pkg/sky_engine",
+      "rootUri": "file:///media/nightwind/NightWind/workspace/flutter_project/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -266,7 +266,7 @@
       "languageVersion": "3.3"
     }
   ],
-  "generated": "2024-04-06T07:21:08.839428Z",
+  "generated": "2024-04-10T06:09:26.130040Z",
   "generator": "pub",
   "generatorVersion": "3.3.1"
 }

@@ -1,4 +1,4 @@
-package com.example.kyc
+package com.example.NonebotGUI
 
 import io.flutter.embedding.android.FlutterActivity
 

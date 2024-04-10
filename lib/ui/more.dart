@@ -62,7 +62,7 @@ class More extends StatelessWidget {
           )
           ),
           Expanded(child: Align(alignment: Alignment.centerRight,
-          child: Text('0.1.0'),
+          child: Text('0.1.2'),
         )
         )
         ]

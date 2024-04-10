@@ -55,10 +55,18 @@ create_main_folder_bots(){
 //检查py
 Future<String> getpyver() async {
   try {
-    final ProcessResult results = await Process.run('python', ['--version']);
-    return results.stdout;
-  } catch (error) {
-    return '你似乎还没有安装Python？';
+    // 使用 Platform 来检测操作系统
+    if (Platform.isLinux || Platform.isMacOS) {
+      ProcessResult results = await Process.run('python3', ['--version']);
+      return results.stdout.trim();
+    } else if (Platform.isWindows) {
+      ProcessResult results = await Process.run('python', ['--version']);
+      return results.stdout.trim();
+    } else {
+      return '不支持的平台...';
+    }
+  } catch (e) {
+    return '你似乎还没有安装python？';
   }
 }
 
@@ -145,16 +153,44 @@ Future<void> createbot_writeconfig_requirement(String drivers, String adapters) 
 }
 
 //判断平台并使用对应的venv指令
-installbot(path,name){
-  if (Platform.isLinux){
-    String installbot = '${path}/${name}/.venv/bin/pip install -r requirements.txt';
-    return installbot;
-  } else if (Platform.isWindows){
-    String installbot = '${path}\\${name}\\.venv\\Scripts\\pip.exe install -r requirements.txt';
-    return installbot;
-  } else if (Platform.isMacOS){
-    String installbot = '${path}/${name}/.venv/bin/pip install -r requirements.txt';
-    return installbot;
+installbot(path,name,venv,dep){
+  if (venv == 'true'){
+    if (dep == 'true'){
+      if (Platform.isLinux){
+        String installbot = '${path}/${name}/.venv/bin/pip install -r requirements.txt';
+        return installbot;
+      } else if (Platform.isWindows){
+        String installbot = '${path}\\${name}\\.venv\\Scripts\\pip.exe install -r requirements.txt';
+        return installbot;
+      } else if (Platform.isMacOS){
+        String installbot = '${path}/${name}/.venv/bin/pip install -r requirements.txt';
+        return installbot;
+      }
+    }
+    else if (dep == 'false'){
+      File requirements = File('${create_main_folder()}/requirements.txt');
+      requirements.copy('${createbot_readconfig_path()}/${createbot_readconfig_name()}/requirements.txt');
+      return 'echo 跳过依赖安装，将requirements.txt复制至${createbot_readconfig_path()}/${createbot_readconfig_name()}下';
+    }
+  }
+  else if (venv == 'false'){
+    if (dep == 'true'){
+      if (Platform.isLinux){
+        String installbot = 'pip install -r requirements.txt';
+        return installbot;
+      } else if (Platform.isWindows){
+        String installbot = 'pip.exe install -r requirements.txt';
+        return installbot;
+      } else if (Platform.isMacOS){
+        String installbot = 'pip install -r requirements.txt';
+        return installbot;
+      }
+    }
+    else if (dep == 'false'){
+      File requirements = File('${create_main_folder()}/requirements.txt');
+      requirements.copy('${createbot_readconfig_path()}/${createbot_readconfig_name()}/requirements.txt');
+      return 'echo 跳过依赖安装，将requirements.txt复制至${createbot_readconfig_path()}/${createbot_readconfig_name()}下';
+    }
   }
 }
 
@@ -174,18 +210,25 @@ else if (Platform.isMacOS){
 }
 
 
-createvenv(path,name){
-  if (Platform.isLinux){
-    String createvenv = 'python3 -m venv ${path}/${name}/.venv';
-    return createvenv;
-  } else if (Platform.isWindows){
-    String createvenv = 'python -m venv ${path}\\${name}\\.venv';
-    return createvenv;
-  } else if (Platform.isMacOS){
-    String createvenv = 'python3 -m venv ${path}/${name}/.venv';
-    return createvenv;
+createvenv(path,name,venv){
+  if(venv == 'true'){
+    if (Platform.isLinux){
+      String createvenv = 'python3 -m venv ${path}/${name}/.venv';
+      return createvenv;
+    } else if (Platform.isWindows){
+      String createvenv = 'python -m venv ${path}\\${name}\\.venv';
+      return createvenv;
+    } else if (Platform.isMacOS){
+      String createvenv = 'python3 -m venv ${path}/${name}/.venv';
+      return createvenv;
+    }
   }
+  else if(venv == 'false'){
+    return 'echo 虚拟环境已关闭，跳过...';
 }
+}
+
+
 
 createfolder(path,name){
   Directory dir = Directory('${path}/${name}');

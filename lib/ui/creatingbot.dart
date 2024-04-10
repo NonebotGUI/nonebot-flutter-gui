@@ -38,13 +38,13 @@ class _MyCustomFormState extends State<creatingbot> {
     String name = arg[0];
     String path = arg[1];
     //保留备用
-    //String venv = arg[2];
-    //String dep = arg[3];
+    String venv = arg[2];
+    String dep = arg[3];
 
     
     _outputController.clear();
 
-    List<String> commands = ['echo 开始创建Bot：${name}', 'echo 读取配置...',createvenv_echo(path, name),createvenv(path, name),'echo 开始安装依赖...',installbot(path,name),writepyproject(path, name),writeenv(path, name),writebot(name, path),'echo 安装完成，可退出'];
+    List<String> commands = ['echo 开始创建Bot：${name}', 'echo 读取配置...',createvenv_echo(path, name),createvenv(path, name,venv),'echo 开始安装依赖...',installbot(path,name,venv,dep),writepyproject(path, name),writeenv(path, name),writebot(name, path),'echo 安装完成，可退出'];
 
     for (String command in commands) {
       List<String> args = command.split(' ');
