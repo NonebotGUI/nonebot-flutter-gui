@@ -1,4 +1,6 @@
-kyc.ini
+kyc.iml
 .dart_tool
 .flutter-plugins
 .flutter-plugins-dependencies
+build/
+tem.dart

@@ -1,15 +1,45 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import '../darts/utils.dart';
+import 'package:file_picker/file_picker.dart';
 import 'dart:io' show Platform;
+import 'dart:io';
 
 
+class More extends StatefulWidget {
+  @override
+  _MoreState createState() => _MoreState();
+}
 
+class _MoreState extends State<More> {
 
+  String? _PythonPath;
+  String? _NbcliPath;
 
+  void _selectpy() async {
+    final result = await FilePicker.platform.pickFiles(
+    );
 
-class More extends StatelessWidget {
+    if (result != null) {
+      set_pypath(result.files.single.path.toString());
+      setState(() {
+        _PythonPath= result.files.single.path.toString();
+      });
+    }
+  }
+
+  void _selectnbcli() async {
+    final result = await FilePicker.platform.pickFiles(
+    );
+
+    if (result != null) {
+      set_nbclipath(result.files.single.path.toString());
+      setState(() {
+        _NbcliPath= result.files.single.path.toString();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -62,7 +92,7 @@ class More extends StatelessWidget {
           )
           ),
           Expanded(child: Align(alignment: Alignment.centerRight,
-          child: Text('0.1.2'),
+          child: Text('0.1.3'),
         )
         )
         ]
@@ -126,7 +156,80 @@ class More extends StatelessWidget {
         )
         ]
         ),
+        const SizedBox(height: 16,),
+        Row(children: <Widget>[
+          Expanded(child: Align(alignment: 
+          Alignment.centerLeft,
+          child: Text('选择Python命令路径[${_PythonPath}]',
+          style: TextStyle(fontWeight: FontWeight.bold),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,),
+          )),
+
+          Expanded(child: Align(alignment: 
+          Alignment.centerRight,
+          child:
+              IconButton(
+                onPressed: _selectpy,
+                tooltip: "选择Python命令路径",
+                icon: const Icon(Icons.file_open_rounded),
+              ),
+          ),
+          ) 
+        ],
+        ),
+        const SizedBox(height: 16,),
+        Row(children: <Widget>[
+          Expanded(child: Align(alignment: 
+          Alignment.centerLeft,
+          child: Text('选择nb-cli命令路径[${_NbcliPath}]',
+          style: TextStyle(fontWeight: FontWeight.bold),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,),
+          )),
+
+          Expanded(child: Align(alignment: 
+          Alignment.centerRight,
+          child:
+              IconButton(
+                onPressed: _selectnbcli,
+                tooltip: "选择nb-cli命令路径",
+                icon: const Icon(Icons.file_open_rounded),
+              ),
+          ),
+          ) 
+        ],
+        ),
+        const SizedBox(height: 20,),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextButton(
+              onPressed: () {
+               set_pypath('default');
+              },
+              child: Text('重置Python路径',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1),)),
+              style: TextButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
+            SizedBox(width: 15,),
+            TextButton(
+              onPressed: () {
+                set_nbclipath('default');
+              },
+              child: Text('重置nb-cli路径',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1),)),
+              style: TextButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
           ],
+        ),
+        ]
         ),
       )
     );

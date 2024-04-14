@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'ui/createbot.dart';
 import 'ui/more.dart';
 import 'ui/manage_bot.dart';
+import 'ui/import_bot.dart';
 import 'package:flutter/material.dart';
 
 
@@ -87,6 +88,16 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
           actions: <Widget>[
           IconButton(
+            icon: Icon(Icons.file_download_outlined),
+            onPressed: () {    
+                       Navigator.push(context, MaterialPageRoute(builder:(context) {
+                                return  import_bot();
+                       }));
+              },
+            tooltip: "从已有的Bot中导入",
+            color: Colors.white,
+          ),
+          IconButton(
             icon: Icon(Icons.refresh),
             onPressed: (){_readConfigFiles();create_main_folder();},
             tooltip: "刷新列表",
@@ -101,6 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text('还没有Bot,点击右下角的“+”来创建'),
+                  SizedBox(height: 3),
+                  Text('如果你已经有了Bot,可以使用右上角的按钮导入'),
                   SizedBox(height: 3),
                   Text('如果创建后没有显示请点击右上角的按钮刷新列表'),
                 ],
@@ -161,6 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Color.fromRGBO(238, 109, 109, 1),
           shape: CircleBorder(),
           ),
+
     );
   }
 }

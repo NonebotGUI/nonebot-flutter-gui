@@ -14,7 +14,7 @@ icon: asset/icon/icon.png
 
 postinstall_scripts: []
 postuninstall_scripts:
-  - 'rm -rf ~/.nbgui'
+  - 'echo 感谢您的使用，再见！'
 
 keywords:
   - Nonebot

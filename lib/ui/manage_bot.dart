@@ -97,6 +97,7 @@ class _MyCustomFormState extends State<manage_bot> {
     setState(() {});
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -295,7 +296,7 @@ void _showConfirmationDialog(BuildContext context) {
     builder: (BuildContext context) {
       return AlertDialog(
         title: Text('删除'),
-        content: Text('你确定要永久删除这个Bot吗？'),
+        content: Text('你确定要删除这个Bot吗？'),
         actions: <Widget>[
           TextButton(
             child: Text('取消'),
@@ -311,7 +312,18 @@ void _showConfirmationDialog(BuildContext context) {
               ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                       content: Text('Bot已删除，请回到主页面刷新列表'),
-                      duration: Duration(seconds: 10),));
+                      duration: Duration(seconds: 3),));
+            },
+          ),
+          TextButton(
+            child: Text('确定（连同bot目录一起删除）',style: TextStyle(color: Color.fromRGBO(255, 0, 0, 1)),),
+            onPressed: () {
+              Navigator.of(context).pop();
+              delete_bot_all(); 
+              ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                      content: Text('Bot已删除，请回到主页面刷新列表'),
+                      duration: Duration(seconds: 3),));
             },
           ),
         ],

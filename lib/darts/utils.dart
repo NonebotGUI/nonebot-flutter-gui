@@ -16,22 +16,35 @@ create_main_folder(){
       dir.createSync();
     }
     Directory.current = dir;
+    File cfgfile = File('${dir.toString().replaceAll("Directory: ", '').replaceAll("'", '')}/user_config.json');
+    if (!cfgfile.existsSync()){
+      String cfg = '''
+    {
+      "python":"default",
+      "nbcli":"default"
+    }
+    ''';
+    cfgfile.writeAsStringSync(cfg);
+    }
     return dir.toString().replaceAll("Directory: ", '').replaceAll("'", '');
   }
-  else if (Platform.isLinux){
+
+  else if (Platform.isLinux || Platform.isMacOS){
     Directory dir = Directory('${Platform.environment['HOME']!}/.nbgui');
     if (!dir.existsSync()){
       dir.createSync();
     }
     Directory.current = dir;
-    return dir.toString().replaceAll("Directory: ", '').replaceAll("'", '');
-  }
-  else if (Platform.isMacOS){
-    Directory dir = Directory('${Platform.environment['HOME']!}/.nbgui');
-    if (!dir.existsSync()){
-      dir.createSync();
+    File cfgfile = File('${dir.toString().replaceAll("Directory: ", '').replaceAll("'", '')}/user_config.json');
+    if (!cfgfile.existsSync()){
+      String cfg = '''
+    {
+      "python":"default",
+      "nbcli":"default"
     }
-    Directory.current = dir;
+    ''';
+    cfgfile.writeAsStringSync(cfg);
+    }
     return dir.toString().replaceAll("Directory: ", '').replaceAll("'", '');
   }
 }
@@ -51,16 +64,58 @@ create_main_folder_bots(){
   }
 }
 
+user_readconfig_python() {
+  File file = File('${create_main_folder()}/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  String PyPath = jsonMap['python'].toString();
+  if (PyPath == 'default'){
+    if (Platform.isLinux || Platform.isMacOS){
+      return 'python3';
+    }
+    else if (Platform.isWindows){
+      return 'python.exe';
+    }
+  }
+  else{
+    return PyPath.replaceAll('\\','\\\\');
+  }
+}
+
+set_pypath(path) {
+  File file = File('${create_main_folder()}/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['python'] = path;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
+
+user_readconfig_nbcli() {
+  File file = File('${create_main_folder()}/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  String NbcliPath = jsonMap['nbcli'].toString();
+  if (NbcliPath == 'default'){
+    return 'nb';
+  }
+  else{
+    return NbcliPath.replaceAll('\\','\\\\');
+  }
+}
+
+set_nbclipath(path) {
+  File file = File('${create_main_folder()}/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['nbcli'] = path;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
+
 
 //检查py
 Future<String> getpyver() async {
   try {
-    // 使用 Platform 来检测操作系统
     if (Platform.isLinux || Platform.isMacOS) {
-      ProcessResult results = await Process.run('python3', ['--version']);
+      ProcessResult results = await Process.run('${user_readconfig_python()}', ['--version']);
       return results.stdout.trim();
     } else if (Platform.isWindows) {
-      ProcessResult results = await Process.run('python', ['--version']);
+      ProcessResult results = await Process.run('${user_readconfig_python()}', ['--version']);
       return results.stdout.trim();
     } else {
       return '不支持的平台...';
@@ -73,7 +128,7 @@ Future<String> getpyver() async {
 //检查nbcli
 Future<String> getnbcliver() async {
   try {
-    final ProcessResult results = await Process.run('nb', ['-V']);
+    final ProcessResult results = await Process.run('${user_readconfig_nbcli()}', ['-V']);
     return results.stdout;
   } catch (error) {
     return '你似乎还没有安装nb-cli？';
@@ -175,16 +230,8 @@ installbot(path,name,venv,dep){
   }
   else if (venv == 'false'){
     if (dep == 'true'){
-      if (Platform.isLinux){
-        String installbot = 'pip install -r requirements.txt';
+        String installbot = '${user_readconfig_python()} -m pip install -r requirements.txt';
         return installbot;
-      } else if (Platform.isWindows){
-        String installbot = 'pip.exe install -r requirements.txt';
-        return installbot;
-      } else if (Platform.isMacOS){
-        String installbot = 'pip install -r requirements.txt';
-        return installbot;
-      }
     }
     else if (dep == 'false'){
       File requirements = File('${create_main_folder()}/requirements.txt');
@@ -212,14 +259,11 @@ else if (Platform.isMacOS){
 
 createvenv(path,name,venv){
   if(venv == 'true'){
-    if (Platform.isLinux){
-      String createvenv = 'python3 -m venv ${path}/${name}/.venv';
+    if (Platform.isLinux || Platform.isMacOS){
+      String createvenv = '${user_readconfig_python()} -m venv ${path}/${name}/.venv --prompt ${name}';
       return createvenv;
     } else if (Platform.isWindows){
-      String createvenv = 'python -m venv ${path}\\${name}\\.venv';
-      return createvenv;
-    } else if (Platform.isMacOS){
-      String createvenv = 'python3 -m venv ${path}/${name}/.venv';
+      String createvenv = '${user_readconfig_python()} -m venv ${path}\\${name}\\.venv --prompt ${name}';
       return createvenv;
     }
   }
@@ -337,6 +381,43 @@ return echo;
   }
 }
 
+//导入
+importbot(name,path){
+  DateTime now = DateTime.now();
+  String time = "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}";
+  File cfgfile = File('${create_main_folder()}/bots/${name}.${time}.json');
+  
+  if (Platform.isWindows){
+  String bot_info = '''
+{
+  "name": "${name}",
+  "path": "${path.replaceAll('\\','\\\\')}",
+  "time": "${time}",
+  "isrunning": "false",
+  "pid": "Null"
+}
+''';
+cfgfile.writeAsStringSync(bot_info);
+String echo = "echo 写入json";
+return echo;
+  };
+
+  if (Platform.isLinux || Platform.isMacOS){
+  String bot_info = '''
+{
+  "name": "${name}",
+  "path": "${path}",
+  "time": "${time}",
+  "isrunning": "false",
+  "pid": "Null"
+}
+''';
+cfgfile.writeAsStringSync(bot_info);
+String echo = "echo 写入json";
+return echo;
+  }
+
+}
 
 
 //管理bot的函数
@@ -410,7 +491,7 @@ Future run_bot(path) async{
   File cfgfile = File('${create_main_folder()}/bots/${name}.${time}.json');
   final stdout = File('${path}/nbgui_stdout.log');
   final stderr = File('${path}/nbgui_stderr.log');
-  Process process = await Process.start('nb', ['run'],workingDirectory: path);
+  Process process = await Process.start('${user_readconfig_nbcli()}', ['run'],workingDirectory: path);
   int pid = process.pid;
   //重写配置文件来更新状态
   Map<String, dynamic> jsonMap = jsonDecode(cfgfile.readAsStringSync());
@@ -455,11 +536,17 @@ Future delete_bot() async{
   String name = manage_bot_readcfg_name();
   String time = manage_bot_readcfg_time();
   File cfgfile = File('${create_main_folder()}/bots/${name}.${time}.json');
+  cfgfile.delete();
+}
+
+Future delete_bot_all() async{
+  String name = manage_bot_readcfg_name();
+  String time = manage_bot_readcfg_time();
+  File cfgfile = File('${create_main_folder()}/bots/${name}.${time}.json');
   String path = manage_bot_readcfg_path();
   Directory(path).delete(recursive: true);
   cfgfile.delete();
 }
-
 
 clear_log() async{
   String path = manage_bot_readcfg_path();
@@ -472,11 +559,11 @@ clear_log() async{
 
 manage_cli_plugin(manage,plugin_name) {
   if(manage == 'install'){
-    String cmd = 'nb plugin install ${plugin_name}';
+    String cmd = '${user_readconfig_nbcli()} plugin install ${plugin_name}';
     return cmd;
   }
   if(manage == 'uninstall'){
-    String cmd = 'nb plugin uninstall ${plugin_name} -y';
+    String cmd = '${user_readconfig_nbcli()} plugin uninstall ${plugin_name} -y';
     return cmd;
   }
 }
@@ -484,37 +571,37 @@ manage_cli_plugin(manage,plugin_name) {
 
 manage_cli_adapter(manage,adapter_name) {
   if(manage == 'install'){
-    String cmd = 'nb adapter install ${adapter_name}';
+    String cmd = '${user_readconfig_nbcli()} adapter install ${adapter_name}';
     return cmd;
   }
   if(manage == 'uninstall'){
-    String cmd = 'nb adapter uninstall ${adapter_name} -y';
+    String cmd = '${user_readconfig_nbcli()} adapter uninstall ${adapter_name} -y';
     return cmd;
   }
 }
 
 manage_cli_driver(manage,driver_name){
   if(manage == 'install'){
-    String cmd = 'nb driver install ${driver_name}';
+    String cmd = '${user_readconfig_nbcli()} driver install ${driver_name}';
     return cmd;
 }
   if(manage == 'uninstall'){
-    String cmd = 'nb driver uninstall ${driver_name} -y';
+    String cmd = '${user_readconfig_nbcli()} driver uninstall ${driver_name} -y';
     return cmd;
 }
 }
 
 manage_cli_self(manage,package_name){
   if(manage == 'install'){
-    String cmd = 'nb self install ${package_name}';
+    String cmd = '${user_readconfig_nbcli()} self install ${package_name}';
     return cmd;
 }
   if(manage == 'uninstall'){
-    String cmd = 'nb self uninstall ${package_name} -y';
+    String cmd = '${user_readconfig_nbcli()} self uninstall ${package_name} -y';
     return cmd;
 }
   if(manage == 'update'){
-    String cmd = 'nb self update';
+    String cmd = '${user_readconfig_nbcli()} self update';
     return cmd;
 }
 }

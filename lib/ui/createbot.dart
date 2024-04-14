@@ -110,6 +110,7 @@ class _MyCustomFormState extends State<CreateBot> {
     return drivers.keys.map((driver) {
       return CheckboxListTile(
         title: Text(driver),
+        activeColor: Color.fromRGBO(238, 109, 109, 1),
         value: drivers[driver],
         onChanged: (bool? value) => onChanged_drivers(driver, value!),
       );
@@ -120,6 +121,7 @@ class _MyCustomFormState extends State<CreateBot> {
     return adapters.keys.map((adapter) {
       return CheckboxListTile(
         title: Text(adapter),
+        activeColor: Color.fromRGBO(238, 109, 109, 1),
         value: adapters[adapter],
         onChanged: (bool? value) => onChanged_adapters(adapter, value!),
       );
@@ -148,9 +150,6 @@ class _MyCustomFormState extends State<CreateBot> {
   String name = 'Nonebot';
 
 
-  void _no(bool newValue){
-    print("我还没写，不许关😡😡😡");
-  }
 
   @override
   Widget build(BuildContext context) {
