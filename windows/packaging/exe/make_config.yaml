@@ -3,7 +3,7 @@ publisher: 【夜风】NightWind
 publisher_url: https://github.com/XTxiaoting14332/nonebot-flutter-gui
 display_name: NonebotGUI
 create_desktop_icon: true
-install_dir_name: Nonebot
+install_dir_name: NonebotGUI
 script_template: inno_setup.iss
 locales:
   - zh

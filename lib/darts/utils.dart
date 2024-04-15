@@ -605,3 +605,4 @@ manage_cli_self(manage,package_name){
     return cmd;
 }
 }
+

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import '../darts/utils.dart';
+import '../assets/my_flutter_app_icons.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io' show Platform;
 import 'dart:io';
+import 'package:flutter/services.dart';
+
+
+
+
 
 
 class More extends StatefulWidget {
@@ -51,6 +57,20 @@ class _MoreState extends State<More> {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Color.fromRGBO(238, 109, 109, 1),
+        actions: <Widget>[
+          IconButton(
+            onPressed: (){
+              Clipboard.setData(ClipboardData(text: 'https://github.com/XTxiaoting14332/nonebot-flutter-gui'));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('项目仓库链接已复制到剪贴板'),
+                  duration: Duration(seconds: 3),));
+            },
+            icon: Icon(MyFlutterApp.github),
+            tooltip: '项目仓库地址',
+            iconSize: 30,
+            )
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
@@ -92,7 +112,7 @@ class _MoreState extends State<More> {
           )
           ),
           Expanded(child: Align(alignment: Alignment.centerRight,
-          child: Text('0.1.3'),
+          child: Text('0.1.3+1'),
         )
         )
         ]
@@ -207,6 +227,8 @@ class _MoreState extends State<More> {
             TextButton(
               onPressed: () {
                set_pypath('default');
+               setState(() {
+               });
               },
               child: Text('重置Python路径',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1),)),
               style: TextButton.styleFrom(
@@ -219,6 +241,8 @@ class _MoreState extends State<More> {
             TextButton(
               onPressed: () {
                 set_nbclipath('default');
+                setState(() {
+                });
               },
               child: Text('重置nb-cli路径',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1),)),
               style: TextButton.styleFrom(
@@ -235,3 +259,4 @@ class _MoreState extends State<More> {
     );
   }
 }
+
