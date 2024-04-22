@@ -244,6 +244,15 @@ runner_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 runner_SOURCE_DIR:STATIC=/media/nightwind/NightWind/workspace/nonebot-flutter-gui/linux
 
+//Value Computed by CMake
+url_launcher_linux_BINARY_DIR:STATIC=/media/nightwind/NightWind/workspace/nonebot-flutter-gui/build/linux/x64/debug/plugins/url_launcher_linux
+
+//Value Computed by CMake
+url_launcher_linux_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+url_launcher_linux_SOURCE_DIR:STATIC=/media/nightwind/NightWind/workspace/nonebot-flutter-gui/linux/flutter/ephemeral/.plugin_symlinks/url_launcher_linux/linux
+
 
 ########################
 # INTERNAL cache entries
@@ -331,7 +340,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=2
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=3
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

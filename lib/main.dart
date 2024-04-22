@@ -7,6 +7,7 @@ import 'ui/more.dart';
 import 'ui/manage_bot.dart';
 import 'ui/import_bot.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 
 void main() {
@@ -39,7 +40,17 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     create_main_folder();
-    _readConfigFiles();
+    refresh();
+  }
+
+
+  void refresh() {
+    Timer.periodic(Duration(seconds: 3), (timer) {
+      // 每隔3秒执行一次
+       _readConfigFiles();
+       setState(() {
+       });
+    });
   }
 
   List<String> configFileContents_name = [];

@@ -112,7 +112,7 @@ class _MoreState extends State<More> {
           )
           ),
           Expanded(child: Align(alignment: Alignment.centerRight,
-          child: Text('0.1.3+1'),
+          child: Text('0.1.4'),
         )
         )
         ]

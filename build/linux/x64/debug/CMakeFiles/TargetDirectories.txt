@@ -12,3 +12,10 @@
 /media/nightwind/NightWind/workspace/nonebot-flutter-gui/build/linux/x64/debug/flutter/CMakeFiles/install.dir
 /media/nightwind/NightWind/workspace/nonebot-flutter-gui/build/linux/x64/debug/flutter/CMakeFiles/install/local.dir
 /media/nightwind/NightWind/workspace/nonebot-flutter-gui/build/linux/x64/debug/flutter/CMakeFiles/install/strip.dir
+/media/nightwind/NightWind/workspace/nonebot-flutter-gui/build/linux/x64/debug/plugins/url_launcher_linux/CMakeFiles/url_launcher_linux_plugin.dir
+/media/nightwind/NightWind/workspace/nonebot-flutter-gui/build/linux/x64/debug/plugins/url_launcher_linux/CMakeFiles/edit_cache.dir
+/media/nightwind/NightWind/workspace/nonebot-flutter-gui/build/linux/x64/debug/plugins/url_launcher_linux/CMakeFiles/rebuild_cache.dir
+/media/nightwind/NightWind/workspace/nonebot-flutter-gui/build/linux/x64/debug/plugins/url_launcher_linux/CMakeFiles/list_install_components.dir
+/media/nightwind/NightWind/workspace/nonebot-flutter-gui/build/linux/x64/debug/plugins/url_launcher_linux/CMakeFiles/install.dir
+/media/nightwind/NightWind/workspace/nonebot-flutter-gui/build/linux/x64/debug/plugins/url_launcher_linux/CMakeFiles/install/local.dir
+/media/nightwind/NightWind/workspace/nonebot-flutter-gui/build/linux/x64/debug/plugins/url_launcher_linux/CMakeFiles/install/strip.dir

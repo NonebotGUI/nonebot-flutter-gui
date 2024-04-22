@@ -39,7 +39,6 @@ class _MyCustomFormState extends State<CreateBot> {
   final myController = TextEditingController();
   bool isvenv = true;
   bool isdep = true;
-  String template = "bootstrap";
   String? _selectedFolderPath;
 
   Future<void> _pickFolder() async {
@@ -147,12 +146,19 @@ class _MyCustomFormState extends State<CreateBot> {
       isdep = newValue;
     });
   }
-  String name = 'Nonebot';
 
+
+  String name = 'Nonebot';
+  final List<String> template = ['bootstrap(初学者或用户)', 'simple(插件开发者)'];
+  late String dropdownValue = template.first;
+  final List<String> plugindir = ['在[bot名称]/[bot名称]下', '在src文件夹下'];
+  late String dropdownValue_plugindir = plugindir.first;
 
 
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -164,9 +170,9 @@ class _MyCustomFormState extends State<CreateBot> {
           IconButton(
             onPressed:() {
               if (_selectedFolderPath.toString() != 'null') {
-                       creatbot_writeconfig(name, _selectedFolderPath, isvenv, isdep, buildSelectedOptions_driver(),buildSelectedOptions_adapter()); 
+                       creatbot_writeconfig(name, _selectedFolderPath, isvenv, isdep, buildSelectedOptions_driver(),buildSelectedOptions_adapter(),dropdownValue,dropdownValue_plugindir); 
                        createbot_writeconfig_requirement(buildSelectedOptions_driver(),buildSelectedOptions_adapter()) ;
-                       createfolder(_selectedFolderPath, name);
+                       createfolder(_selectedFolderPath, name,dropdownValue_plugindir);
                        Navigator.push(context, MaterialPageRoute(builder:(context) {
                                 return  creatingbot();
                        }));
@@ -207,7 +213,72 @@ class _MyCustomFormState extends State<CreateBot> {
               },
             ),
             const SizedBox(height: 12),
+            Row(children: <Widget>[
+              Expanded(child: Align(alignment: 
+              Alignment.centerLeft,
+              child: Text('选择模板',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,),
+              )),
+              Expanded(child: Align(alignment: 
+              Alignment.centerRight,
+              child: DropdownButton<String>(
+                  value: dropdownValue,
+                  icon: const Icon(Icons.arrow_downward),
+                  elevation: 16,
+                  style: const TextStyle(color: Color.fromARGB(255, 31, 28, 28),),                  
+                  onChanged: (String? value) {
+                    setState(() {
+                      dropdownValue = value!;
+                    });
+                  },
+                  items: template.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),           
+              )
+              ),
+            ],
+            ),
+            const SizedBox(height: 12,),
+            Visibility(
+              visible: dropdownValue == template[1],
+              child: Row(children: <Widget>[
+              Expanded(child: Align(alignment: 
+              Alignment.centerLeft,
+              child: Text('选择插件存放位置',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,),
+              )),
+              Expanded(child: Align(alignment: 
+              Alignment.centerRight,
+              child: DropdownButton<String>(
+                  value: dropdownValue_plugindir,
+                  icon: const Icon(Icons.arrow_downward),
+                  elevation: 16,
+                  style: const TextStyle(color: Color.fromARGB(255, 31, 28, 28),),                  
+                  onChanged: (String? value) {
+                    setState(() {
+                      dropdownValue_plugindir = value!;
+                    });
+                  },
+                  items: plugindir.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),           
+              )
+              ),
+            ],
+            ),
+            ),
 
+            const SizedBox(height: 12,),
             //bot目录
             Row(children: <Widget>[
               Expanded(child: Align(alignment: 

@@ -136,17 +136,19 @@ Future<String> getnbcliver() async {
 }
 
 //创建bot的配置文件
-Future creatbot_writeconfig(name,path,venv,dep,drivers,adapters) async{
+Future creatbot_writeconfig(name,path,venv,dep,drivers,adapters,template,plugindir) async{
   String name_ = name.toString();
   String path_ = path.toString();
   String venv_ = venv.toString();
   String dep_ = dep.toString();
   String drivers_ = drivers.toString();
   String adapters_ = adapters.toString();
+  String template_ = template.toString();
+  String plugindir_ = plugindir.toString();
   File file = File('${create_main_folder()}/cache_config.txt');
   File file_drivers = File('${create_main_folder()}/cache_drivers.txt');
   File file_adapters = File('${create_main_folder()}/cache_adapters.txt');
-  file.writeAsStringSync('${name_},${path_},${venv_},${dep_}');
+  file.writeAsStringSync('${name_},${path_},${venv_},${dep_},${template_},${plugindir_}');
   file_drivers.writeAsStringSync(drivers_);
   file_adapters.writeAsStringSync(adapters_);
 }
@@ -185,6 +187,20 @@ createbot_readconfig_dep() {
   String args = file.readAsStringSync();    
   List args_ = args.split(',');   
   return args_[3];
+}
+
+createbot_readconfig_template() {
+  File file = File('${create_main_folder()}/cache_config.txt');
+  String args = file.readAsStringSync();    
+  List args_ = args.split(',');   
+  return args_[4];
+}
+
+createbot_readconfig_plugindir() {
+  File file = File('${create_main_folder()}/cache_config.txt');
+  String args = file.readAsStringSync();    
+  List args_ = args.split(',');   
+  return args_[5];
 }
 
 //处理适配器和驱动器
@@ -274,22 +290,36 @@ createvenv(path,name,venv){
 
 
 
-createfolder(path,name){
+createfolder(path,name,plugindir){
   Directory dir = Directory('${path}/${name}');
-  Directory dir_src = Directory('${path}/${name}/src');
-  Directory dir_src_plugins = Directory('${path}/${name}/src/plugins');
   Directory dir_bots = Directory('${create_main_folder()}/bots');
   if (!dir.existsSync()){
     dir.createSync();
   }
-  if (!dir_src.existsSync()){
-    dir_src.createSync();
-  }
-  if (!dir_src_plugins.existsSync()){
-    dir_src_plugins.createSync();
-  }
   if (!dir_bots.existsSync()){
     dir_bots.createSync();
+  }
+  if ( createbot_readconfig_template() == 'simple(插件开发者)' ){
+    if ( plugindir == '在[bot名称]/[bot名称]下' ){
+        Directory dir_src = Directory('${path}/${name}/${name}');
+        Directory dir_src_plugins = Directory('${path}/${name}/${name}/plugins');
+        if (!dir_src.existsSync()){
+          dir_src.createSync();
+      }
+        if (!dir_src_plugins.existsSync()){
+          dir_src_plugins.createSync();
+      }
+    }
+    else if ( plugindir == '在src文件夹下' ){
+        Directory dir_src = Directory('${path}/${name}/src');
+        Directory dir_src_plugins = Directory('${path}/${name}/src/plugins');
+        if (!dir_src.existsSync()){
+          dir_src.createSync();
+        }
+        if (!dir_src_plugins.existsSync()){
+          dir_src_plugins.createSync();
+      }
+    }
   }
 }
 
@@ -323,11 +353,74 @@ writepyproject(path,name){
     .map((adapter) => '{ name = "${adapter.replaceAll('nonebot-adapter-','').replaceAll('.', ' ')}", module_name = "${adapter.replaceAll('-', '.').replaceAll('adapter', 'adapters')}" }')
     .join(',');  
 
-  String pyproject = '[tool.poetry]\nname = "${name}"\nversion = "0.1.0"\ndescription = "${name}"\n\n[tool.poetry.dependencies]\npython = ">=3.8,<4.0"\n\n[tool.nonebot]\nadapters = [${adapterlist_}]\nplugins = []\nplugin_dirs = ["src/plugins"]\nbuiltin_plugins = ["echo"]';
+  if (createbot_readconfig_template() == 'bootstrap(初学者或用户)'){
+  String pyproject = '''
+    [project]
+    name = "${name}"
+    version = "0.1.0"
+    description = "${name}"
+    readme = "README.md"
+    requires-python = ">=3.8, <4.0"
+
+    [tool.nonebot]
+    adapters = [
+        ${adapterlist_}
+    ]
+    plugins = []
+    plugin_dirs = []
+    builtin_plugins = ["echo"]
+  ''';
   File file_pyproject = File('${path}/${name}/pyproject.toml');
   file_pyproject.writeAsStringSync(pyproject.replaceAll(',{ name = "", module_name = "" }', ''.replaceAll('adapter', 'adapters')));
   String echo = "echo 写入pyproject.toml";
   return echo;
+  }
+else if (createbot_readconfig_template() == 'simple(插件开发者)'){
+  if (createbot_readconfig_plugindir() == '在src文件夹下'){
+  String pyproject = '''
+    [project]
+    name = "${name}"
+    version = "0.1.0"
+    description = "${name}"
+    readme = "README.md"
+    requires-python = ">=3.8, <4.0"
+
+    [tool.nonebot]
+    adapters = [
+        ${adapterlist_}
+    ]
+    plugins = []
+    plugin_dirs = ["src/plugins"]
+    builtin_plugins = ["echo"]
+  ''';
+  File file_pyproject = File('${path}/${name}/pyproject.toml');
+  file_pyproject.writeAsStringSync(pyproject.replaceAll(',{ name = "", module_name = "" }', ''.replaceAll('adapter', 'adapters')));
+  String echo = "echo 写入pyproject.toml";
+  return echo;
+  }
+  else if (createbot_readconfig_plugindir() == '在[bot名称]/[bot名称]下'){
+  String pyproject = '''
+    [project]
+    name = "${name}"
+    version = "0.1.0"
+    description = "${name}"
+    readme = "README.md"
+    requires-python = ">=3.8, <4.0"
+
+    [tool.nonebot]
+    adapters = [
+        ${adapterlist_}
+    ]
+    plugins = []
+    plugin_dirs = ["${name}/plugins"]
+    builtin_plugins = ["echo"]
+  ''';
+  File file_pyproject = File('${path}/${name}/pyproject.toml');
+  file_pyproject.writeAsStringSync(pyproject.replaceAll(',{ name = "", module_name = "" }', ''.replaceAll('adapter', 'adapters')));
+  String echo = "echo 写入pyproject.toml";
+  return echo;
+  }
+  }
 }
 
 writebot(name,path){

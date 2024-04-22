@@ -39,6 +39,7 @@ class _MyCustomFormState extends State<manage_bot> {
   void initState() {
     super.initState();
     _loadFileContent();
+    _startRefreshing();
   }
 
   void _startRefreshing() {
@@ -47,12 +48,11 @@ class _MyCustomFormState extends State<manage_bot> {
     }
   }
 
-  void _stopRefreshing() {
-    _timer?.cancel();
-    _timer = null;
-  }
+
 
   void _loadFileContent() async {
+  File stdoutfile = File(_filePath);
+  if ( stdoutfile.existsSync()){
     try {
       final file = File(_filePath);
       final lines = await file.readAsLines();
@@ -63,6 +63,7 @@ class _MyCustomFormState extends State<manage_bot> {
     } catch (e) {
       print('Error reading file: $e');
     }
+  }
   }
   void _executeCommands() async {
 
@@ -120,7 +121,7 @@ class _MyCustomFormState extends State<manage_bot> {
   child: Column(
     children: <Widget>[
       Card(
-        margin: EdgeInsets.all(12.0),
+        margin: EdgeInsets.all(4.0),
         child: Column(
         children: <Widget>[
             const Center(
@@ -200,9 +201,6 @@ class _MyCustomFormState extends State<manage_bot> {
                   if (manage_bot_readcfg_status().toString() == 'true'){
                   stop_bot();
                   _reloadConfig();
-                  Future.delayed(Duration(seconds: 10), () {
-                    _stopRefreshing();
-                  });
                   ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                       content: Text('Bot已停止'),
@@ -224,6 +222,7 @@ class _MyCustomFormState extends State<manage_bot> {
                   if  (manage_bot_readcfg_status().toString() == 'true'){
                   stop_bot();
                   run_bot(manage_bot_readcfg_path());
+                  clear_log();
                   _reloadConfig();
                   ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -255,7 +254,7 @@ class _MyCustomFormState extends State<manage_bot> {
                 iconSize: 25,),
 
               IconButton(
-                onPressed: (){_startRefreshing();clear_log();},
+                onPressed: (){clear_log();},
                 tooltip: "清空日志",
                 icon: Icon(Icons.delete_rounded),
                 iconSize: 25,),
