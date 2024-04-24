@@ -332,11 +332,24 @@ writeenv(path,name){
   String driverlist = drivers.split(',')
     .map((driver) => '~${driver}')
     .join('+');
-  String env = 'ENVIRONMENT=dev\nDRIVER=${driverlist}';
-  File file_drivers = File('${path}/${name}/.env');
-  file_drivers.writeAsStringSync(env);
+  if (createbot_readconfig_template() == 'bootstrap(初学者或用户)'){
+  String env = 'DRIVER=${driverlist}';
+  File file_env = File('${path}/${name}/.env.prod');
+  file_env.writeAsStringSync(env);
   String echo = "echo 写入.env文件";
   return echo;
+  }
+  else if (createbot_readconfig_template() == 'simple(插件开发者)'){
+  String env = 'ENVIRONMENT=dev\nDRIVER=${driverlist}';
+  File file_env = File('${path}/${name}/.env');
+  file_env.writeAsStringSync(env);
+  File file_envdev = File('${path}/${name}/.env.dev');
+  file_envdev.writeAsStringSync('LOG_LEVEL=DEBUG');
+  File file_envprod = File('${path}/${name}/.env.prod');
+  file_envprod.createSync();
+  String echo = "echo 写入.env文件";
+  return echo;
+  }
 }
 
 writepyproject(path,name){
