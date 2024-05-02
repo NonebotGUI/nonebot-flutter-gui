@@ -45,8 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   void refresh() {
-    Timer.periodic(Duration(seconds: 3), (timer) {
-      // 每隔3秒执行一次
+    Timer.periodic(Duration(seconds: 1), (timer) {
        _readConfigFiles();
        setState(() {
        });
@@ -136,6 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 String name = configFileContents_name[index];
                 String status = configFileContents_run[index];
                 String time = configFileContents_time[index];
+                String path = configFileContents_path[index];
                 if (status == 'true') {
                 return SingleChildScrollView(
                 child: Card(
@@ -146,6 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                         manage_bot_onopencfg(name, time);
                         Navigator.push(context, MaterialPageRoute(builder:(context) {
+                                createlog(path);
                                 return  manage_bot();
                        }));
                     },
@@ -163,6 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                         manage_bot_onopencfg(name, time);
                         Navigator.push(context, MaterialPageRoute(builder:(context) {
+                                createlog(path);
                                 return  manage_bot();
                        }));
                     },

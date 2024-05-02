@@ -1,11 +1,14 @@
 import 'package:Nonebot_GUI/darts/utils.dart';
+import 'package:Nonebot_GUI/ui/managecli.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:io';
 import 'dart:async';
 import '../darts/utils.dart';
-import 'manage_cli.dart';
+import 'package:Nonebot_GUI/ui/stderr.dart';
+import 'package:Nonebot_GUI/ui/managecli.dart';
+import 'package:Nonebot_GUI/ui/driver.dart';
 
 
 void main() {
@@ -44,7 +47,7 @@ class _MyCustomFormState extends State<manage_bot> {
 
   void _startRefreshing() {
     if (_timer == null) {
-      _timer = Timer.periodic(Duration(seconds: 2), (Timer t) => _loadFileContent());
+      _timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _loadFileContent());
     }
   }
 
@@ -123,46 +126,162 @@ class _MyCustomFormState extends State<manage_bot> {
       Card(
         margin: EdgeInsets.all(4.0),
         child: Column(
-        children: <Widget>[
+          children: <Widget>[
             const Center(
-              child: Text('Bot信息',
-              style: TextStyle(fontWeight: FontWeight.bold),)
+              child: Text(
+                'Bot信息',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
             Row(
               children: <Widget>[
-                Expanded(child: Align(alignment: Alignment.centerLeft, child: Text('名称',style: TextStyle(fontWeight: FontWeight.bold),))),
-                Expanded(child: Align(alignment: Alignment.centerRight, child: Text(manage_bot_readcfg_name().toString()))),
-              ]),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '名称',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(manage_bot_readcfg_name().toString()),
+                    ),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 6,),
             Row(
               children: <Widget>[
-                Expanded(child: Align(alignment: Alignment.centerLeft, child: Text('路径',style: TextStyle(fontWeight: FontWeight.bold),))),
-                Expanded(child: Align(alignment: Alignment.centerRight, child: Text(manage_bot_readcfg_path().toString()))),
-              ]),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '路径',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(manage_bot_readcfg_path().toString()),
+                    ),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 6,),
             Row(
               children: <Widget>[
-                Expanded(child: Align(alignment: Alignment.centerLeft, child: Text('创建时间',style: TextStyle(fontWeight: FontWeight.bold),))),
-                Expanded(child: Align(alignment: Alignment.centerRight, child: Text(manage_bot_readcfg_time().toString()))),
-              ]),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '创建时间',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(manage_bot_readcfg_time().toString()),
+                    ),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 7,),
             Row(
               children: <Widget>[
-                Expanded(child: Align(alignment: Alignment.centerLeft, child: Text('状态',style: TextStyle(fontWeight: FontWeight.bold),))),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '状态',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
                 if (manage_bot_readcfg_status().toString() == 'true')
-                  Expanded(child: Align(alignment: Alignment.centerRight, child: Text('运行中',style: TextStyle(color: Colors.green),))),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          '运行中',
+                          style: TextStyle(color: Colors.green),
+                        ),
+                      ),
+                    ),
+                  ),
                 if (manage_bot_readcfg_status().toString() == 'false')
-                  Expanded(child: Align(alignment: Alignment.centerRight, child: Text('未运行',style: TextStyle(color: Colors.red),))),
-              ]),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          '未运行',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
             Row(
               children: <Widget>[
-                Expanded(child: Align(alignment: Alignment.centerLeft, child: Text('进程ID',style: TextStyle(fontWeight: FontWeight.bold),))),
-                Expanded(child: Align(alignment: Alignment.centerRight, child: Text(manage_bot_readcfg_pid().toString()))),
-              ]
-            )
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '进程ID',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(manage_bot_readcfg_pid().toString()),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
+
       Card(
         margin: EdgeInsets.all(4.0),
         child: Column(
@@ -246,7 +365,7 @@ class _MyCustomFormState extends State<manage_bot> {
               IconButton(
                 onPressed: () {
                        Navigator.push(context, MaterialPageRoute(builder:(context) {
-                                return  manage_cli();
+                                return  ManageCli();
                        }));
               }, 
                 tooltip: "管理CLI",
@@ -259,6 +378,21 @@ class _MyCustomFormState extends State<manage_bot> {
                 icon: Icon(Icons.delete_rounded),
                 iconSize: 25,),
 
+              Visibility(
+                visible: File('${manage_bot_readcfg_path()}/nbgui_stderr.log').readAsStringSync().isNotEmpty, 
+                child: IconButton(
+                  onPressed: () {
+                       Navigator.push(context, MaterialPageRoute(builder:(context) {
+                                return StdErr();
+                       }));
+                  }, 
+                  tooltip: '查看报错日志',
+                  icon: Icon(Icons.error_rounded),
+                  color: Colors.red,
+                  iconSize: 25,
+                )
+              )
+
             ],
           )
           ],
@@ -268,19 +402,31 @@ class _MyCustomFormState extends State<manage_bot> {
         margin: EdgeInsets.all(4.0),
         child: Column(
           children: <Widget>[
-           const Center(child: Text('控制台输出',style: TextStyle(fontWeight: FontWeight.bold),),),
-           SizedBox(height: 3,),
-          SizedBox(
-          height: 400,
-          width: 2000,
-          child: Card(
-            color: const Color.fromARGB(255, 31, 28, 28),
-            child: SingleChildScrollView(
-              child: Text(_log,style: TextStyle(color: Colors.white),)),
-          )
-          )
-          ]
-        )
+            const Center(
+              child: Text(
+                '控制台输出',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(height: 3,),
+            SizedBox(
+              height: 400,
+              width: 2000,
+              child: Card(
+                color: const Color.fromARGB(255, 31, 28, 28),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text(
+                      _log,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     ],
   ),

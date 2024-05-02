@@ -99,7 +99,7 @@
     },
     {
       "name": "flutter",
-      "rootUri": "file:///media/nightwind/NightWind/workspace/flutter_project/flutter/packages/flutter",
+      "rootUri": "file:///media/nightwind/1DDA52C8685DBF4F/flutter/packages/flutter",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -123,15 +123,27 @@
     },
     {
       "name": "flutter_test",
-      "rootUri": "file:///media/nightwind/NightWind/workspace/flutter_project/flutter/packages/flutter_test",
+      "rootUri": "file:///media/nightwind/1DDA52C8685DBF4F/flutter/packages/flutter_test",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
     {
       "name": "flutter_web_plugins",
-      "rootUri": "file:///media/nightwind/NightWind/workspace/flutter_project/flutter/packages/flutter_web_plugins",
+      "rootUri": "file:///media/nightwind/1DDA52C8685DBF4F/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.2"
+    },
+    {
+      "name": "http",
+      "rootUri": "file:///home/nightwind/.pub-cache/hosted/pub.flutter-io.cn/http-1.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "http_parser",
+      "rootUri": "file:///home/nightwind/.pub-cache/hosted/pub.flutter-io.cn/http_parser-4.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "image",
@@ -261,7 +273,7 @@
     },
     {
       "name": "sky_engine",
-      "rootUri": "file:///media/nightwind/NightWind/workspace/flutter_project/flutter/bin/cache/pkg/sky_engine",
+      "rootUri": "file:///media/nightwind/1DDA52C8685DBF4F/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -300,6 +312,12 @@
       "rootUri": "file:///home/nightwind/.pub-cache/hosted/pub.flutter-io.cn/test_api-0.6.1",
       "packageUri": "lib/",
       "languageVersion": "3.0"
+    },
+    {
+      "name": "toml",
+      "rootUri": "file:///home/nightwind/.pub-cache/hosted/pub.flutter-io.cn/toml-0.15.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
     },
     {
       "name": "typed_data",
@@ -404,7 +422,7 @@
       "languageVersion": "3.3"
     }
   ],
-  "generated": "2024-04-22T06:06:57.409960Z",
+  "generated": "2024-05-02T05:35:44.983338Z",
   "generator": "pub",
   "generatorVersion": "3.3.1"
 }

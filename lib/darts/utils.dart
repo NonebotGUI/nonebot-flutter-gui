@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:core';
 import 'dart:convert';
-
-import 'package:Nonebot_GUI/ui/manage_bot.dart';
+import 'package:toml/toml.dart';
 
 
 
@@ -573,7 +572,17 @@ manage_bot_readcfg_pid(){
   return jsonMap['pid'].toString();
 }
 
+manage_bot_view_stderr(){
+  File stderrfile = File('${manage_bot_readcfg_path()}/nbgui_stderr.log');
+  String stderr = stderrfile.readAsStringSync();
+  return stderr;
+}
 
+delete_stderr(){
+  File stderrfile = File('${manage_bot_readcfg_path()}/nbgui_stderr.log');
+  String clear = "";
+  stderrfile.writeAsString(clear);
+}
 
 
 Future openfolder(path) async{
@@ -712,3 +721,24 @@ manage_cli_self(manage,package_name){
 }
 }
 
+//补救用，发现进managebot时如果找不到stderr就会炸（）
+createlog(path){
+  File stdout = File('${path}/nbgui_stdout.log');
+  File stderr = File('${path}/nbgui_stderr.log');
+  if ( !stdout.existsSync()){
+    stdout.createSync();
+  }
+  if ( !stderr.existsSync()){
+    stderr.createSync();
+  }
+}
+
+//从pyproject.toml中读取插件列表
+get_pluginlist() {
+  File pyprojectFile = File('${manage_bot_readcfg_path()}/pyproject.toml');
+  String pyproject = pyprojectFile.readAsStringSync();
+  var toml = TomlDocument.parse(pyproject).toMap();
+  var nonebot = toml['tool']['nonebot'];
+  List pluginsList = nonebot['plugins'];
+  return pluginsList;
+}

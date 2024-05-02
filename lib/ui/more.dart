@@ -18,9 +18,12 @@ class More extends StatefulWidget {
 }
 
 class _MoreState extends State<More> {
-
+  int tapCount = 0;
+  final int tapsToReveal = 9;
+  bool showImage = false;
   String? _PythonPath;
   String? _NbcliPath;
+
 
   void _selectpy() async {
     final result = await FilePicker.platform.pickFiles(
@@ -44,6 +47,22 @@ class _MoreState extends State<More> {
         _NbcliPath= result.files.single.path.toString();
       });
     }
+  }
+
+  void _handleTap() {
+    setState(() {
+      tapCount++;
+      if (tapCount >= tapsToReveal) {
+        showImage = true;
+      }
+    });
+  }
+
+  void _resetCounter() {
+    setState(() {
+      tapCount = 0;
+      showImage = false;
+    });
   }
 
   @override
@@ -85,7 +104,7 @@ class _MoreState extends State<More> {
 
 
             Center(
-              child:Text("Nonebot GUI",
+              child:Text("NoneBot GUI",
               style: TextStyle(fontSize: MediaQuery.of(context).textScaleFactor * 35.0,
               fontWeight: FontWeight.bold),)
             ),
@@ -93,8 +112,8 @@ class _MoreState extends State<More> {
 
 
             Center(
-              child: Text("_✨基于Flutter的Nonebot GUI✨_",
-              style: TextStyle(color: Colors.black),),
+              child: Text("_✨新一代NoneBot图形化界面✨_",
+              style: TextStyle(color: Colors.black,),),
             ),
             const Divider(
               height: 20,
@@ -112,7 +131,46 @@ class _MoreState extends State<More> {
           )
           ),
           Expanded(child: Align(alignment: Alignment.centerRight,
-          child: Text('0.1.4+1'),
+          child: InkWell(
+            child: Text('0.1.5'),
+            onTap: (){
+                if (showImage){
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return Material(
+                        color: Colors.transparent,
+                        child: Center(
+                          child: AlertDialog(
+                            title: Row(
+                              children: <Widget>[
+                                Image.asset('lib/assets/loading.gif',
+                                width: 180*0.15,
+                                height: 180*0.15,),
+                                Text('UWU')
+                              ],
+                            ),
+                            content: Container(
+                              child: InkWell(
+                                child: Image.asset('lib/assets/colorEgg.png'),
+                                onTap: () {
+                                  _resetCounter();
+                                  Navigator.pop(context);
+                                },
+                              )
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+                else {
+                  _handleTap();
+                }
+            },
+          ),
         )
         )
         ]

@@ -245,18 +245,23 @@ class _MyCustomFormState extends State<creatingbot> {
           ),
           const SizedBox(height: 4),
           Expanded(
-            child: Card(
-              color: const Color.fromARGB(255, 31, 28, 28),
-              child: SingleChildScrollView(
-                child: RichText(
-                  text: TextSpan(
-                    style: TextStyle(color: Colors.white), 
-                    text: _outputController.text,
+            child: SizedBox(
+              height: 400,
+              width: 2000,
+              child: Card(
+                color: const Color.fromARGB(255, 31, 28, 28),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Text(
+                      style: TextStyle(color: Colors.white),
+                      _outputController.text,
+                    ),
+                    )
                   ),
                 ),
-              ),
+          )
             ),
-          ),
         ],
       ),
       ),
