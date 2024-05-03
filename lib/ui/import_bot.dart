@@ -60,6 +60,7 @@ class _HomeScreenState extends State<import_bot> {
             onPressed:() {
               if (_selectedFolderPath.toString() != 'null') {
                 importbot(name, _selectedFolderPath.toString());
+                Navigator.of(context).popUntil((route) => route.isFirst);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('导入完成'),
