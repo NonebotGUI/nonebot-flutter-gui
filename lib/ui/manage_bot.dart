@@ -5,10 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:io';
 import 'dart:async';
-import '../darts/utils.dart';
 import 'package:Nonebot_GUI/ui/stderr.dart';
-import 'package:Nonebot_GUI/ui/managecli.dart';
-import 'package:Nonebot_GUI/ui/driver.dart';
 
 
 void main() {
@@ -453,10 +450,11 @@ void _showConfirmationDialog(BuildContext context) {
             child: Text('确定',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1)),),
             onPressed: () {
               Navigator.of(context).pop();
+              Navigator.of(context).popUntil((route) => route.isFirst);
               delete_bot(); 
               ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                      content: Text('Bot已删除，请回到主页面刷新列表'),
+                      content: Text('Bot已删除'),
                       duration: Duration(seconds: 3),));
             },
           ),
@@ -464,10 +462,11 @@ void _showConfirmationDialog(BuildContext context) {
             child: Text('确定（连同bot目录一起删除）',style: TextStyle(color: Color.fromRGBO(255, 0, 0, 1)),),
             onPressed: () {
               Navigator.of(context).pop();
+              Navigator.of(context).popUntil((route) => route.isFirst);
               delete_bot_all(); 
               ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                      content: Text('Bot已删除，请回到主页面刷新列表'),
+                      content: Text('Bot已删除'),
                       duration: Duration(seconds: 3),));
             },
           ),

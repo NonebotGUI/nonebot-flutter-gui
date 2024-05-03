@@ -132,7 +132,7 @@ class _MoreState extends State<More> {
           ),
           Expanded(child: Align(alignment: Alignment.centerRight,
           child: InkWell(
-            child: Text('0.1.5'),
+            child: Text('0.1.5.1'),
             onTap: (){
                 if (showImage){
                   showDialog(

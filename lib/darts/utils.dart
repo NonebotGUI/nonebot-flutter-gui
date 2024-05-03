@@ -437,7 +437,7 @@ else if (createbot_readconfig_template() == 'simple(插件开发者)'){
 
 writebot(name,path){
   DateTime now = DateTime.now();
-  String time = "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}";
+  String time = "${now.year}年${now.month}月${now.day}日${now.hour}时${now.minute}分${now.second}秒";
   File cfgfile = File('${create_main_folder()}/bots/${name}.${time}.json');
   
   if (Platform.isWindows){
@@ -489,9 +489,9 @@ return echo;
 //导入
 importbot(name,path){
   DateTime now = DateTime.now();
-  String time = "${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}${now.hour.toString().padLeft(2, '0')}${now.minute.toString().padLeft(2, '0')}";
+  String time = "${now.year}年${now.month}月${now.day}日${now.hour}时${now.minute}分${now.second}秒";
   File cfgfile = File('${create_main_folder()}/bots/${name}.${time}.json');
-  
+
   if (Platform.isWindows){
   String bot_info = '''
 {
