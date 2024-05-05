@@ -6,14 +6,16 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(
-    MyApp(),
+    const MyApp(),
   );
 
 }
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: ManagePlugin(),
     );
   }
@@ -23,6 +25,8 @@ class MyApp extends StatelessWidget {
 
 
 class ManagePlugin extends StatefulWidget {
+  const ManagePlugin({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -40,13 +44,13 @@ class _HomeScreenState extends State<ManagePlugin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "管理插件",
           style: TextStyle(color: Colors.white),
         ),
-        actions: <Widget>[
+        actions: const <Widget>[
         ],
-        backgroundColor: Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
       ),
       body: get_pluginlist().length == 0
         ? const Center(
@@ -70,7 +74,7 @@ class _HomeScreenState extends State<ManagePlugin> {
                     children: <Widget>[
                       Expanded(
                         child: Text(' ${get_pluginlist()[index]}',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                       Expanded(
@@ -87,17 +91,17 @@ class _HomeScreenState extends State<ManagePlugin> {
                                         builder: (BuildContext context) {
                                           String name = get_pluginlist()[index];
                                           return AlertDialog(
-                                            title: Text('确认卸载'),
-                                            content: Text('你确定要卸载这个插件吗？'),
+                                            title: const Text('确认卸载'),
+                                            content: const Text('你确定要卸载这个插件吗？'),
                                             actions: <Widget>[
                                               TextButton(
-                                                child: Text('取消'),
+                                                child: const Text('取消'),
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
                                                 },
                                               ),
                                               TextButton(
-                                                child: Text('确定',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1)),),
+                                                child: const Text('确定',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1)),),
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
                                                   _uninstall(name);
@@ -113,7 +117,7 @@ class _HomeScreenState extends State<ManagePlugin> {
                                       );
                                   },
                                   tooltip: '卸载插件',
-                                  icon: Icon(Icons.delete_rounded),
+                                  icon: const Icon(Icons.delete_rounded),
                                   iconSize: 25,
                                 ),
                               ],

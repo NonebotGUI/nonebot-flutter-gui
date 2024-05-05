@@ -1,25 +1,26 @@
 import 'dart:io';
 import 'package:Nonebot_GUI/darts/utils.dart';
-import 'package:flutter/widgets.dart';
 import 'dart:convert';
-import 'ui/createbot.dart';
-import 'ui/more.dart';
-import 'ui/manage_bot.dart';
-import 'ui/import_bot.dart';
+import 'package:Nonebot_GUI/ui/createbot.dart';
+import 'package:Nonebot_GUI/ui/more.dart';
+import 'package:Nonebot_GUI/ui/manage_bot.dart';
+import 'package:Nonebot_GUI/ui/import_bot.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 
 void main() {
   runApp(
-    MyApp(),
+    const MyApp(),
   );
 
 }
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: HomeScreen(),
     );
   }
@@ -29,6 +30,8 @@ class MyApp extends StatelessWidget {
 
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -45,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   void refresh() {
-    Timer.periodic(Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
        _readConfigFiles();
        setState(() {
        });
@@ -84,31 +87,31 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Nonebot GUI',
+        title: const Text('Nonebot GUI',
         style: TextStyle(color: Colors.white),),
-        backgroundColor: Color.fromRGBO(238, 109,109, 1),
+        backgroundColor: const Color.fromRGBO(238, 109,109, 1),
         leading: IconButton(icon: const Icon(Icons.menu),
             tooltip: '更多',
             onPressed: () {    
                        Navigator.push(context, MaterialPageRoute(builder:(context) {
-                                return  More();
+                                return  const More();
                        }));
               },
             color: Colors.white,
               ),
           actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.file_download_outlined),
+            icon: const Icon(Icons.file_download_outlined),
             onPressed: () {    
                        Navigator.push(context, MaterialPageRoute(builder:(context) {
-                                return  import_bot();
+                                return  const import_bot();
                        }));
               },
             tooltip: "从已有的Bot中导入",
             color: Colors.white,
           ),
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             onPressed: (){_readConfigFiles();create_main_folder();},
             tooltip: "刷新列表",
             color: Colors.white,
@@ -141,16 +144,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Card(
                   child: ListTile(
                     title: Text(name),
-                    subtitle: Text("运行中",
+                    subtitle: const Text("运行中",
                     style: TextStyle(color: Colors.green),),
                     onTap: () {
                         manage_bot_onopencfg(name, time);
                         Navigator.push(context, MaterialPageRoute(builder:(context) {
                                 createlog(path);
-                                return  manage_bot();
+                                return  const manage_bot();
                        }));
                     },
-                    trailing: Icon(Icons.menu), 
+                    trailing: const Icon(Icons.menu), 
                   ),
                 )
                 );
@@ -160,16 +163,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Card(
                   child: ListTile(
                     title: Text(name),
-                    subtitle: Text("未运行",),
+                    subtitle: const Text("未运行",),
                     onTap: () {
                         manage_bot_onopencfg(name, time);
                         Navigator.push(context, MaterialPageRoute(builder:(context) {
                                 createlog(path);
-                                return  manage_bot();
+                                return  const manage_bot();
                        }));
                     },
                     
-                    trailing: Icon(Icons.menu), 
+                    trailing: const Icon(Icons.menu), 
                   ),
                 )
                 );
@@ -179,13 +182,13 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButton:  FloatingActionButton(
           onPressed:  () {    
                        Navigator.push(context, MaterialPageRoute(builder:(context) {
-                                return  CreateBot();
+                                return  const CreateBot();
                        }));
               },
           tooltip: '添加一个bot',
-          child: Icon(Icons.add,color: Colors.white,),
-          backgroundColor: Color.fromRGBO(238, 109, 109, 1),
-          shape: CircleBorder(),
+          backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
+          shape: const CircleBorder(),
+          child: const Icon(Icons.add,color: Colors.white,),
           ),
 
     );

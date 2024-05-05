@@ -3,4 +3,5 @@ kyc.iml
 .flutter-plugins
 .flutter-plugins-dependencies
 build/
+.idea/
 tem.dart

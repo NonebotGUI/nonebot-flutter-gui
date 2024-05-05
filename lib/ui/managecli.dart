@@ -11,14 +11,16 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(
-    MyApp(),
+    const MyApp(),
   );
 
 }
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: ManageCli(),
     );
   }
@@ -28,6 +30,8 @@ class MyApp extends StatelessWidget {
 
 
 class ManageCli extends StatefulWidget {
+  const ManageCli({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -46,13 +50,13 @@ class _HomeScreenState extends State<ManageCli> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "管理CLI",
           style: TextStyle(color: Colors.white),
         ),
-        actions: <Widget>[
+        actions: const <Widget>[
         ],
-        backgroundColor: Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
       ),
       body: SingleChildScrollView(
       child: Column(
@@ -60,7 +64,7 @@ class _HomeScreenState extends State<ManageCli> {
             SizedBox(
               height: 80,
               child: InkWell(
-                child: Card(
+                child: const Card(
                   child: Row(
                     children: <Widget>[
                       Text('  插件商店'),
@@ -70,16 +74,16 @@ class _HomeScreenState extends State<ManageCli> {
                 ),
                 onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder:(context) {
-                      return PluginStore();
+                      return const PluginStore();
                   }));
                 }
               )
             ),
-            SizedBox(height: 4,),
+            const SizedBox(height: 4,),
             SizedBox(
               height: 80,
               child: InkWell(
-                child: Card(
+                child: const Card(
                   child: Row(
                     children: <Widget>[
                       Text('  管理插件'),
@@ -89,7 +93,7 @@ class _HomeScreenState extends State<ManageCli> {
                 ),
                 onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder:(context) {
-                      return ManagePlugin();
+                      return const ManagePlugin();
                   }));
                 }
               )
@@ -98,7 +102,7 @@ class _HomeScreenState extends State<ManageCli> {
             SizedBox(
               height: 80,
               child: InkWell(
-                child: Card(
+                child: const Card(
                   child: Row(
                     children: <Widget>[
                       Text('  适配器商店'),
@@ -108,16 +112,16 @@ class _HomeScreenState extends State<ManageCli> {
                 ),
                 onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder:(context) {
-                      return AdapterStore();
+                      return const AdapterStore();
                   }));
                 }
               )
             ),
-            SizedBox(height: 4,),
+            const SizedBox(height: 4,),
             SizedBox(
               height: 80,
               child: InkWell(
-                child: Card(
+                child: const Card(
                   child: Row(
                     children: <Widget>[
                       Text('  驱动器商店'),
@@ -127,7 +131,7 @@ class _HomeScreenState extends State<ManageCli> {
                 ),
                 onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder:(context) {
-                      return DriverStore();
+                      return const DriverStore();
                   }));
                 }
               )
@@ -135,7 +139,7 @@ class _HomeScreenState extends State<ManageCli> {
             SizedBox(
               height: 80,
               child: InkWell(
-                child: Card(
+                child: const Card(
                   child: Row(
                     children: <Widget>[
                       Text('  管理nb-cli本体'),
@@ -145,7 +149,7 @@ class _HomeScreenState extends State<ManageCli> {
                 ),
                 onTap: (){
                     Navigator.push(context, MaterialPageRoute(builder:(context) {
-                      return manage_cli();
+                      return const manage_cli();
                   }));
                 }
               )
@@ -154,7 +158,7 @@ class _HomeScreenState extends State<ManageCli> {
             SizedBox(
               height: 80,
               child: InkWell(
-                child: Card(
+                child: const Card(
                   child: Row(
                     children: <Widget>[
                       Text('  生成机器人的入口文件(bot.py)  '),

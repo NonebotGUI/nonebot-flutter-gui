@@ -3,24 +3,28 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../assets/my_flutter_app_icons.dart';
+import 'package:Nonebot_GUI/assets/my_flutter_app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:Nonebot_GUI/darts/utils.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: DriverStore(),
     );
   }
 }
 
 class DriverStore extends StatefulWidget {
+  const DriverStore({super.key});
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -109,14 +113,14 @@ class _MyHomePageState extends State<DriverStore> {
       appBar: AppBar(
         title: TextField(
           controller: _searchController,
-          decoration: InputDecoration(hintText: '搜索适配器...',hintStyle: TextStyle(color: Colors.white)),
-          style: TextStyle(color: Colors.white),
+          decoration: const InputDecoration(hintText: '搜索适配器...',hintStyle: TextStyle(color: Colors.white)),
+          style: const TextStyle(color: Colors.white),
           onChanged: _Searchdrivers,
           
         ),
-        backgroundColor: Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
       ),
-      body: data.length == 0
+      body: data.isEmpty
       ? const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -142,7 +146,7 @@ class _MyHomePageState extends State<DriverStore> {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(drivers['name'], style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: Text(drivers['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -180,8 +184,8 @@ class _MyHomePageState extends State<DriverStore> {
                                       color: Colors.transparent,
                                       child: Center(
                                         child: AlertDialog(
-                                          title: Text('正在安装适配器'),
-                                          content: Container(
+                                          title: const Text('正在安装适配器'),
+                                          content: SizedBox(
                                             height: 600,
                                             width: 800,
                                             child: StreamBuilder<String>(
@@ -202,10 +206,10 @@ class _MyHomePageState extends State<DriverStore> {
                                                           color: const Color.fromARGB(255, 31, 28, 28),
                                                           child: SingleChildScrollView(
                                                             child: Padding(
-                                                              padding: EdgeInsets.all(8.0),
+                                                              padding: const EdgeInsets.all(8.0),
                                                               child: Text(
                                                                 driver_output.text,
-                                                                style: TextStyle(color: Colors.white),
+                                                                style: const TextStyle(color: Colors.white),
                                                               ),
                                                             ),
                                                           ),
@@ -235,7 +239,7 @@ class _MyHomePageState extends State<DriverStore> {
                                 );
                               },
                               tooltip: '安装适配器',
-                              icon: Icon(Icons.download_rounded),
+                              icon: const Icon(Icons.download_rounded),
                               iconSize: 25,
                             ),
                             IconButton(
@@ -249,7 +253,7 @@ class _MyHomePageState extends State<DriverStore> {
                                 );
                               },
                               tooltip: '复制仓库地址',
-                              icon: Icon(MyFlutterApp.github),
+                              icon: const Icon(MyFlutterApp.github),
                               iconSize: 25,
                             ),
                           ],

@@ -3,24 +3,28 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../assets/my_flutter_app_icons.dart';
+import 'package:Nonebot_GUI/assets/my_flutter_app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:Nonebot_GUI/darts/utils.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: PluginStore(),
     );
   }
 }
 
 class PluginStore extends StatefulWidget {
+  const PluginStore({super.key});
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -109,14 +113,14 @@ class _MyHomePageState extends State<PluginStore> {
       appBar: AppBar(
         title: TextField(
           controller: _searchController,
-          decoration: InputDecoration(hintText: '搜索插件...',hintStyle: TextStyle(color: Colors.white)),
-          style: TextStyle(color: Colors.white),
+          decoration: const InputDecoration(hintText: '搜索插件...',hintStyle: TextStyle(color: Colors.white)),
+          style: const TextStyle(color: Colors.white),
           onChanged: _SearchPlugins,
           
         ),
-        backgroundColor: Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
       ),
-      body: data.length == 0
+      body: data.isEmpty
         ? const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -143,7 +147,7 @@ class _MyHomePageState extends State<PluginStore> {
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(plugins['name'], style: TextStyle(fontWeight: FontWeight.bold)),
+                            child: Text(plugins['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -181,8 +185,8 @@ class _MyHomePageState extends State<PluginStore> {
                                         color: Colors.transparent,
                                         child: Center(
                                           child: AlertDialog(
-                                            title: Text('正在安装插件'),
-                                            content: Container(
+                                            title: const Text('正在安装插件'),
+                                            content: SizedBox(
                                               height: 600,
                                               width: 800,
                                               child: StreamBuilder<String>(
@@ -203,10 +207,10 @@ class _MyHomePageState extends State<PluginStore> {
                                                             color: const Color.fromARGB(255, 31, 28, 28),
                                                             child: SingleChildScrollView(
                                                               child: Padding(
-                                                                padding: EdgeInsets.all(8.0),
+                                                                padding: const EdgeInsets.all(8.0),
                                                                 child: Text(
                                                                   plugin_output.text,
-                                                                  style: TextStyle(color: Colors.white),
+                                                                  style: const TextStyle(color: Colors.white),
                                                                 ),
                                                               ),
                                                             ),
@@ -236,7 +240,7 @@ class _MyHomePageState extends State<PluginStore> {
                                   );
                                 },
                                 tooltip: '安装插件',
-                                icon: Icon(Icons.download_rounded),
+                                icon: const Icon(Icons.download_rounded),
                                 iconSize: 25,
                               ),
                               IconButton(
@@ -250,7 +254,7 @@ class _MyHomePageState extends State<PluginStore> {
                                   );
                                 },
                                 tooltip: '复制仓库地址',
-                                icon: Icon(MyFlutterApp.github),
+                                icon: const Icon(MyFlutterApp.github),
                                 iconSize: 25,
                               ),
                             ],

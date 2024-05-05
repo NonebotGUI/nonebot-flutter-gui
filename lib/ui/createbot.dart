@@ -1,19 +1,20 @@
 import 'package:Nonebot_GUI/darts/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:file_picker/file_picker.dart';
-import 'creatingbot.dart';
+import 'package:Nonebot_GUI/ui/creatingbot.dart';
 
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
 
   
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: CreateBot(),
     );
   }
@@ -96,20 +97,20 @@ class _MyCustomFormState extends State<CreateBot> {
   String buildSelectedOptions_driver() {
     List<String> selectedOptions = drivers.keys.where((option) => drivers[option] == true).toList();
     String selectedDrivers = selectedOptions.join(',').toString();
-    return '${selectedDrivers}';
+    return selectedDrivers;
   }
 
   String buildSelectedOptions_adapter() {
     List<String> selectedOptions = adapters.keys.where((option) => adapters[option] == true).toList();
     String selectedAdapters = selectedOptions.join(',').toString();
-    return '${selectedAdapters}';
+    return selectedAdapters;
   }
 
   List<Widget> buildDriversCheckboxes() {
     return drivers.keys.map((driver) {
       return CheckboxListTile(
         title: Text(driver),
-        activeColor: Color.fromRGBO(238, 109, 109, 1),
+        activeColor: const Color.fromRGBO(238, 109, 109, 1),
         value: drivers[driver],
         onChanged: (bool? value) => onChanged_drivers(driver, value!),
       );
@@ -120,7 +121,7 @@ class _MyCustomFormState extends State<CreateBot> {
     return adapters.keys.map((adapter) {
       return CheckboxListTile(
         title: Text(adapter),
-        activeColor: Color.fromRGBO(238, 109, 109, 1),
+        activeColor: const Color.fromRGBO(238, 109, 109, 1),
         value: adapters[adapter],
         onChanged: (bool? value) => onChanged_adapters(adapter, value!),
       );
@@ -161,11 +162,11 @@ class _MyCustomFormState extends State<CreateBot> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "创建Bot",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
         actions: <Widget>[
           IconButton(
             onPressed:() {
@@ -174,7 +175,7 @@ class _MyCustomFormState extends State<CreateBot> {
                        createbot_writeconfig_requirement(buildSelectedOptions_driver(),buildSelectedOptions_adapter()) ;
                        createfolder(_selectedFolderPath, name,dropdownValue_plugindir);
                        Navigator.push(context, MaterialPageRoute(builder:(context) {
-                                return  creatingbot();
+                                return  const creatingbot();
                        }));
             }
             else {
@@ -214,7 +215,7 @@ class _MyCustomFormState extends State<CreateBot> {
             ),
             const SizedBox(height: 12),
             Row(children: <Widget>[
-              Expanded(child: Align(alignment: 
+              const Expanded(child: Align(alignment: 
               Alignment.centerLeft,
               child: Text('选择模板',
               overflow: TextOverflow.ellipsis,
@@ -247,7 +248,7 @@ class _MyCustomFormState extends State<CreateBot> {
             Visibility(
               visible: dropdownValue == template[1],
               child: Row(children: <Widget>[
-              Expanded(child: Align(alignment: 
+              const Expanded(child: Align(alignment: 
               Alignment.centerLeft,
               child: Text('选择插件存放位置',
               overflow: TextOverflow.ellipsis,
@@ -283,7 +284,7 @@ class _MyCustomFormState extends State<CreateBot> {
             Row(children: <Widget>[
               Expanded(child: Align(alignment: 
               Alignment.centerLeft,
-              child: Text('存放bot的目录[${_selectedFolderPath}]',
+              child: Text('存放bot的目录[$_selectedFolderPath]',
               overflow: TextOverflow.ellipsis,
               maxLines: 1,),
               )),
@@ -304,7 +305,7 @@ class _MyCustomFormState extends State<CreateBot> {
             
             Row(
               children: <Widget>[
-                Expanded(
+                const Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text("是否开启虚拟环境"),
@@ -316,7 +317,7 @@ class _MyCustomFormState extends State<CreateBot> {
                     child: Switch(
                       value: isvenv,
                       onChanged: _toggleVenv,
-                      activeColor: Color.fromRGBO(238, 109, 109, 1),
+                      activeColor: const Color.fromRGBO(238, 109, 109, 1),
                       focusColor: Colors.black,
                       inactiveTrackColor: Colors.grey,
                     ),
@@ -328,7 +329,7 @@ class _MyCustomFormState extends State<CreateBot> {
             const SizedBox(height: 10,),
             Row(
               children: <Widget> [
-                Expanded(
+                const Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text("是否安装依赖"),
@@ -340,7 +341,7 @@ class _MyCustomFormState extends State<CreateBot> {
                     child: Switch(
                       value: isdep,
                       onChanged: _toggledep,
-                      activeColor: Color.fromRGBO(238, 109, 109, 1),
+                      activeColor: const Color.fromRGBO(238, 109, 109, 1),
                       focusColor: Colors.black,
                       inactiveTrackColor: Colors.grey,
                     ),
@@ -355,7 +356,7 @@ class _MyCustomFormState extends State<CreateBot> {
             endIndent: 20,
             color: Colors.grey,
             ),
-            Center(
+            const Center(
               child: Text("选择驱动器"),
             ),
             const SizedBox(height: 3,),
@@ -370,7 +371,7 @@ class _MyCustomFormState extends State<CreateBot> {
             endIndent: 20,
             color: Colors.grey,
             ),
-            Center(
+            const Center(
               child: Text("选择适配器"),
             ),
             const SizedBox(height: 3,),

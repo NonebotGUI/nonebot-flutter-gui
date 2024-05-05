@@ -6,14 +6,16 @@ import 'package:file_picker/file_picker.dart';
 
 void main() {
   runApp(
-    MyApp(),
+    const MyApp(),
   );
 
 }
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: import_bot(),
     );
   }
@@ -23,6 +25,8 @@ class MyApp extends StatelessWidget {
 
 
 class import_bot extends StatefulWidget {
+  const import_bot({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -52,9 +56,9 @@ class _HomeScreenState extends State<import_bot> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('导入Bot',
+        title: const Text('导入Bot',
         style: TextStyle(color: Colors.white),),
-        backgroundColor: Color.fromRGBO(238, 109,109, 1),
+        backgroundColor: const Color.fromRGBO(238, 109,109, 1),
         actions: <Widget>[
           IconButton(
             onPressed:() {
@@ -72,7 +76,7 @@ class _HomeScreenState extends State<import_bot> {
                   content: Text('你还没有选择Bot的根目录！'),
                   duration: Duration(seconds: 3),));
             }},
-            icon: Icon(Icons.done_rounded,
+            icon: const Icon(Icons.done_rounded,
             color: Colors.white,),
             tooltip: "导入",
             )
@@ -104,7 +108,7 @@ class _HomeScreenState extends State<import_bot> {
             Row(children: <Widget>[
               Expanded(child: Align(alignment: 
               Alignment.centerLeft,
-              child: Text('bot根目录[${_selectedFolderPath}]',
+              child: Text('bot根目录[$_selectedFolderPath]',
               overflow: TextOverflow.ellipsis,
               maxLines: 1,),
               )),

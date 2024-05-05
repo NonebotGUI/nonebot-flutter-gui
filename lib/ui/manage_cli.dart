@@ -1,16 +1,17 @@
 import 'package:Nonebot_GUI/darts/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'dart:io';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: manage_cli(),
     );
   }
@@ -59,11 +60,11 @@ class _MyCustomFormState extends State<manage_cli> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "管理CLI",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -74,7 +75,7 @@ class _MyCustomFormState extends State<manage_cli> {
               children: <Widget>[
             //Text('cli-self管理',style: TextStyle(fontWeight: FontWeight.bold),),
             TextField(
-              scrollPadding: EdgeInsets.all(6),
+              scrollPadding: const EdgeInsets.all(6),
               controller: myController_package,
               decoration: const InputDecoration(
                 hintText: "输入包名，每次只输入一个",
@@ -107,14 +108,14 @@ class _MyCustomFormState extends State<manage_cli> {
                         duration: Duration(seconds: 3),)); 
                     }
                   },
-                  child: Text('安装软件包到cli',style: TextStyle(color: Colors.blue.shade700,)),
                   style: TextButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
+                  child: Text('安装软件包到cli',style: TextStyle(color: Colors.blue.shade700,)),
                 ),
-                SizedBox(width: 15,),
+                const SizedBox(width: 15,),
                 TextButton(
                   onPressed: () {
                     if ( package != "" ){
@@ -128,24 +129,24 @@ class _MyCustomFormState extends State<manage_cli> {
                         duration: Duration(seconds: 3),)); 
                     }
                   },
-                  child: Text('卸载cli中的软件包',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1),)),
                   style: TextButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
+                  child: const Text('卸载cli中的软件包',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1),)),
                 ),
 
                 TextButton(
                   onPressed: () {
                     manage_package('update', 'update');
                   },
-                  child: Text('更新cli',style: TextStyle(color: Colors.green.shade700,)),
                   style: TextButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
+                  child: Text('更新cli',style: TextStyle(color: Colors.green.shade700,)),
                 ),
               ]),
             SizedBox(
@@ -155,9 +156,9 @@ class _MyCustomFormState extends State<manage_cli> {
                 color: const Color.fromARGB(255, 31, 28, 28),
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Text(
-                      style: TextStyle(color: Colors.white), 
+                      style: const TextStyle(color: Colors.white), 
                       package_output.text,
                     ),
                   ),

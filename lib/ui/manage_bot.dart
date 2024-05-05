@@ -1,22 +1,22 @@
 import 'package:Nonebot_GUI/darts/utils.dart';
 import 'package:Nonebot_GUI/ui/managecli.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'dart:io';
 import 'dart:async';
 import 'package:Nonebot_GUI/ui/stderr.dart';
 
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: manage_bot(),
     );
   }
@@ -43,9 +43,7 @@ class _MyCustomFormState extends State<manage_bot> {
   }
 
   void _startRefreshing() {
-    if (_timer == null) {
-      _timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _loadFileContent());
-    }
+    _timer ??= Timer.periodic(const Duration(seconds: 1), (Timer t) => _loadFileContent());
   }
 
 
@@ -105,23 +103,23 @@ class _MyCustomFormState extends State<manage_bot> {
       appBar: AppBar(
         title: Text(
           "${manage_bot_readcfg_name()}",
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () => _showConfirmationDialog(context),
             tooltip: "删除",
             color: Colors.white,
           )
         ],
-        backgroundColor: Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
       ),
       body: SingleChildScrollView(
   child: Column(
     children: <Widget>[
       Card(
-        margin: EdgeInsets.all(4.0),
+        margin: const EdgeInsets.all(4.0),
         child: Column(
           children: <Widget>[
             const Center(
@@ -132,7 +130,7 @@ class _MyCustomFormState extends State<manage_bot> {
             ),
             Row(
               children: <Widget>[
-                Expanded(
+                const Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Align(
@@ -146,7 +144,7 @@ class _MyCustomFormState extends State<manage_bot> {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(manage_bot_readcfg_name().toString()),
@@ -158,7 +156,7 @@ class _MyCustomFormState extends State<manage_bot> {
             const SizedBox(height: 6,),
             Row(
               children: <Widget>[
-                Expanded(
+                const Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Align(
@@ -172,7 +170,7 @@ class _MyCustomFormState extends State<manage_bot> {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(manage_bot_readcfg_path().toString()),
@@ -184,7 +182,7 @@ class _MyCustomFormState extends State<manage_bot> {
             const SizedBox(height: 6,),
             Row(
               children: <Widget>[
-                Expanded(
+                const Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Align(
@@ -198,7 +196,7 @@ class _MyCustomFormState extends State<manage_bot> {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(manage_bot_readcfg_time().toString()),
@@ -210,7 +208,7 @@ class _MyCustomFormState extends State<manage_bot> {
             const SizedBox(height: 7,),
             Row(
               children: <Widget>[
-                Expanded(
+                const Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Align(
@@ -223,7 +221,7 @@ class _MyCustomFormState extends State<manage_bot> {
                   ),
                 ),
                 if (manage_bot_readcfg_status().toString() == 'true')
-                  Expanded(
+                  const Expanded(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                       child: Align(
@@ -236,7 +234,7 @@ class _MyCustomFormState extends State<manage_bot> {
                     ),
                   ),
                 if (manage_bot_readcfg_status().toString() == 'false')
-                  Expanded(
+                  const Expanded(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                       child: Align(
@@ -252,7 +250,7 @@ class _MyCustomFormState extends State<manage_bot> {
             ),
             Row(
               children: <Widget>[
-                Expanded(
+                const Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Align(
@@ -266,7 +264,7 @@ class _MyCustomFormState extends State<manage_bot> {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(manage_bot_readcfg_pid().toString()),
@@ -280,13 +278,13 @@ class _MyCustomFormState extends State<manage_bot> {
       ),
 
       Card(
-        margin: EdgeInsets.all(4.0),
+        margin: const EdgeInsets.all(4.0),
         child: Column(
           children: <Widget>[
            const Center(
             child: Text('操作',style: TextStyle(fontWeight: FontWeight.bold),)
            ),
-           SizedBox(height: 3,),
+           const SizedBox(height: 3,),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
@@ -309,7 +307,7 @@ class _MyCustomFormState extends State<manage_bot> {
                   }
                   },
                 tooltip: "运行",
-                icon: Icon(Icons.play_arrow_rounded),
+                icon: const Icon(Icons.play_arrow_rounded),
                 iconSize: 25,),
 
               IconButton(
@@ -330,7 +328,7 @@ class _MyCustomFormState extends State<manage_bot> {
                   }
                 }, 
                 tooltip: "停止",
-                icon: Icon(Icons.stop_rounded),
+                icon: const Icon(Icons.stop_rounded),
                 iconSize: 25,),
 
               IconButton(
@@ -353,26 +351,26 @@ class _MyCustomFormState extends State<manage_bot> {
                   }
                 },
                 tooltip: "重启",
-                icon: Icon(Icons.refresh),
+                icon: const Icon(Icons.refresh),
                 iconSize: 25,),
 
 
-              IconButton(onPressed: (){openfolder(manage_bot_readcfg_path().toString());}, tooltip: "打开文件夹",icon: Icon(Icons.folder),iconSize: 25,),
+              IconButton(onPressed: (){openfolder(manage_bot_readcfg_path().toString());}, tooltip: "打开文件夹",icon: const Icon(Icons.folder),iconSize: 25,),
 
               IconButton(
                 onPressed: () {
                        Navigator.push(context, MaterialPageRoute(builder:(context) {
-                                return  ManageCli();
+                                return  const ManageCli();
                        }));
               }, 
                 tooltip: "管理CLI",
-                icon: Icon(Icons.terminal_rounded),
+                icon: const Icon(Icons.terminal_rounded),
                 iconSize: 25,),
 
               IconButton(
                 onPressed: (){clear_log();},
                 tooltip: "清空日志",
-                icon: Icon(Icons.delete_rounded),
+                icon: const Icon(Icons.delete_rounded),
                 iconSize: 25,),
 
               Visibility(
@@ -380,11 +378,11 @@ class _MyCustomFormState extends State<manage_bot> {
                 child: IconButton(
                   onPressed: () {
                        Navigator.push(context, MaterialPageRoute(builder:(context) {
-                                return StdErr();
+                                return const StdErr();
                        }));
                   }, 
                   tooltip: '查看报错日志',
-                  icon: Icon(Icons.error_rounded),
+                  icon: const Icon(Icons.error_rounded),
                   color: Colors.red,
                   iconSize: 25,
                 )
@@ -396,7 +394,7 @@ class _MyCustomFormState extends State<manage_bot> {
         ),
       ),
       Card(
-        margin: EdgeInsets.all(4.0),
+        margin: const EdgeInsets.all(4.0),
         child: Column(
           children: <Widget>[
             const Center(
@@ -405,7 +403,7 @@ class _MyCustomFormState extends State<manage_bot> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(height: 3,),
+            const SizedBox(height: 3,),
             SizedBox(
               height: 400,
               width: 2000,
@@ -413,10 +411,10 @@ class _MyCustomFormState extends State<manage_bot> {
                 color: const Color.fromARGB(255, 31, 28, 28),
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: Text(
                       _log,
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
@@ -437,17 +435,17 @@ void _showConfirmationDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('删除'),
-        content: Text('你确定要删除这个Bot吗？'),
+        title: const Text('删除'),
+        content: const Text('你确定要删除这个Bot吗？'),
         actions: <Widget>[
           TextButton(
-            child: Text('取消'),
+            child: const Text('取消'),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
           TextButton(
-            child: Text('确定',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1)),),
+            child: const Text('确定',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1)),),
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).popUntil((route) => route.isFirst);
@@ -459,7 +457,7 @@ void _showConfirmationDialog(BuildContext context) {
             },
           ),
           TextButton(
-            child: Text('确定（连同bot目录一起删除）',style: TextStyle(color: Color.fromRGBO(255, 0, 0, 1)),),
+            child: const Text('确定（连同bot目录一起删除）',style: TextStyle(color: Color.fromRGBO(255, 0, 0, 1)),),
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).popUntil((route) => route.isFirst);

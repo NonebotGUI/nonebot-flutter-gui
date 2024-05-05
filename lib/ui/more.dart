@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import '../darts/utils.dart';
-import '../assets/my_flutter_app_icons.dart';
+import 'package:Nonebot_GUI/darts/utils.dart';
+import 'package:Nonebot_GUI/assets/my_flutter_app_icons.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io' show Platform;
 import 'dart:io';
@@ -13,6 +12,8 @@ import 'package:flutter/services.dart';
 
 
 class More extends StatefulWidget {
+  const More({super.key});
+
   @override
   _MoreState createState() => _MoreState();
 }
@@ -71,28 +72,28 @@ class _MoreState extends State<More> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "更多",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
         actions: <Widget>[
           IconButton(
             onPressed: (){
-              Clipboard.setData(ClipboardData(text: 'https://github.com/XTxiaoting14332/nonebot-flutter-gui'));
+              Clipboard.setData(const ClipboardData(text: 'https://github.com/XTxiaoting14332/nonebot-flutter-gui'));
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('项目仓库链接已复制到剪贴板'),
                   duration: Duration(seconds: 3),));
             },
-            icon: Icon(MyFlutterApp.github),
+            icon: const Icon(MyFlutterApp.github),
             tooltip: '项目仓库地址',
             iconSize: 30,
             )
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget> [
             Center(
@@ -111,7 +112,7 @@ class _MoreState extends State<More> {
 
 
 
-            Center(
+            const Center(
               child: Text("_✨新一代NoneBot图形化界面✨_",
               style: TextStyle(color: Colors.black,),),
             ),
@@ -123,16 +124,16 @@ class _MoreState extends State<More> {
               color: Colors.grey,
             ),
 
-          SizedBox(height: 8,),
+          const SizedBox(height: 8,),
           Row(children: <Widget> [
-          Expanded(child: Align(alignment: Alignment.centerLeft,
+          const Expanded(child: Align(alignment: Alignment.centerLeft,
           child: Text('软件版本',
           style: TextStyle(fontWeight: FontWeight.bold),),
           )
           ),
           Expanded(child: Align(alignment: Alignment.centerRight,
           child: InkWell(
-            child: Text('0.1.5.1'),
+            child: const Text('0.1.5.1'),
             onTap: (){
                 if (showImage){
                   showDialog(
@@ -148,7 +149,7 @@ class _MoreState extends State<More> {
                                 Image.asset('lib/assets/loading.gif',
                                 width: 180*0.15,
                                 height: 180*0.15,),
-                                Text('UWU')
+                                const Text('UWU')
                               ],
                             ),
                             content: Container(
@@ -175,9 +176,9 @@ class _MoreState extends State<More> {
         )
         ]
         ),
-            SizedBox(height: 16,),
+            const SizedBox(height: 16,),
             Row(children: <Widget>[
-             Expanded(child: Align(alignment: Alignment.centerLeft,
+             const Expanded(child: Align(alignment: Alignment.centerLeft,
              child: Text('平台',style: TextStyle(fontWeight: FontWeight.bold),),)
              ),
             Expanded(child: Align(alignment: Alignment.bottomRight,
@@ -188,7 +189,7 @@ class _MoreState extends State<More> {
 
             const SizedBox(height: 20,),
             Row(children: <Widget> [
-            Expanded(child: Align(alignment: Alignment.centerLeft,
+            const Expanded(child: Align(alignment: Alignment.centerLeft,
             child: Text('当前Python环境',
             style: TextStyle(fontWeight: FontWeight.bold),),
             )
@@ -200,9 +201,9 @@ class _MoreState extends State<More> {
               if (snapshot.hasData) {
                 return Text(snapshot.data.toString());
               } else if (snapshot.hasError) {
-                return Text('你似乎还没安装Python？');
+                return const Text('你似乎还没安装Python？');
               } else {
-                return Text('获取中...');
+                return const Text('获取中...');
               }
             },
           ),
@@ -210,9 +211,9 @@ class _MoreState extends State<More> {
           )
           ]
           ),
-          SizedBox(height: 16,),
+          const SizedBox(height: 16,),
           Row(children: <Widget> [
-          Expanded(child: Align(alignment: Alignment.centerLeft,
+          const Expanded(child: Align(alignment: Alignment.centerLeft,
           child: Text('当前nb-cli版本',
           style: TextStyle(fontWeight: FontWeight.bold),),
           )
@@ -224,9 +225,9 @@ class _MoreState extends State<More> {
             if (snapshot.hasData) {
               return Text(snapshot.data.toString().replaceAll('nb: ', ''));
             } else if (snapshot.hasError) {
-              return Text('你似乎还没安装nb-cli？');
+              return const Text('你似乎还没安装nb-cli？');
             } else {
-              return Text('获取中...');
+              return const Text('获取中...');
             }
           },
         ),
@@ -238,8 +239,8 @@ class _MoreState extends State<More> {
         Row(children: <Widget>[
           Expanded(child: Align(alignment: 
           Alignment.centerLeft,
-          child: Text('选择Python命令路径[${_PythonPath}]',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          child: Text('选择Python命令路径[$_PythonPath]',
+          style: const TextStyle(fontWeight: FontWeight.bold),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,),
           )),
@@ -260,8 +261,8 @@ class _MoreState extends State<More> {
         Row(children: <Widget>[
           Expanded(child: Align(alignment: 
           Alignment.centerLeft,
-          child: Text('选择nb-cli命令路径[${_NbcliPath}]',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          child: Text('选择nb-cli命令路径[$_NbcliPath]',
+          style: const TextStyle(fontWeight: FontWeight.bold),
           overflow: TextOverflow.ellipsis,
           maxLines: 1,),
           )),
@@ -288,26 +289,26 @@ class _MoreState extends State<More> {
                setState(() {
                });
               },
-              child: Text('重置Python路径',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1),)),
               style: TextButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
+              child: const Text('重置Python路径',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1),)),
             ),
-            SizedBox(width: 15,),
+            const SizedBox(width: 15,),
             TextButton(
               onPressed: () {
                 set_nbclipath('default');
                 setState(() {
                 });
               },
-              child: Text('重置nb-cli路径',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1),)),
               style: TextButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
+              child: const Text('重置nb-cli路径',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1),)),
             ),
           ],
         ),

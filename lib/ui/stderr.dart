@@ -4,14 +4,16 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(
-    MyApp(),
+    const MyApp(),
   );
 
 }
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: StdErr(),
     );
   }
@@ -21,6 +23,8 @@ class MyApp extends StatelessWidget {
 
 
 class StdErr extends StatefulWidget {
+  const StdErr({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -34,21 +38,21 @@ class _HomeScreenState extends State<StdErr> {
       appBar: AppBar(
         title: Text(
           "${manage_bot_readcfg_name()} - nbgui_stderr.log",
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () => _showConfirmationDialog(context),
             tooltip: "删除报错日志",
             color: Colors.white,
           )
         ],
-        backgroundColor: Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
       ),
 
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           width: 20000,
           child: Row(
             children: <Widget>[
@@ -72,17 +76,17 @@ void _showConfirmationDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('删除'),
-        content: Text('你确定要删除吗？'),
+        title: const Text('删除'),
+        content: const Text('你确定要删除吗？'),
         actions: <Widget>[
           TextButton(
-            child: Text('取消'),
+            child: const Text('取消'),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
           TextButton(
-            child: Text('确定',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1)),),
+            child: const Text('确定',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1)),),
             onPressed: () {
               Navigator.of(context).pop();
               delete_stderr(); 

@@ -1,16 +1,17 @@
 import 'package:Nonebot_GUI/darts/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'dart:io';
 
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: creatingbot(),
     );
   }
@@ -42,7 +43,7 @@ class _MyCustomFormState extends State<creatingbot> {
     
     _outputController.clear();
 
-    List<String> commands = ['echo 开始创建Bot：${name}', 'echo 读取配置...',createvenv_echo(path, name),createvenv(path, name,venv),'echo 开始安装依赖...',installbot(path,name,venv,dep),writepyproject(path, name),writeenv(path, name),writebot(name, path),'echo 安装完成，可退出'];
+    List<String> commands = ['echo 开始创建Bot：$name', 'echo 读取配置...',createvenv_echo(path, name),createvenv(path, name,venv),'echo 开始安装依赖...',installbot(path,name,venv,dep),writepyproject(path, name),writeenv(path, name),writebot(name, path),'echo 安装完成，可退出'];
 
     for (String command in commands) {
       List<String> args = command.split(' ');
@@ -71,20 +72,20 @@ class _MyCustomFormState extends State<creatingbot> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "确认创建",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
       ),
       body: Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
         children: <Widget>[
           Center(
           child: ElevatedButton(
             onPressed: _executeCommands,
-            child: Text('确认创建',
+            child: const Text('确认创建',
             style: TextStyle(color: Colors.black),),
           ),
           ),
@@ -96,12 +97,12 @@ class _MyCustomFormState extends State<creatingbot> {
             color: Colors.grey,
           ),
 
-          Center(
+          const Center(
             child: Text('Bot信息')
           ),
 
           Row(children: <Widget>[
-            Expanded(child: Align(alignment: Alignment.centerLeft,
+            const Expanded(child: Align(alignment: Alignment.centerLeft,
             child: Text('Bot名称',
             style: TextStyle(fontWeight: FontWeight.bold),),
             )
@@ -115,7 +116,7 @@ class _MyCustomFormState extends State<creatingbot> {
           const SizedBox(height: 8),
 
           Row(children: <Widget>[
-              Expanded(child: Align(alignment: Alignment.centerLeft,
+              const Expanded(child: Align(alignment: Alignment.centerLeft,
               child: Text('Bot路径',
               style: TextStyle(fontWeight: FontWeight.bold),),
                 )
@@ -131,7 +132,7 @@ class _MyCustomFormState extends State<creatingbot> {
 
           const SizedBox(height: 8),
           Row(children: <Widget>[
-            Expanded(child: Align(alignment: Alignment.centerLeft,
+            const Expanded(child: Align(alignment: Alignment.centerLeft,
             child: Text('虚拟环境',
               style: TextStyle(fontWeight: FontWeight.bold),
             )
@@ -146,7 +147,7 @@ class _MyCustomFormState extends State<creatingbot> {
           const SizedBox(height: 8),
 
           Row(children: <Widget>[
-            Expanded(child: Align(alignment: Alignment.centerLeft,
+            const Expanded(child: Align(alignment: Alignment.centerLeft,
               child: Text('依赖',
                 style: TextStyle(fontWeight: FontWeight.bold),
               )
@@ -183,9 +184,9 @@ class _MyCustomFormState extends State<creatingbot> {
               if (snapshot.hasData) {
                 return Text(snapshot.data.toString());
               } else if (snapshot.hasError) {
-                return Text('未检测到Python');
+                return const Text('未检测到Python');
               } else {
-                return Text('获取中...');
+                return const Text('获取中...');
               }
             },
           ),
@@ -220,9 +221,9 @@ class _MyCustomFormState extends State<creatingbot> {
             if (snapshot.hasData) {
               return Text(snapshot.data.toString().replaceAll('nb:', ''));
             } else if (snapshot.hasError) {
-              return Text('未检测到nb-cli');
+              return const Text('未检测到nb-cli');
             } else {
-              return Text('获取中...');
+              return const Text('获取中...');
             }
           },
         ),
@@ -238,7 +239,7 @@ class _MyCustomFormState extends State<creatingbot> {
           color: Colors.grey,
         ),
 
-          Center(
+          const Center(
             child: Text('控制台输出')
           ),
           const SizedBox(height: 4),
@@ -250,9 +251,9 @@ class _MyCustomFormState extends State<creatingbot> {
                 color: const Color.fromARGB(255, 31, 28, 28),
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.all(12.0),
                     child: Text(
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                       _outputController.text,
                     ),
                     )
