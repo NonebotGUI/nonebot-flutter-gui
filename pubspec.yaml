@@ -1,4 +1,4 @@
-name: "Nonebot_GUI"
+name: "NonebotGUI"
 description: "新一代Nonebot图形化界面"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -40,7 +40,6 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
-  flutter_lints: ^3.0.2
 
 dev_dependencies:
   flutter_test:
@@ -51,8 +50,8 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
+  flutter_lints: ^3.0.2
 
-  NonebotGUI: any
 flutter_launcher_icons:
   image_path: "asset/icon/icon.png"
   windows:

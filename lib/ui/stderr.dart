@@ -1,13 +1,12 @@
-import 'package:Nonebot_GUI/darts/utils.dart';
+import 'package:NonebotGUI/darts/utils.dart';
 import 'package:flutter/material.dart';
-
 
 void main() {
   runApp(
     const MyApp(),
   );
-
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -19,25 +18,20 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
-
-
 class StdErr extends StatefulWidget {
   const StdErr({super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<StdErr> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<StdErr> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "${manage_bot_readcfg_name()} - nbgui_stderr.log",
+          "${manageBotReadCfgName()} - nbgui_stderr.log",
           style: const TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
@@ -50,26 +44,21 @@ class _HomeScreenState extends State<StdErr> {
         ],
         backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
       ),
-
       body: SingleChildScrollView(
-        child: SizedBox(
-          width: 20000,
-          child: Row(
-            children: <Widget>[
-              Expanded(child: Align(alignment: Alignment.centerLeft, child: Text(manage_bot_view_stderr()))),  
-            ],
+          child: SizedBox(
+        width: 20000,
+        child: Row(
+          children: <Widget>[
+            Expanded(
+                child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(manageBotViewStderr()))),
+          ],
         ),
-      )
-      ),
+      )),
     );
   }
 }
-
-
-
-
-
-
 
 void _showConfirmationDialog(BuildContext context) {
   showDialog(
@@ -86,14 +75,17 @@ void _showConfirmationDialog(BuildContext context) {
             },
           ),
           TextButton(
-            child: const Text('确定',style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1)),),
+            child: const Text(
+              '确定',
+              style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1)),
+            ),
             onPressed: () {
               Navigator.of(context).pop();
-              delete_stderr(); 
-              ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                      content: Text('已删除'),
-                      duration: Duration(seconds: 3),));
+              deleteStderr();
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('已删除'),
+                duration: Duration(seconds: 3),
+              ));
             },
           ),
         ],
