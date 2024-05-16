@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:NonebotGUI/darts/utils.dart';
 import 'package:NonebotGUI/assets/my_flutter_app_icons.dart';
-import 'package:file_picker/file_picker.dart';
 import 'dart:io' show Platform;
 import 'dart:io';
 import 'package:flutter/services.dart';
@@ -16,30 +15,7 @@ class _MoreState extends State<About> {
   int tapCount = 0;
   final int tapsToReveal = 9;
   bool showImage = false;
-  String? _pythonPath;
-  String? _nbcliPath;
 
-  void _selectpy() async {
-    final result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
-      setPyPath(result.files.single.path.toString());
-      setState(() {
-        _pythonPath = result.files.single.path.toString();
-      });
-    }
-  }
-
-  void _selectnbcli() async {
-    final result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
-      setNbcliPath(result.files.single.path.toString());
-      setState(() {
-        _nbcliPath = result.files.single.path.toString();
-      });
-    }
-  }
 
   void _handleTap() {
     setState(() {
