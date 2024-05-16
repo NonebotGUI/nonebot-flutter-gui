@@ -115,14 +115,16 @@ class _MyHomePageState extends State<DriverStore> {
           style: const TextStyle(color: Colors.white),
           onChanged: _searchDrivers,
         ),
-        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: userColorMode() == 'light'
+          ? const Color.fromRGBO(238, 109, 109, 1)
+          : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: data.isEmpty
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('正在从Nonebot官网拉取驱动器列表...'),
+                  Image.asset('lib/assets/loading.gif'),
                 ],
               ),
             )

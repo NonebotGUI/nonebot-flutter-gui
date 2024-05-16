@@ -6,14 +6,13 @@ import 'dart:io' show Platform;
 import 'dart:io';
 import 'package:flutter/services.dart';
 
-class More extends StatefulWidget {
-  const More({super.key});
+class About extends StatefulWidget {
 
   @override
-  State<More> createState() => _MoreState();
+  State<About> createState() => _MoreState();
 }
 
-class _MoreState extends State<More> {
+class _MoreState extends State<About> {
   int tapCount = 0;
   final int tapsToReveal = 9;
   bool showImage = false;
@@ -63,16 +62,18 @@ class _MoreState extends State<More> {
     return Scaffold(
         appBar: AppBar(
           title: const Text(
-            "更多",
+            "关于",
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
+          backgroundColor: userColorMode() == 'light'
+          ? const Color.fromRGBO(238, 109, 109, 1)
+          : const Color.fromRGBO(127, 86, 151, 1),
           actions: <Widget>[
             IconButton(
               onPressed: () {
                 Clipboard.setData(const ClipboardData(
                     text:
-                        'https://github.com/XTxiaoting14332/nonebot-flutter-gui'));
+                        'https://github.com/NonebotGUI/nonebot-flutter-gui'));
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text('项目仓库链接已复制到剪贴板'),
                   duration: Duration(seconds: 3),
@@ -106,9 +107,6 @@ class _MoreState extends State<More> {
             const Center(
               child: Text(
                 "_✨新一代NoneBot图形化界面✨_",
-                style: TextStyle(
-                  color: Colors.black,
-                ),
               ),
             ),
             const Divider(
@@ -134,7 +132,7 @@ class _MoreState extends State<More> {
                   child: Align(
                 alignment: Alignment.centerRight,
                 child: InkWell(
-                  child: const Text('0.1.5.1'),
+                  child: const Text('0.1.6'),
                   onTap: () {
                     if (showImage) {
                       showDialog(
@@ -259,98 +257,6 @@ class _MoreState extends State<More> {
             ]),
             const SizedBox(
               height: 16,
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                    child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '选择Python命令路径[$_pythonPath]',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                )),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      onPressed: _selectpy,
-                      tooltip: "选择Python命令路径",
-                      icon: const Icon(Icons.file_open_rounded),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                    child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '选择nb-cli命令路径[$_nbcliPath]',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                )),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      onPressed: _selectnbcli,
-                      tooltip: "选择nb-cli命令路径",
-                      icon: const Icon(Icons.file_open_rounded),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    setPyPath('default');
-                    setState(() {});
-                  },
-                  style: TextButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  child: const Text('重置Python路径',
-                      style: TextStyle(
-                        color: Color.fromRGBO(238, 109, 109, 1),
-                      )),
-                ),
-                const SizedBox(
-                  width: 15,
-                ),
-                TextButton(
-                  onPressed: () {
-                    setNbcliPath('default');
-                    setState(() {});
-                  },
-                  style: TextButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  child: const Text('重置nb-cli路径',
-                      style: TextStyle(
-                        color: Color.fromRGBO(238, 109, 109, 1),
-                      )),
-                ),
-              ],
             ),
           ]),
         ));

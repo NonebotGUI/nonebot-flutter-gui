@@ -117,14 +117,16 @@ class _MyHomePageState extends State<AdapterStore> {
           style: const TextStyle(color: Colors.white),
           onChanged: _searchAdapters,
         ),
-        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: userColorMode() == 'light'
+          ? const Color.fromRGBO(238, 109, 109, 1)
+          : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: data.isEmpty
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('正在从Nonebot官网拉取适配器列表...'),
+                  Image.asset('lib/assets/loading.gif'),
                 ],
               ),
             )
@@ -230,22 +232,15 @@ class _MyHomePageState extends State<AdapterStore> {
                                                               }
                                                               return Card(
                                                                 color: const Color
-                                                                    .fromARGB(
-                                                                    255,
-                                                                    31,
-                                                                    28,
-                                                                    28),
+                                                                    .fromARGB(255,31,28,28),
                                                                 child:
                                                                     SingleChildScrollView(
                                                                   child:
                                                                       Padding(
                                                                     padding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            8.0),
+                                                                        const EdgeInsets.all(8.0),
                                                                     child: Text(
-                                                                      adapterOutput
-                                                                          .text,
+                                                                      adapterOutput.text,
                                                                       style: const TextStyle(
                                                                           color:
                                                                               Colors.white),

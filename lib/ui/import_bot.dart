@@ -48,7 +48,9 @@ class _HomeScreenState extends State<ImportBot> {
             '导入Bot',
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
+          backgroundColor: userColorMode() == 'light'
+          ? const Color.fromRGBO(238, 109, 109, 1)
+          : const Color.fromRGBO(127, 86, 151, 1),
           actions: <Widget>[
             IconButton(
               onPressed: () {

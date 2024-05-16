@@ -36,7 +36,9 @@ class _HomeScreenState extends State<ManagePlugin> {
             style: TextStyle(color: Colors.white),
           ),
           actions: const <Widget>[],
-          backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
+          backgroundColor: userColorMode() == 'light'
+          ? const Color.fromRGBO(238, 109, 109, 1)
+          : const Color.fromRGBO(127, 86, 151, 1),
         ),
         body: getPluginList().length == 0
             ? const Center(

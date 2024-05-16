@@ -1,7 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:NonebotGUI/darts/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:NonebotGUI/ui/creatingbot.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -40,34 +44,46 @@ class _MyCustomFormState extends State<CreateBot> {
     }
   }
 
+//拉取适配器和驱动器列表
+  @override
+  void initState() {
+    super.initState();
+    _fetchAdapters();
+  }
+
+//驱动器，万年不更新一次的东西就不搞http请求了🤓
   Map<String, bool> drivers = {
     'None': false,
-    'FastAPI': false,
+    'FastAPI': true,
     'Quart': false,
     'HTTPX': false,
     'websockets': false,
     'AIOHTTP': false,
   };
 
-  Map<String, bool> adapters = {
-    'OneBot V11(nonebot-adapter-onebot.v11)': false,
-    'OneBot V12(nonebot-adapter-onebot.v12)': false,
-    '开黑啦(nonebot-adapter-kaiheila)': false,
-    '飞书(nonebot-adapter-feishu)': false,
-    'Discord(nonebot-adapter-discord)': false,
-    'Telegram(nonebot-adapter-telegram)': false,
-    'QQ(nonebot-adapter-qq)': false,
-    'mirai2(nonebot_adapter_mirai2)': false,
-    //'console(nonebot-adapter-console)': false,
-    'Github(nonebot-adapter-github)': false,
-    'NtChat(nonebot-adapter-ntchat)': false,
-    'Minecraft(nonebot-adapter-minecraft)': false,
-    'BilibiliLive(nonebot-adapter-bilibili)': false,
-    'Walle-Q(nonebot-adapter-walleq)': false,
-    'RedProtocol(nonebot-adapter-red)': false,
-    'Satori(nonebot-adapter-satori)': false,
-    'DoDo(nonebot-adapter-dodo)': false,
-  };
+
+
+//适配器
+  Map<String, bool> adapterMap = {};
+  List adapterList = [];
+  bool loadAdapter = true;
+  Future<void> _fetchAdapters() async {
+    final response = await http.get(Uri.parse('https://registry.nonebot.dev/adapters.json'));
+    if (response.statusCode == 200) {
+      final decodedBody = systemEncoding.decode(response.bodyBytes);
+      List<dynamic> adapters = json.decode(decodedBody);
+      setState(() {
+        adapterList = adapters;
+        adapterMap = Map.fromIterable(adapters, key: (item) => item['name'], value: (item) => false);
+        loadAdapter = false;
+      });
+    } else {
+      setState(() {
+        loadAdapter = false;
+      });
+    }
+  }
+
 
   void onDriversChanged(String option, bool value) {
     setState(() {
@@ -77,7 +93,7 @@ class _MyCustomFormState extends State<CreateBot> {
 
   void onAdaptersChanged(String option, bool value) {
     setState(() {
-      adapters[option] = value;
+      adapterMap[option] = value;
     });
   }
 
@@ -89,33 +105,28 @@ class _MyCustomFormState extends State<CreateBot> {
   }
 
   String buildSelectedAdapterOptions() {
-    List<String> selectedOptions =
-        adapters.keys.where((option) => adapters[option] == true).toList();
-    String selectedAdapters = selectedOptions.join(',').toString();
-    return selectedAdapters;
+    List<String> selectedOptions = adapterMap.keys.where((option) => adapterMap[option] == true).toList();
+    List<String> selectedAdapters = selectedOptions.map((option) {
+      String showText = '${option}(${adapterList.firstWhere((adapter) => adapter['name'] == option)['module_name']})';
+      return showText.replaceAll('adapters', 'adapter').replaceAll('.', '-').replaceAll('-v11', '.v11').replaceAll('-v12', '.v12');
+    }).toList();
+    String selectedAdaptersString = selectedAdapters.join(', ');
+    return selectedAdaptersString;
   }
 
   List<Widget> buildDriversCheckboxes() {
     return drivers.keys.map((driver) {
       return CheckboxListTile(
         title: Text(driver),
-        activeColor: const Color.fromRGBO(238, 109, 109, 1),
+        activeColor: userColorMode() == 'light'
+          ? const Color.fromRGBO(238, 109, 109, 1)
+          : const Color.fromRGBO(127, 86, 151, 1),
         value: drivers[driver],
         onChanged: (bool? value) => onDriversChanged(driver, value!),
       );
     }).toList();
   }
 
-  List<Widget> buildAdaptersCheckboxes() {
-    return adapters.keys.map((adapter) {
-      return CheckboxListTile(
-        title: Text(adapter),
-        activeColor: const Color.fromRGBO(238, 109, 109, 1),
-        value: adapters[adapter],
-        onChanged: (bool? value) => onAdaptersChanged(adapter, value!),
-      );
-    }).toList();
-  }
 
   @override
   void dispose() {
@@ -150,7 +161,9 @@ class _MyCustomFormState extends State<CreateBot> {
             "创建Bot",
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
+          backgroundColor: userColorMode() == 'light'
+          ? const Color.fromRGBO(238, 109, 109, 1)
+          : const Color.fromRGBO(127, 86, 151, 1),
           actions: <Widget>[
             IconButton(
               onPressed: () {
@@ -225,11 +238,8 @@ class _MyCustomFormState extends State<CreateBot> {
                       alignment: Alignment.centerRight,
                       child: DropdownButton<String>(
                         value: dropDownValue,
-                        icon: const Icon(Icons.arrow_downward),
+                        icon: const Icon(Icons.keyboard_arrow_down_rounded),
                         elevation: 16,
-                        style: const TextStyle(
-                          color: Color.fromARGB(255, 31, 28, 28),
-                        ),
                         onChanged: (String? value) {
                           setState(() {
                             dropDownValue = value!;
@@ -267,11 +277,8 @@ class _MyCustomFormState extends State<CreateBot> {
                         alignment: Alignment.centerRight,
                         child: DropdownButton<String>(
                           value: dropDownValuePluginDir,
-                          icon: const Icon(Icons.arrow_downward),
+                          icon: const Icon(Icons.keyboard_arrow_down_rounded),
                           elevation: 16,
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 31, 28, 28),
-                          ),
                           onChanged: (String? value) {
                             setState(() {
                               dropDownValuePluginDir = value!;
@@ -335,7 +342,9 @@ class _MyCustomFormState extends State<CreateBot> {
                         child: Switch(
                           value: isvenv,
                           onChanged: _toggleVenv,
-                          activeColor: const Color.fromRGBO(238, 109, 109, 1),
+                          activeColor: userColorMode() == 'light'
+                            ? const Color.fromRGBO(238, 109, 109, 1)
+                            : const Color.fromRGBO(127, 86, 151, 1),
                           focusColor: Colors.black,
                           inactiveTrackColor: Colors.grey,
                         ),
@@ -360,7 +369,9 @@ class _MyCustomFormState extends State<CreateBot> {
                         child: Switch(
                           value: isdep,
                           onChanged: _toggledep,
-                          activeColor: const Color.fromRGBO(238, 109, 109, 1),
+                          activeColor: userColorMode() == 'light'
+                            ? const Color.fromRGBO(238, 109, 109, 1)
+                            : const Color.fromRGBO(127, 86, 151, 1),
                           focusColor: Colors.black,
                           inactiveTrackColor: Colors.grey,
                         ),
@@ -396,7 +407,35 @@ class _MyCustomFormState extends State<CreateBot> {
                 const SizedBox(
                   height: 3,
                 ),
-                Column(children: buildAdaptersCheckboxes()),
+                Column(
+                children: [
+                  if (loadAdapter)
+                    Center(child: CircularProgressIndicator(
+                      color: userColorMode() == 'light'
+                        ? const Color.fromRGBO(238, 109, 109, 1)
+                        : const Color.fromRGBO(127, 86, 151, 1),
+                    ))
+                  else
+                    ListView(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: adapterList.map((adapter) {
+                        String name = adapter['name'];
+                        //屎山，别骂了别骂了😭
+                        String moduleName = adapter['module_name'].replaceAll('adapters', 'adapter').replaceAll('.', '-').replaceAll('-v11', '.v11').replaceAll('-v12', '.v12');
+                        String showText = '${name}(${moduleName})';
+                        return CheckboxListTile(
+                          activeColor: userColorMode() == 'light'
+                            ? const Color.fromRGBO(238, 109, 109, 1)
+                            : const Color.fromRGBO(127, 86, 151, 1),
+                          title: Text(showText),
+                          value: adapterMap[name],
+                          onChanged: (bool? value) => onAdaptersChanged(name, value!),
+                        );
+                      }).toList(),
+                    ),
+                ],
+              ),
               ],
             ),
           ),

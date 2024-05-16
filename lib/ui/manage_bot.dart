@@ -31,9 +31,8 @@ class ManageBot extends StatefulWidget {
 // This class holds the data related to the Form.
 class _MyCustomFormState extends State<ManageBot> {
   Timer? _timer;
-  String _log = '[I]Welcome to Nonebot GUI!\n';
+  String _log = '[INFO]Welcome to Nonebot GUI!\n';
   final _filePath = '${manageBotReadCfgPath()}/nbgui_stdout.log';
-  final _outputController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -63,35 +62,6 @@ class _MyCustomFormState extends State<ManageBot> {
     }
   }
 
-  //TODO: If this function is not used, shuld be not defined.
-  void _executeCommands() async {
-    _outputController.clear();
-
-    List<String> commands = [''];
-
-    for (String command in commands) {
-      List<String> args = command.split(' ');
-
-      String executable = args.removeAt(0);
-      Process process = await Process.start(executable, args, runInShell: true);
-
-      process.stdout.transform(systemEncoding.decoder).listen((data) {
-        _outputController.text += data;
-        _outputController.selection = TextSelection.fromPosition(
-            TextPosition(offset: _outputController.text.length));
-        setState(() {});
-      });
-
-      process.stderr.transform(systemEncoding.decoder).listen((data) {
-        _outputController.text += data;
-        _outputController.selection = TextSelection.fromPosition(
-            TextPosition(offset: _outputController.text.length));
-        setState(() {});
-      });
-
-      await process.exitCode;
-    }
-  }
 
   void _reloadConfig() {
     setState(() {});
@@ -113,7 +83,9 @@ class _MyCustomFormState extends State<ManageBot> {
               color: Colors.white,
             )
           ],
-          backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
+          backgroundColor: userColorMode() == 'light'
+            ? const Color.fromRGBO(238, 109, 109, 1)
+            : const Color.fromRGBO(127, 86, 151, 1),
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -393,7 +365,7 @@ class _MyCustomFormState extends State<ManageBot> {
                           onPressed: () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return const ManageCli();
+                              return const manageCli();
                             }));
                           },
                           tooltip: "管理CLI",
@@ -444,16 +416,18 @@ class _MyCustomFormState extends State<ManageBot> {
                       height: 3,
                     ),
                     SizedBox(
-                      height: 400,
+                      height: 450,
                       width: 2000,
                       child: Card(
                         color: const Color.fromARGB(255, 31, 28, 28),
                         child: SingleChildScrollView(
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              _log,
-                              style: const TextStyle(color: Colors.white),
+                            child: RichText(
+                              text: TextSpan(
+                                style: const TextStyle(color: Colors.white, fontFamily: 'JetBrainsMono'),
+                                children: _logSpans(_log),
+                              ),
                             ),
                           ),
                         ),
@@ -467,6 +441,93 @@ class _MyCustomFormState extends State<ManageBot> {
         ));
   }
 }
+
+//终端字体颜色
+//这一段AI写的我什么也不知道😭
+  List<TextSpan> _logSpans(text) {
+    RegExp regex = RegExp(r'(\[[A-Z]+\])|(nonebot \|)|(uvicorn \|)|(Env: dev)|(Env: prod)|(Config)|(nonebot_plugin_[\S]+)|("nonebot_plugin_[\S]+)|(使用 Python: [\S]+)|(Loaded adapters: [\S]+)|(\d{2}-\d{2} \d{2}:\d{2}:\d{2})|(Calling API [\S]+)');
+    List<TextSpan> spans = [];
+    int lastEnd = 0;
+
+    for (Match match in regex.allMatches(text)) {
+      if (match.start > lastEnd) {
+        spans.add(TextSpan(
+          text: text.substring(lastEnd, match.start),
+          style: TextStyle(color: Colors.white),
+        ));
+      }
+
+
+      Color color;
+      switch (match.group(0)) {
+        case '[SUCCESS]':
+          color = Colors.greenAccent;
+          break;
+        case '[INFO]':
+          color = Colors.white;
+          break;
+        case '[WARNING]':
+          color = Colors.orange;
+          break;
+        case '[ERROR]':
+          color = Colors.red;
+          break;
+        case '[DEBUG]':
+          color = Colors.blue;
+          break;
+        case 'nonebot |':
+          color = Colors.green;
+          break;
+        case 'uvicorn |':
+          color = Colors.green;
+          break;
+        case 'Env: dev':
+          color = Colors.orange;
+          break;
+        case 'Env: prod':
+          color = Colors.orange;
+          break;
+        case 'Config':
+          color = Colors.orange;
+          break;
+      default:
+        if (match.group(0)!.startsWith('nonebot_plugin_')) {
+          color = Colors.yellow;
+        } else if (match.group(0)!.startsWith('"nonebot_plugin_')) {
+          color = Colors.yellow; 
+        } else if (match.group(0)!.startsWith('Loaded adapters:')) {
+          color = Colors.greenAccent; 
+        } else if (match.group(0)!.startsWith('使用 Python:')) {
+          color = Colors.greenAccent; 
+        } else if (match.group(0)!.startsWith('Calling API')) {
+          color = Colors.purple; 
+        } else if (match.group(0)!.contains('-') && match.group(0)!.contains(':')) {
+          color = Colors.green;
+        } else {
+          color = Colors.white;
+        }
+        break;
+    }
+
+      spans.add(TextSpan(
+        text: match.group(0),
+        style: TextStyle(color: color),
+      ));
+
+      lastEnd = match.end;
+    }
+    if (lastEnd < text.length) {
+      spans.add(TextSpan(
+        text: text.substring(lastEnd),
+        style: TextStyle(color: Colors.white),
+      ));
+    }
+
+    return spans;
+  }
+  
+
+
 
 void _showConfirmationDialog(BuildContext context) {
   showDialog(

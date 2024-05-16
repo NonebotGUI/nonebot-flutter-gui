@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:NonebotGUI/ui/manage_cli.dart';
 import 'package:NonebotGUI/darts/utils.dart';
 import 'package:NonebotGUI/ui/adapter.dart';
 import 'package:NonebotGUI/ui/driver.dart';
@@ -19,19 +19,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: ManageCli(),
+      home: manageCli(),
     );
   }
 }
 
-class ManageCli extends StatefulWidget {
-  const ManageCli({super.key});
+class manageCli extends StatefulWidget {
+  const manageCli({super.key});
 
   @override
-  State<ManageCli> createState() => _HomeScreenState();
+  State<manageCli> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<ManageCli> {
+class _HomeScreenState extends State<manageCli> {
   final myController = TextEditingController();
 
   @override
@@ -43,7 +43,9 @@ class _HomeScreenState extends State<ManageCli> {
           style: TextStyle(color: Colors.white),
         ),
         actions: const <Widget>[],
-        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: userColorMode() == 'light'
+          ? const Color.fromRGBO(238, 109, 109, 1)
+          : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: SingleChildScrollView(
         child: Column(

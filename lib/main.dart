@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:NonebotGUI/darts/utils.dart';
 import 'dart:convert';
 import 'package:NonebotGUI/ui/createbot.dart';
-import 'package:NonebotGUI/ui/more.dart';
+import 'package:NonebotGUI/ui/settings/more_page.dart';
 import 'package:NonebotGUI/ui/manage_bot.dart';
 import 'package:NonebotGUI/ui/import_bot.dart';
 import 'package:flutter/material.dart';
@@ -19,11 +19,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: HomeScreen(),
+      theme: _getTheme(userColorMode()),
     );
   }
 }
+
+
+  ThemeData _getTheme(mode) {
+    switch (mode) {
+      case 'light':
+        return ThemeData.light();
+      case 'dark':
+        return ThemeData.dark();
+      default:
+        return ThemeData.light();
+    }
+  }
+
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -40,12 +55,15 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     createMainFolder();
     refresh();
+    _getTheme(userColorMode());
   }
 
   void refresh() {
     Timer.periodic(const Duration(seconds: 1), (timer) {
       _readConfigFiles();
-      setState(() {});
+      setState(() {
+        _getTheme(userColorMode());
+      });
     });
   }
 
@@ -74,7 +92,9 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
 
-    setState(() {});
+    setState(() {
+      _getTheme(userColorMode());
+    });
   }
 
   @override
@@ -85,14 +105,17 @@ class _HomeScreenState extends State<HomeScreen> {
           'Nonebot GUI',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: userColorMode() == 'light'
+          ? const Color.fromRGBO(238, 109, 109, 1)
+          : const Color.fromRGBO(127, 86, 151, 1),
         leading: IconButton(
           icon: const Icon(Icons.menu),
           tooltip: '更多',
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return const More();
+              return more();
             }));
+          
           },
           color: Colors.white,
         ),
@@ -187,7 +210,9 @@ class _HomeScreenState extends State<HomeScreen> {
           }));
         },
         tooltip: '添加一个bot',
-        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: userColorMode() == 'light'
+          ? const Color.fromRGBO(238, 109, 109, 1)
+          : const Color.fromRGBO(127, 86, 151, 1),
         shape: const CircleBorder(),
         child: const Icon(
           Icons.add,
@@ -197,3 +222,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+

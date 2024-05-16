@@ -17,7 +17,8 @@ createMainFolder() {
       String cfg = '''
     {
       "python":"default",
-      "nbcli":"default"
+      "nbcli":"default",
+      "color":"system"
     }
     ''';
       cfgFile.writeAsStringSync(cfg);
@@ -35,7 +36,8 @@ createMainFolder() {
       String cfg = '''
     {
       "python":"default",
-      "nbcli":"default"
+      "nbcli":"default",
+      "color":"system"
     }
     ''';
       cfgFile.writeAsStringSync(cfg);
@@ -96,6 +98,27 @@ setNbcliPath(path) {
   jsonMap['nbcli'] = path;
   file.writeAsStringSync(jsonEncode(jsonMap));
 }
+
+userColorMode() {
+  File file = File('${createMainFolder()}/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  if ( jsonMap.containsKey("color")){
+    String colorMode = jsonMap['color'].toString();
+    return colorMode;
+  }
+  else {
+    setColorMode('system');
+    return 'system';
+  }
+}
+
+setColorMode(mode) {
+  File file = File('${createMainFolder()}/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['color'] = mode;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
+
 
 //检查py
 Future<String> getpyver() async {
@@ -588,7 +611,7 @@ Future openFolder(path) async {
 }
 
 //唤起Bot进程
-Future runBot(path) async {
+Future runBot(String path) async {
   String name = manageBotReadCfgName();
   String time = manageBotReadCfgTime();
   Directory.current = Directory(path);
@@ -598,7 +621,7 @@ Future runBot(path) async {
   Process process = await Process.start('${userReadConfigNbcli()}', ['run'],
       workingDirectory: path);
   int pid = process.pid;
-  //重写配置文件来更新状态
+  // 重写配置文件来更新状态
   Map<String, dynamic> jsonMap = jsonDecode(cfgFile.readAsStringSync());
   jsonMap['pid'] = pid;
   jsonMap['isrunning'] = 'true';
@@ -607,14 +630,16 @@ Future runBot(path) async {
   final outputSink = stdout.openWrite();
   final errorSink = stderr.openWrite();
 
-  process.stdout.transform(systemEncoding.decoder).listen((data) {
-    outputSink.write(data);
+  // 直接监听原始字节输出
+  process.stdout.listen((data) {
+    outputSink.add(data);
   });
 
-  process.stderr.transform(systemEncoding.decoder).listen((data) {
-    errorSink.write(data);
+  process.stderr.listen((data) {
+    errorSink.add(data);
   });
 }
+
 
 //结束bot进程
 Future stopBot() async {
@@ -653,7 +678,7 @@ clearLog() async {
   String path = manageBotReadCfgPath();
   File stdout = File('$path/nbgui_stdout.log');
   stdout.delete();
-  String info = "[I]Welcome to Nonebot GUI!\n";
+  String info = "[INFO]Welcome to Nonebot GUI!";
   stdout.writeAsString(info);
 }
 

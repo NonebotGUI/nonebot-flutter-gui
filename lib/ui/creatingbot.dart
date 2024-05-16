@@ -87,7 +87,9 @@ class _MyCustomFormState extends State<CreatingBot> {
           "确认创建",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
+        backgroundColor: userColorMode() == 'light'
+          ? const Color.fromRGBO(238, 109, 109, 1)
+          : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: Container(
         padding: const EdgeInsets.all(16.0),
