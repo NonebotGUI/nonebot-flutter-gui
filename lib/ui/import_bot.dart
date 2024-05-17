@@ -2,22 +2,22 @@ import 'package:NonebotGUI/darts/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
-void main() {
-  runApp(
-    const MyApp(),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: ImportBot(),
-    );
-  }
-}
+// void main() {
+//   runApp(
+//     const MyApp(),
+//   );
+// }
+//
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const MaterialApp(
+//       home: ImportBot(),
+//     );
+//   }
+// }
 
 class ImportBot extends StatefulWidget {
   const ImportBot({super.key});
@@ -43,41 +43,45 @@ class _HomeScreenState extends State<ImportBot> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            '导入Bot',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: userColorMode() == 'light'
-          ? const Color.fromRGBO(238, 109, 109, 1)
-          : const Color.fromRGBO(127, 86, 151, 1),
-          actions: <Widget>[
-            IconButton(
-              onPressed: () {
-                if (_selectedFolderPath.toString() != 'null') {
-                  importbot(name, _selectedFolderPath.toString());
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      appBar: AppBar(
+        title: const Text(
+          '导入Bot',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: userColorMode() == 'light'
+            ? const Color.fromRGBO(238, 109, 109, 1)
+            : const Color.fromRGBO(127, 86, 151, 1),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              if (_selectedFolderPath.toString() != 'null') {
+                importbot(name, _selectedFolderPath.toString());
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
                     content: Text('导入完成'),
                     duration: Duration(seconds: 3),
-                  ));
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
                     content: Text('你还没有选择Bot的根目录！'),
                     duration: Duration(seconds: 3),
-                  ));
-                }
-              },
-              icon: const Icon(
-                Icons.done_rounded,
-                color: Colors.white,
-              ),
-              tooltip: "导入",
-            )
-          ],
-        ),
-        body: SingleChildScrollView(
-            child: Container(
+                  ),
+                );
+              }
+            },
+            icon: const Icon(
+              Icons.done_rounded,
+              color: Colors.white,
+            ),
+            tooltip: "导入",
+          )
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Container(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: <Widget>[
@@ -104,27 +108,31 @@ class _HomeScreenState extends State<ImportBot> {
               Row(
                 children: <Widget>[
                   Expanded(
-                      child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'bot根目录[$_selectedFolderPath]',
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'bot根目录[$_selectedFolderPath]',
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
                     ),
-                  )),
+                  ),
                   Expanded(
-                      child: Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      onPressed: _pickFolder,
-                      tooltip: "选择bot的根目录",
-                      icon: const Icon(Icons.folder),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        onPressed: _pickFolder,
+                        tooltip: "选择bot的根目录",
+                        icon: const Icon(Icons.folder),
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               ),
             ],
           ),
-        )));
+        ),
+      ),
+    );
   }
 }

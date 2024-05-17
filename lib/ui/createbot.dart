@@ -7,20 +7,20 @@ import 'package:file_picker/file_picker.dart';
 import 'package:NonebotGUI/ui/creatingbot.dart';
 import 'package:http/http.dart' as http;
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: CreateBot(),
-    );
-  }
-}
+// void main() {
+//   runApp(const MyApp());
+// }
+//
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const MaterialApp(
+//       home: CreateBot(),
+//     );
+//   }
+// }
 
 class CreateBot extends StatefulWidget {
   const CreateBot({super.key});
@@ -31,8 +31,8 @@ class CreateBot extends StatefulWidget {
 
 class _MyCustomFormState extends State<CreateBot> {
   final myController = TextEditingController();
-  bool isvenv = true;
-  bool isdep = true;
+  bool isVENV = true;
+  bool isDep = true;
   String? _selectedFolderPath;
 
   Future<void> _pickFolder() async {
@@ -61,20 +61,19 @@ class _MyCustomFormState extends State<CreateBot> {
     'AIOHTTP': false,
   };
 
-
-
 //适配器
   Map<String, bool> adapterMap = {};
   List adapterList = [];
   bool loadAdapter = true;
   Future<void> _fetchAdapters() async {
-    final response = await http.get(Uri.parse('https://registry.nonebot.dev/adapters.json'));
+    final response =
+        await http.get(Uri.parse('https://registry.nonebot.dev/adapters.json'));
     if (response.statusCode == 200) {
       final decodedBody = systemEncoding.decode(response.bodyBytes);
       List<dynamic> adapters = json.decode(decodedBody);
       setState(() {
         adapterList = adapters;
-        adapterMap = Map.fromIterable(adapters, key: (item) => item['name'], value: (item) => false);
+        adapterMap = {for (var item in adapters) item['name']: false};
         loadAdapter = false;
       });
     } else {
@@ -83,7 +82,6 @@ class _MyCustomFormState extends State<CreateBot> {
       });
     }
   }
-
 
   void onDriversChanged(String option, bool value) {
     setState(() {
@@ -105,10 +103,16 @@ class _MyCustomFormState extends State<CreateBot> {
   }
 
   String buildSelectedAdapterOptions() {
-    List<String> selectedOptions = adapterMap.keys.where((option) => adapterMap[option] == true).toList();
+    List<String> selectedOptions =
+        adapterMap.keys.where((option) => adapterMap[option] == true).toList();
     List<String> selectedAdapters = selectedOptions.map((option) {
-      String showText = '${option}(${adapterList.firstWhere((adapter) => adapter['name'] == option)['module_name']})';
-      return showText.replaceAll('adapters', 'adapter').replaceAll('.', '-').replaceAll('-v11', '.v11').replaceAll('-v12', '.v12');
+      String showText =
+          '$option(${adapterList.firstWhere((adapter) => adapter['name'] == option)['module_name']})';
+      return showText
+          .replaceAll('adapters', 'adapter')
+          .replaceAll('.', '-')
+          .replaceAll('-v11', '.v11')
+          .replaceAll('-v12', '.v12');
     }).toList();
     String selectedAdaptersString = selectedAdapters.join(', ');
     return selectedAdaptersString;
@@ -119,14 +123,13 @@ class _MyCustomFormState extends State<CreateBot> {
       return CheckboxListTile(
         title: Text(driver),
         activeColor: userColorMode() == 'light'
-          ? const Color.fromRGBO(238, 109, 109, 1)
-          : const Color.fromRGBO(127, 86, 151, 1),
+            ? const Color.fromRGBO(238, 109, 109, 1)
+            : const Color.fromRGBO(127, 86, 151, 1),
         value: drivers[driver],
         onChanged: (bool? value) => onDriversChanged(driver, value!),
       );
     }).toList();
   }
-
 
   @override
   void dispose() {
@@ -137,143 +140,148 @@ class _MyCustomFormState extends State<CreateBot> {
 
   void _toggleVenv(bool newValue) {
     setState(() {
-      isvenv = newValue;
+      isVENV = newValue;
     });
   }
 
-  void _toggledep(bool newValue) {
+  void _toggleDep(bool newValue) {
     setState(() {
-      isdep = newValue;
+      isDep = newValue;
     });
   }
 
   String name = 'Nonebot';
   final List<String> template = ['bootstrap(初学者或用户)', 'simple(插件开发者)'];
   late String dropDownValue = template.first;
-  final List<String> plugindir = ['在[bot名称]/[bot名称]下', '在src文件夹下'];
-  late String dropDownValuePluginDir = plugindir.first;
+  final List<String> pluginDir = ['在[bot名称]/[bot名称]下', '在src文件夹下'];
+  late String dropDownValuePluginDir = pluginDir.first;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "创建Bot",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: userColorMode() == 'light'
-          ? const Color.fromRGBO(238, 109, 109, 1)
-          : const Color.fromRGBO(127, 86, 151, 1),
-          actions: <Widget>[
-            IconButton(
-              onPressed: () {
-                if (_selectedFolderPath.toString() != 'null') {
-                  createBotWriteConfig(
-                      name,
-                      _selectedFolderPath,
-                      isvenv,
-                      isdep,
-                      buildSelectedDriverOptions(),
-                      buildSelectedAdapterOptions(),
-                      dropDownValue,
-                      dropDownValuePluginDir);
-                  createBotWriteConfigRequirement(
-                      buildSelectedDriverOptions(),
-                      buildSelectedAdapterOptions());
-                  createFolder(
-                      _selectedFolderPath, name, dropDownValuePluginDir);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const CreatingBot();
-                  }));
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      appBar: AppBar(
+        title: const Text(
+          "创建Bot",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: userColorMode() == 'light'
+            ? const Color.fromRGBO(238, 109, 109, 1)
+            : const Color.fromRGBO(127, 86, 151, 1),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              if (_selectedFolderPath.toString() != 'null') {
+                createBotWriteConfig(
+                  name,
+                  _selectedFolderPath,
+                  isVENV,
+                  isDep,
+                  buildSelectedDriverOptions(),
+                  buildSelectedAdapterOptions(),
+                  dropDownValue,
+                  dropDownValuePluginDir,
+                );
+                createBotWriteConfigRequirement(
+                  buildSelectedDriverOptions(),
+                  buildSelectedAdapterOptions(),
+                );
+                createFolder(
+                  _selectedFolderPath,
+                  name,
+                  dropDownValuePluginDir,
+                );
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return const CreatingBot();
+                }));
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
                     content: Text('你还没有选择存放Bot的目录！'),
                     duration: Duration(seconds: 3),
-                  ));
-                }
-              },
-              icon: const Icon(Icons.arrow_forward),
-              color: Colors.white,
-              tooltip: "下一步",
-            ),
-          ],
-        ),
-        body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              //bot名称
-              children: <Widget>[
-                TextField(
-                  controller: myController,
-                  decoration: const InputDecoration(
-                    hintText: "bot名称，不填则默认为Nonebot",
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color.fromRGBO(238, 109, 109, 1),
-                        width: 5.0,
-                      ),
+                  ),
+                );
+              }
+            },
+            icon: const Icon(Icons.arrow_forward),
+            color: Colors.white,
+            tooltip: "下一步",
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            //bot名称
+            children: <Widget>[
+              TextField(
+                controller: myController,
+                decoration: const InputDecoration(
+                  hintText: "bot名称，不填则默认为Nonebot",
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color.fromRGBO(238, 109, 109, 1),
+                      width: 5.0,
                     ),
                   ),
-                  onChanged: (value) {
-                    setState(() {
-                      name = value;
-                    });
-                  },
                 ),
-                const SizedBox(height: 12),
-                Row(
-                  children: <Widget>[
-                    const Expanded(
-                        child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        '选择模板',
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    )),
-                    Expanded(
-                        child: Align(
+                onChanged: (value) {
+                  setState(() => name = value);
+                },
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: <Widget>[
+                  const Expanded(
+                      child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '选择模板',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  )),
+                  Expanded(
+                    child: Align(
                       alignment: Alignment.centerRight,
                       child: DropdownButton<String>(
                         value: dropDownValue,
                         icon: const Icon(Icons.keyboard_arrow_down_rounded),
                         elevation: 16,
                         onChanged: (String? value) {
-                          setState(() {
-                            dropDownValue = value!;
-                          });
+                          setState(() => dropDownValue = value!);
                         },
                         items: template
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
+                            .map<DropdownMenuItem<String>>(
+                              (String value) => DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 12,
+              ),
+              Visibility(
+                visible: dropDownValue == template[1],
+                child: Row(
+                  children: <Widget>[
+                    const Expanded(
+                        child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '选择插件存放位置',
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     )),
-                  ],
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                Visibility(
-                  visible: dropDownValue == template[1],
-                  child: Row(
-                    children: <Widget>[
-                      const Expanded(
-                          child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '选择插件存放位置',
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      )),
-                      Expanded(
-                          child: Align(
+                    Expanded(
+                      child: Align(
                         alignment: Alignment.centerRight,
                         child: DropdownButton<String>(
                           value: dropDownValuePluginDir,
@@ -284,161 +292,174 @@ class _MyCustomFormState extends State<CreateBot> {
                               dropDownValuePluginDir = value!;
                             });
                           },
-                          items: plugindir
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+                          items: pluginDir
+                              .map<DropdownMenuItem<String>>(
+                                (String value) => DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                ),
+                              )
+                              .toList(),
                         ),
-                      )),
-                    ],
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
+              ),
 
-                const SizedBox(
-                  height: 12,
-                ),
-                //bot目录
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                        child: Align(
+              const SizedBox(
+                height: 12,
+              ),
+              //bot目录
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
                         '存放bot的目录[$_selectedFolderPath]',
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
-                    )),
-                    Expanded(
-                        child: Align(
+                    ),
+                  ),
+                  Expanded(
+                    child: Align(
                       alignment: Alignment.centerRight,
                       child: IconButton(
                         onPressed: _pickFolder,
                         tooltip: "选择bot存放路径",
                         icon: const Icon(Icons.folder),
                       ),
-                    )),
-                  ],
-                ),
-
-                const SizedBox(
-                  height: 10,
-                ),
-
-                Row(
-                  children: <Widget>[
-                    const Expanded(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("是否开启虚拟环境"),
-                      ),
                     ),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Switch(
-                          value: isvenv,
-                          onChanged: _toggleVenv,
-                          activeColor: userColorMode() == 'light'
+                  ),
+                ],
+              ),
+
+              const SizedBox(
+                height: 10,
+              ),
+
+              Row(
+                children: <Widget>[
+                  const Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text("是否开启虚拟环境"),
+                    ),
+                  ),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Switch(
+                        value: isVENV,
+                        onChanged: _toggleVenv,
+                        activeColor: userColorMode() == 'light'
                             ? const Color.fromRGBO(238, 109, 109, 1)
                             : const Color.fromRGBO(127, 86, 151, 1),
-                          focusColor: Colors.black,
-                          inactiveTrackColor: Colors.grey,
-                        ),
+                        focusColor: Colors.black,
+                        inactiveTrackColor: Colors.grey,
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: <Widget>[
-                    const Expanded(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("是否安装依赖"),
-                      ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: <Widget>[
+                  const Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text("是否安装依赖"),
                     ),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Switch(
-                          value: isdep,
-                          onChanged: _toggledep,
-                          activeColor: userColorMode() == 'light'
+                  ),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Switch(
+                        value: isDep,
+                        onChanged: _toggleDep,
+                        activeColor: userColorMode() == 'light'
                             ? const Color.fromRGBO(238, 109, 109, 1)
                             : const Color.fromRGBO(127, 86, 151, 1),
-                          focusColor: Colors.black,
-                          inactiveTrackColor: Colors.grey,
-                        ),
+                        focusColor: Colors.black,
+                        inactiveTrackColor: Colors.grey,
                       ),
                     ),
-                  ],
-                ),
-                const Divider(
-                  height: 20,
-                  thickness: 2,
-                  indent: 20,
-                  endIndent: 20,
-                  color: Colors.grey,
-                ),
-                const Center(
-                  child: Text("选择驱动器"),
-                ),
-                const SizedBox(
-                  height: 3,
-                ),
-                Column(children: buildDriversCheckboxes()),
+                  ),
+                ],
+              ),
+              const Divider(
+                height: 20,
+                thickness: 2,
+                indent: 20,
+                endIndent: 20,
+                color: Colors.grey,
+              ),
+              const Center(
+                child: Text("选择驱动器"),
+              ),
+              const SizedBox(
+                height: 3,
+              ),
+              Column(children: buildDriversCheckboxes()),
 
-                const Divider(
-                  height: 20,
-                  thickness: 2,
-                  indent: 20,
-                  endIndent: 20,
-                  color: Colors.grey,
-                ),
-                const Center(
-                  child: Text("选择适配器"),
-                ),
-                const SizedBox(
-                  height: 3,
-                ),
-                Column(
+              const Divider(
+                height: 20,
+                thickness: 2,
+                indent: 20,
+                endIndent: 20,
+                color: Colors.grey,
+              ),
+              const Center(
+                child: Text("选择适配器"),
+              ),
+              const SizedBox(
+                height: 3,
+              ),
+              Column(
                 children: [
                   if (loadAdapter)
-                    Center(child: CircularProgressIndicator(
-                      color: userColorMode() == 'light'
-                        ? const Color.fromRGBO(238, 109, 109, 1)
-                        : const Color.fromRGBO(127, 86, 151, 1),
-                    ))
+                    Center(
+                      child: CircularProgressIndicator(
+                        color: userColorMode() == 'light'
+                            ? const Color.fromRGBO(238, 109, 109, 1)
+                            : const Color.fromRGBO(127, 86, 151, 1),
+                      ),
+                    )
                   else
                     ListView(
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       children: adapterList.map((adapter) {
                         String name = adapter['name'];
                         //屎山，别骂了别骂了😭
-                        String moduleName = adapter['module_name'].replaceAll('adapters', 'adapter').replaceAll('.', '-').replaceAll('-v11', '.v11').replaceAll('-v12', '.v12');
-                        String showText = '${name}(${moduleName})';
+                        // 还好
+                        String moduleName = adapter['module_name']
+                            .replaceAll('adapters', 'adapter')
+                            .replaceAll('.', '-')
+                            .replaceAll('-v11', '.v11')
+                            .replaceAll('-v12', '.v12');
+                        String showText = '$name($moduleName)';
                         return CheckboxListTile(
                           activeColor: userColorMode() == 'light'
-                            ? const Color.fromRGBO(238, 109, 109, 1)
-                            : const Color.fromRGBO(127, 86, 151, 1),
+                              ? const Color.fromRGBO(238, 109, 109, 1)
+                              : const Color.fromRGBO(127, 86, 151, 1),
                           title: Text(showText),
                           value: adapterMap[name],
-                          onChanged: (bool? value) => onAdaptersChanged(name, value!),
+                          onChanged: (bool? value) =>
+                              onAdaptersChanged(name, value!),
                         );
                       }).toList(),
                     ),
                 ],
               ),
-              ],
-            ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

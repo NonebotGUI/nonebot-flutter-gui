@@ -2,34 +2,23 @@ import 'package:NonebotGUI/darts/utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
+// void main() {
+//   runApp(
+//     Settings(),
+//   );
+// }
 
-void main() {
-  runApp(
-    MyApp(),
-  );
+class Settings extends StatefulWidget {
+  const Settings({super.key});
 
-}
-class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: settings(),
-    );
-  }
+  State<Settings> createState() => _HomeScreenState();
 }
 
+class _HomeScreenState extends State<Settings> {
 
 
-
-class settings extends StatefulWidget {
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<settings> {
-
-
-  void _selectpy() async {
+  void _selectPy() async {
     final result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
@@ -37,7 +26,7 @@ class _HomeScreenState extends State<settings> {
     }
   }
 
-  void _selectnbcli() async {
+  void _selectNbCli() async {
     final result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
@@ -47,12 +36,6 @@ class _HomeScreenState extends State<settings> {
 
   final List<String> colorMode = ['light', 'dark'];
   late String dropDownValue = userColorMode();
-
-
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -74,14 +57,14 @@ class _HomeScreenState extends State<settings> {
                 child: Card(
                   child: Row(
                     children: <Widget>[
-                      Expanded(child: Align(
+                      const Expanded(child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text('颜色主题'),
                       )),
                       Expanded(child: Align(
                         alignment: Alignment.centerRight,
                         child: Padding(
-                          padding: EdgeInsets.all(4),
+                          padding: const EdgeInsets.all(4),
                           child:  DropdownButton<String>(
                         value: dropDownValue,
                         icon: const Icon(Icons.keyboard_arrow_down_rounded),
@@ -129,7 +112,7 @@ class _HomeScreenState extends State<settings> {
                       ),
                     ),
                     onTap: () {
-                      _selectpy();
+                      _selectPy();
                     })),
                     const SizedBox(height: 4,),
             SizedBox(
@@ -173,7 +156,7 @@ class _HomeScreenState extends State<settings> {
                       ),
                     ),
                     onTap: () {
-                      _selectnbcli();
+                      _selectNbCli();
                     })),
                     const SizedBox(height: 4,),
             SizedBox(

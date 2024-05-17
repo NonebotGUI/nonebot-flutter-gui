@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomeScreen(),
+      home: const HomeScreen(),
       theme: _getTheme(userColorMode()),
     );
   }
@@ -44,7 +44,7 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -67,28 +67,28 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  List<String> configFileContents_name = [];
-  List<String> configFileContents_path = [];
-  List<String> configFileContents_run = [];
-  List<String> configFileContents_time = [];
+  List<String> configFileContentsName = [];
+  List<String> configFileContentsPath = [];
+  List<String> configFileContentsRun = [];
+  List<String> configFileContentsTime = [];
 
   void _readConfigFiles() async {
     Directory directory = Directory(configFolder);
     List<FileSystemEntity> files = await directory.list().toList();
 
-    configFileContents_name.clear();
-    configFileContents_path.clear();
-    configFileContents_run.clear();
-    configFileContents_time.clear();
+    configFileContentsName.clear();
+    configFileContentsPath.clear();
+    configFileContentsRun.clear();
+    configFileContentsTime.clear();
 
     for (FileSystemEntity file in files) {
       if (file is File) {
         String content = await file.readAsString();
         Map<String, dynamic> jsonContent = json.decode(content);
-        configFileContents_name.add(jsonContent['name']);
-        configFileContents_path.add(jsonContent['path']);
-        configFileContents_run.add(jsonContent['isrunning']);
-        configFileContents_time.add(jsonContent['time']);
+        configFileContentsName.add(jsonContent['name']);
+        configFileContentsPath.add(jsonContent['path']);
+        configFileContentsRun.add(jsonContent['isrunning']);
+        configFileContentsTime.add(jsonContent['time']);
       }
     }
 
@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
           tooltip: '更多',
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return more();
+              return const More();
             }));
           
           },
@@ -141,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: configFileContents_name.isEmpty
+      body: configFileContentsName.isEmpty
           ? const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -155,12 +155,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             )
           : ListView.builder(
-              itemCount: configFileContents_name.length,
+              itemCount: configFileContentsName.length,
               itemBuilder: (context, index) {
-                String name = configFileContents_name[index];
-                String status = configFileContents_run[index];
-                String time = configFileContents_time[index];
-                String path = configFileContents_path[index];
+                String name = configFileContentsName[index];
+                String status = configFileContentsRun[index];
+                String time = configFileContentsTime[index];
+                String path = configFileContentsPath[index];
                 if (status == 'true') {
                   return SingleChildScrollView(
                       child: Card(
