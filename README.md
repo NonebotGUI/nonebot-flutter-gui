@@ -5,7 +5,10 @@
 
 # nonebot-flutter-gui
 </div>
-_✨ 新一代Nonebot图形化界面 ✨_<br>
+
+_✨ 新一代Nonebot图形化界面 ✨_
+
+<br>
 
 
 <a href="./LICENSE">
