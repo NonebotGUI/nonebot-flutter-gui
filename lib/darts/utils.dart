@@ -121,7 +121,7 @@ setColorMode(mode) {
 
 
 //检查py
-Future<String> getpyver() async {
+Future<String> getPyVer() async {
   try {
     if (Platform.isLinux || Platform.isMacOS) {
       ProcessResult results =

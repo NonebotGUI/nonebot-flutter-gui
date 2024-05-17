@@ -3,45 +3,30 @@ import 'package:NonebotGUI/ui/settings/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:NonebotGUI/darts/utils.dart';
 
+//这段不知道干嘛用的 如果是Test应该放到 /test 文件夹
+// void main() {
+//   runApp(
+//     const More(),
+//   );
+//
+// }
 
-void main() {
-  runApp(
-    More(),
-  );
+class More extends StatefulWidget {
+  const More({super.key});
 
-}
-class More extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: more(),
-    );
-  }
+  State<More> createState() => _HomeScreenState();
 }
 
-
-
-
-class more extends StatefulWidget {
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<more> {
+class _HomeScreenState extends State<More> {
 
   final myController = TextEditingController();
-
-
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "更多",
           style: TextStyle(color: Colors.white),
         ),
@@ -66,7 +51,7 @@ class _HomeScreenState extends State<more> {
                     onTap: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return settings();
+                        return Settings();
                       }));
                     })),
             SizedBox(
@@ -83,7 +68,7 @@ class _HomeScreenState extends State<more> {
                     onTap: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return About();
+                        return const About();
                       }));
                     })),
             SizedBox(

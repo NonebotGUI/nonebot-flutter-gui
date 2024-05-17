@@ -7,20 +7,20 @@ import 'package:NonebotGUI/assets/my_flutter_app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:NonebotGUI/darts/utils.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: AdapterStore(),
-    );
-  }
-}
+// void main() {
+//   runApp(const MyApp());
+// }
+//
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const MaterialApp(
+//       home: AdapterStore(),
+//     );
+//   }
+// }
 
 class AdapterStore extends StatefulWidget {
   const AdapterStore({super.key});
@@ -90,6 +90,7 @@ class _MyHomePageState extends State<AdapterStore> {
     setState(() {
       //根据名字，描述等搜索
       search = data.where((adapter) {
+        //果然是个人都喜欢堆起来
         return adapter['name'].toLowerCase().contains(value.toLowerCase()) ||
             adapter['desc'].toLowerCase().contains(value.toLowerCase()) ||
             adapter['module_name']
@@ -113,13 +114,15 @@ class _MyHomePageState extends State<AdapterStore> {
         title: TextField(
           controller: _searchController,
           decoration: const InputDecoration(
-              hintText: '搜索适配器...', hintStyle: TextStyle(color: Colors.white)),
+            hintText: '搜索适配器...',
+            hintStyle: TextStyle(color: Colors.white),
+          ),
           style: const TextStyle(color: Colors.white),
           onChanged: _searchAdapters,
         ),
         backgroundColor: userColorMode() == 'light'
-          ? const Color.fromRGBO(238, 109, 109, 1)
-          : const Color.fromRGBO(127, 86, 151, 1),
+            ? const Color.fromRGBO(238, 109, 109, 1)
+            : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: data.isEmpty
           ? Center(
@@ -146,9 +149,11 @@ class _MyHomePageState extends State<AdapterStore> {
                             children: <Widget>[
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text(adapters['name'],
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold)),
+                                child: Text(
+                                  adapters['name'],
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -184,94 +189,8 @@ class _MyHomePageState extends State<AdapterStore> {
                                       showDialog(
                                         context: context,
                                         barrierDismissible: false,
-                                        builder: (BuildContext context) {
-                                          String name = adapters['module_name'];
-                                          _install(name);
-                                          return Material(
-                                            color: Colors.transparent,
-                                            child: Center(
-                                              child: AlertDialog(
-                                                title: const Text('正在安装适配器'),
-                                                content: SizedBox(
-                                                  height: 600,
-                                                  width: 800,
-                                                  child: StreamBuilder<String>(
-                                                    stream:
-                                                        adapterOutputController
-                                                            .stream,
-                                                    builder: (BuildContext
-                                                            context,
-                                                        AsyncSnapshot<String>
-                                                            snapshot) {
-                                                      return Card(
-                                                        color: const Color
-                                                            .fromARGB(
-                                                            255, 31, 28, 28),
-                                                        child:
-                                                            SingleChildScrollView(
-                                                          child: StreamBuilder<
-                                                              String>(
-                                                            stream:
-                                                                adapterOutputController
-                                                                    .stream,
-                                                            builder: (BuildContext
-                                                                    context,
-                                                                AsyncSnapshot<
-                                                                        String>
-                                                                    snapshot) {
-                                                              if (snapshot
-                                                                  .hasData) {
-                                                                final newText =
-                                                                    adapterOutput
-                                                                            .text +
-                                                                        (snapshot.data ??
-                                                                            '');
-                                                                adapterOutput
-                                                                        .text =
-                                                                    newText;
-                                                              }
-                                                              return Card(
-                                                                color: const Color
-                                                                    .fromARGB(255,31,28,28),
-                                                                child:
-                                                                    SingleChildScrollView(
-                                                                  child:
-                                                                      Padding(
-                                                                    padding:
-                                                                        const EdgeInsets.all(8.0),
-                                                                    child: Text(
-                                                                      adapterOutput.text,
-                                                                      style: const TextStyle(
-                                                                          color:
-                                                                              Colors.white),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Text(
-                                                      '关闭窗口',
-                                                      style: TextStyle(
-                                                          color:
-                                                              Colors.grey[800]),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
+                                        builder: (BuildContext context) =>
+                                            installDialog(adapters),
                                       );
                                     },
                                     tooltip: '安装适配器',
@@ -305,6 +224,67 @@ class _MyHomePageState extends State<AdapterStore> {
                 );
               },
             ),
+    );
+  }
+
+  Material installDialog(Map adapters) {
+    String name = adapters['module_name'];
+    _install(name);
+    return Material(
+      color: Colors.transparent,
+      child: Center(
+        child: AlertDialog(
+          title: const Text('正在安装适配器'),
+          content: SizedBox(
+            height: 600,
+            width: 800,
+            child: StreamBuilder<String>(
+              stream: adapterOutputController.stream,
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                return Card(
+                  color: const Color.fromARGB(255, 31, 28, 28),
+                  child: SingleChildScrollView(
+                    child: StreamBuilder<String>(
+                      stream: adapterOutputController.stream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        if (snapshot.hasData) {
+                          final newText =
+                              adapterOutput.text + (snapshot.data ?? '');
+                          adapterOutput.text = newText;
+                        }
+                        return Card(
+                          color: const Color.fromARGB(255, 31, 28, 28),
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                adapterOutput.text,
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                '关闭窗口',
+                style: TextStyle(color: Colors.grey[800]),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

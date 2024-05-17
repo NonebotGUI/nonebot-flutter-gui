@@ -1,22 +1,22 @@
 import 'package:NonebotGUI/darts/utils.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(
-    const MyApp(),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: StdErr(),
-    );
-  }
-}
+// void main() {
+//   runApp(
+//     const MyApp(),
+//   );
+// }
+//
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const MaterialApp(
+//       home: StdErr(),
+//     );
+//   }
+// }
 
 class StdErr extends StatefulWidget {
   const StdErr({super.key});
@@ -45,17 +45,18 @@ class _HomeScreenState extends State<StdErr> {
         backgroundColor: const Color.fromRGBO(238, 109, 109, 1),
       ),
       body: SingleChildScrollView(
-          child: SizedBox(
-        width: 20000,
-        child: Row(
-          children: <Widget>[
-            Expanded(
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(manageBotViewStderr()))),
-          ],
+        child: SizedBox(
+          width: 20000,
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(manageBotViewStderr()))),
+            ],
+          ),
         ),
-      )),
+      ),
     );
   }
 }
@@ -82,10 +83,12 @@ void _showConfirmationDialog(BuildContext context) {
             onPressed: () {
               Navigator.of(context).pop();
               deleteStderr();
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('已删除'),
-                duration: Duration(seconds: 3),
-              ));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('已删除'),
+                  duration: Duration(seconds: 3),
+                ),
+              );
             },
           ),
         ],

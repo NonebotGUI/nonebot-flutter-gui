@@ -2,20 +2,20 @@ import 'package:NonebotGUI/darts/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: ManageCli(),
-    );
-  }
-}
+// void main() {
+//   runApp(const MyApp());
+// }
+//
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const MaterialApp(
+//       home: ManageCli(),
+//     );
+//   }
+// }
 
 class ManageCli extends StatefulWidget {
   const ManageCli({super.key});
@@ -35,18 +35,24 @@ class _MyCustomFormState extends State<ManageCli> {
     for (String command in commands) {
       List<String> args = command.split(' ');
       String executable = args.removeAt(0);
-      Process process = await Process.start(executable, args,
-          runInShell: true, workingDirectory: manageBotReadCfgPath());
+      Process process = await Process.start(
+        executable,
+        args,
+        runInShell: true,
+        workingDirectory: manageBotReadCfgPath(),
+      );
       process.stdout.transform(systemEncoding.decoder).listen((data) {
         packageOutput.text += data;
         packageOutput.selection = TextSelection.fromPosition(
-            TextPosition(offset: packageOutput.text.length));
+          TextPosition(offset: packageOutput.text.length),
+        );
         setState(() {});
       });
       process.stderr.transform(systemEncoding.decoder).listen((data) {
         packageOutput.text += data;
         packageOutput.selection = TextSelection.fromPosition(
-            TextPosition(offset: packageOutput.text.length));
+          TextPosition(offset: packageOutput.text.length),
+        );
         setState(() {});
       });
       await process.exitCode;
@@ -59,21 +65,22 @@ class _MyCustomFormState extends State<ManageCli> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "管理CLI",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: userColorMode() == 'light'
-          ? const Color.fromRGBO(238, 109, 109, 1)
-          : const Color.fromRGBO(127, 86, 151, 1),
+      appBar: AppBar(
+        title: const Text(
+          "管理CLI",
+          style: TextStyle(color: Colors.white),
         ),
-        body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: <Widget>[
-                Column(children: <Widget>[
+        backgroundColor: userColorMode() == 'light'
+            ? const Color.fromRGBO(238, 109, 109, 1)
+            : const Color.fromRGBO(127, 86, 151, 1),
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: <Widget>[
+              Column(
+                children: <Widget>[
                   //Text('cli-self管理',style: TextStyle(fontWeight: FontWeight.bold),),
                   TextField(
                     scrollPadding: const EdgeInsets.all(6),
@@ -87,77 +94,80 @@ class _MyCustomFormState extends State<ManageCli> {
                         ),
                       ),
                     ),
-                    onChanged: (value) {
-                      setState(() {
-                        package = value;
-                      });
-                    },
+                    onChanged: (value) => setState(() => package = value),
                   ),
                   Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            if (package != "") {
-                              managePackage('install', package);
-                            } else {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          if (package != "") {
+                            managePackage('install', package);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
                                 content: Text('请输入包名！'),
                                 duration: Duration(seconds: 3),
-                              ));
-                            }
-                          },
-                          style: TextButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
+                              ),
+                            );
+                          }
+                        },
+                        style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
-                          child: Text('安装软件包到cli',
-                              style: TextStyle(
-                                color: Colors.blue.shade700,
-                              )),
                         ),
-                        const SizedBox(
-                          width: 15,
+                        child: Text(
+                          '安装软件包到cli',
+                          style: TextStyle(
+                            color: Colors.blue.shade700,
+                          ),
                         ),
-                        TextButton(
-                          onPressed: () {
-                            if (package != "") {
-                              managePackage('uninstall', package);
-                            } else {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
+                      ),
+                      const SizedBox(width: 15),
+                      TextButton(
+                        onPressed: () {
+                          if (package != "") {
+                            managePackage('uninstall', package);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
                                 content: Text('请输入包名！'),
                                 duration: Duration(seconds: 3),
-                              ));
-                            }
-                          },
-                          style: TextButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
+                              ),
+                            );
+                          }
+                        },
+                        style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
-                          child: const Text('卸载cli中的软件包',
-                              style: TextStyle(
-                                color: Color.fromRGBO(238, 109, 109, 1),
-                              )),
                         ),
-                        TextButton(
-                          onPressed: () {
-                            managePackage('update', 'update');
-                          },
-                          style: TextButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
+                        child: const Text(
+                          '卸载cli中的软件包',
+                          style: TextStyle(
+                            color: Color.fromRGBO(238, 109, 109, 1),
                           ),
-                          child: Text('更新cli',
-                              style: TextStyle(
-                                color: Colors.green.shade700,
-                              )),
                         ),
-                      ]),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          managePackage('update', 'update');
+                        },
+                        style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                        child: Text(
+                          '更新cli',
+                          style: TextStyle(
+                            color: Colors.green.shade700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   SizedBox(
                     height: 400,
                     width: 2000,
@@ -173,11 +183,13 @@ class _MyCustomFormState extends State<ManageCli> {
                         ),
                       ),
                     ),
-                  )
-                ])
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

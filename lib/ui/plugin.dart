@@ -7,20 +7,20 @@ import 'package:NonebotGUI/assets/my_flutter_app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:NonebotGUI/darts/utils.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: PluginStore(),
-    );
-  }
-}
+// void main() {
+//   runApp(const MyApp());
+// }
+//
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const MaterialApp(
+//       home: PluginStore(),
+//     );
+//   }
+// }
 
 class PluginStore extends StatefulWidget {
   const PluginStore({super.key});
@@ -86,17 +86,17 @@ class _MyHomePageState extends State<PluginStore> {
     setState(() {});
   }
 
-  void _searchPlugins(value) {
-    setState(() {
-      //根据名字，描述等搜索
-      search = data.where((plugin) {
-        return plugin['name'].toLowerCase().contains(value.toLowerCase()) ||
-            plugin['desc'].toLowerCase().contains(value.toLowerCase()) ||
-            plugin['module_name'].toLowerCase().contains(value.toLowerCase()) ||
-            plugin['author'].toLowerCase().contains(value.toLowerCase());
-      }).toList();
-    });
-  }
+  void _searchPlugins(value) => setState(() {
+        //根据名字，描述等搜索
+        search = data.where((plugin) {
+          return plugin['name'].toLowerCase().contains(value.toLowerCase()) ||
+              plugin['desc'].toLowerCase().contains(value.toLowerCase()) ||
+              plugin['module_name']
+                  .toLowerCase()
+                  .contains(value.toLowerCase()) ||
+              plugin['author'].toLowerCase().contains(value.toLowerCase());
+        }).toList();
+      });
 
   @override
   void initState() {
@@ -111,13 +111,15 @@ class _MyHomePageState extends State<PluginStore> {
         title: TextField(
           controller: _searchController,
           decoration: const InputDecoration(
-              hintText: '搜索插件...', hintStyle: TextStyle(color: Colors.white)),
+            hintText: '搜索插件...',
+            hintStyle: TextStyle(color: Colors.white),
+          ),
           style: const TextStyle(color: Colors.white),
           onChanged: _searchPlugins,
         ),
         backgroundColor: userColorMode() == 'light'
-          ? const Color.fromRGBO(238, 109, 109, 1)
-          : const Color.fromRGBO(127, 86, 151, 1),
+            ? const Color.fromRGBO(238, 109, 109, 1)
+            : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: data.isEmpty
           ? Center(
@@ -144,9 +146,11 @@ class _MyHomePageState extends State<PluginStore> {
                             children: <Widget>[
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text(plugins['name'],
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold)),
+                                child: Text(
+                                  plugins['name'],
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -182,101 +186,8 @@ class _MyHomePageState extends State<PluginStore> {
                                       showDialog(
                                         context: context,
                                         barrierDismissible: false,
-                                        builder: (BuildContext context) {
-                                          String name = plugins['module_name'];
-                                          _install(name);
-                                          return Material(
-                                            color: Colors.transparent,
-                                            child: Center(
-                                              child: AlertDialog(
-                                                title: const Text('正在安装插件'),
-                                                content: SizedBox(
-                                                  height: 600,
-                                                  width: 800,
-                                                  child: StreamBuilder<String>(
-                                                    stream:
-                                                        pluginOutputController
-                                                            .stream,
-                                                    builder: (BuildContext
-                                                            context,
-                                                        AsyncSnapshot<String>
-                                                            snapshot) {
-                                                      return Card(
-                                                        color: const Color
-                                                            .fromARGB(
-                                                            255, 31, 28, 28),
-                                                        child:
-                                                            SingleChildScrollView(
-                                                          child: StreamBuilder<
-                                                              String>(
-                                                            stream:
-                                                                pluginOutputController
-                                                                    .stream,
-                                                            builder: (BuildContext
-                                                                    context,
-                                                                AsyncSnapshot<
-                                                                        String>
-                                                                    snapshot) {
-                                                              if (snapshot
-                                                                  .hasData) {
-                                                                final newText =
-                                                                    pluginOutput
-                                                                            .text +
-                                                                        (snapshot.data ??
-                                                                            '');
-                                                                pluginOutput
-                                                                        .text =
-                                                                    newText;
-                                                              }
-                                                              return Card(
-                                                                color: const Color
-                                                                    .fromARGB(
-                                                                    255,
-                                                                    31,
-                                                                    28,
-                                                                    28),
-                                                                child:
-                                                                    SingleChildScrollView(
-                                                                  child:
-                                                                      Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            8.0),
-                                                                    child: Text(
-                                                                      pluginOutput
-                                                                          .text,
-                                                                      style: const TextStyle(
-                                                                          color:
-                                                                              Colors.white,),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Text(
-                                                      '关闭窗口',
-                                                      style: TextStyle(
-                                                          color:
-                                                              Colors.grey[800]),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
+                                        builder: (BuildContext context) =>
+                                            installingPluginDialog(plugins),
                                       );
                                     },
                                     tooltip: '安装插件',
@@ -310,6 +221,69 @@ class _MyHomePageState extends State<PluginStore> {
                 );
               },
             ),
+    );
+  }
+
+  Material installingPluginDialog(Map plugins) {
+    String name = plugins['module_name'];
+    _install(name);
+    return Material(
+      color: Colors.transparent,
+      child: Center(
+        child: AlertDialog(
+          title: const Text('正在安装插件'),
+          content: SizedBox(
+            height: 600,
+            width: 800,
+            child: StreamBuilder<String>(
+              stream: pluginOutputController.stream,
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                return Card(
+                  color: const Color.fromARGB(255, 31, 28, 28),
+                  child: SingleChildScrollView(
+                    child: StreamBuilder<String>(
+                      stream: pluginOutputController.stream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        if (snapshot.hasData) {
+                          final newText =
+                              pluginOutput.text + (snapshot.data ?? '');
+                          pluginOutput.text = newText;
+                        }
+                        return Card(
+                          color: const Color.fromARGB(255, 31, 28, 28),
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                pluginOutput.text,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                '关闭窗口',
+                style: TextStyle(color: Colors.grey[800]),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

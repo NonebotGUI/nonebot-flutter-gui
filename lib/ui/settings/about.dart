@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 
 class About extends StatefulWidget {
+  const About({super.key});
 
   @override
   State<About> createState() => _MoreState();
@@ -186,7 +187,7 @@ class _MoreState extends State<About> {
                   child: Align(
                 alignment: Alignment.centerRight,
                 child: FutureBuilder<String>(
-                  future: getpyver(),
+                  future: getPyVer(),
                   builder:
                       (BuildContext context, AsyncSnapshot<String> snapshot) {
                     if (snapshot.hasData) {

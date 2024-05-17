@@ -2,20 +2,20 @@ import 'package:NonebotGUI/darts/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: CreatingBot(),
-    );
-  }
-}
+// void main() {
+//   runApp(const MyApp());
+// }
+//
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return const MaterialApp(
+//       home: CreatingBot(),
+//     );
+//   }
+// }
 
 class CreatingBot extends StatefulWidget {
   const CreatingBot({super.key});
@@ -63,7 +63,8 @@ class _MyCustomFormState extends State<CreatingBot> {
       process.stdout.transform(systemEncoding.decoder).listen((data) {
         _outputController.text += data;
         _outputController.selection = TextSelection.fromPosition(
-            TextPosition(offset: _outputController.text.length));
+          TextPosition(offset: _outputController.text.length),
+        );
         // 更新UI
         setState(() {});
       });
@@ -71,7 +72,8 @@ class _MyCustomFormState extends State<CreatingBot> {
       process.stderr.transform(systemEncoding.decoder).listen((data) {
         _outputController.text += data;
         _outputController.selection = TextSelection.fromPosition(
-            TextPosition(offset: _outputController.text.length));
+          TextPosition(offset: _outputController.text.length),
+        );
         setState(() {});
       });
 
@@ -88,8 +90,8 @@ class _MyCustomFormState extends State<CreatingBot> {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: userColorMode() == 'light'
-          ? const Color.fromRGBO(238, 109, 109, 1)
-          : const Color.fromRGBO(127, 86, 151, 1),
+            ? const Color.fromRGBO(238, 109, 109, 1)
+            : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: Container(
         padding: const EdgeInsets.all(16.0),
@@ -115,162 +117,182 @@ class _MyCustomFormState extends State<CreatingBot> {
             Row(
               children: <Widget>[
                 const Expanded(
-                    child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Bot名称',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Bot名称',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                )),
+                ),
                 Expanded(
-                    child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(createBotReadConfigName()),
-                ))
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(createBotReadConfigName()),
+                  ),
+                )
               ],
             ),
             const SizedBox(height: 8),
             Row(children: <Widget>[
               const Expanded(
-                  child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Bot路径',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Bot路径',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
-              )),
+              ),
               Expanded(
-                  child: Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  createBotReadConfigPath(),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    createBotReadConfigPath(),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
                 ),
-              ))
+              ),
             ]),
             const SizedBox(height: 8),
             Row(children: <Widget>[
               const Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        '虚拟环境',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ))),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '虚拟环境',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
               Expanded(
-                  child: Align(
-                alignment: Alignment.centerRight,
-                child: Text(createBotReadConfigVENV()),
-              ))
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(createBotReadConfigVENV()),
+                ),
+              ),
             ]),
             const SizedBox(height: 8),
             Row(children: <Widget>[
               const Expanded(
-                  child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        '依赖',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ))),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '依赖',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
               Expanded(
-                  child: Align(
-                alignment: Alignment.centerRight,
-                child: Text(createBotReadConfigDep()),
-              ))
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(createBotReadConfigDep()),
+                ),
+              ),
             ]),
             Row(children: <Widget>[
               Expanded(
-                  child: Align(
-                alignment: Alignment.centerLeft,
-                child: FutureBuilder<String>(
-                  future: getpyver(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.hasData) {
-                      return const Text(
-                        'Python版本',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      );
-                    } else if (snapshot.hasError) {
-                      return const Text(
-                        'Python版本',
-                        style: TextStyle(
-                            color: Colors.red, fontWeight: FontWeight.bold),
-                      );
-                    } else {
-                      return const Text(
-                        'Python版本',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      );
-                    }
-                  },
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: FutureBuilder<String>(
+                    future: getPyVer(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      if (snapshot.hasData) {
+                        return const Text(
+                          'Python版本',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      } else if (snapshot.hasError) {
+                        return const Text(
+                          'Python版本',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      } else {
+                        return const Text(
+                          'Python版本',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ),
-              )),
+              ),
               Expanded(
-                  child: Align(
-                alignment: Alignment.centerRight,
-                child: FutureBuilder<String>(
-                  future: getpyver(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.hasData) {
-                      return Text(snapshot.data.toString());
-                    } else if (snapshot.hasError) {
-                      return const Text('未检测到Python');
-                    } else {
-                      return const Text('获取中...');
-                    }
-                  },
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: FutureBuilder<String>(
+                    future: getPyVer(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(snapshot.data.toString());
+                      } else if (snapshot.hasError) {
+                        return const Text('未检测到Python');
+                      } else {
+                        return const Text('获取中...');
+                      }
+                    },
+                  ),
                 ),
-              ))
+              )
             ]),
             Row(children: <Widget>[
               Expanded(
-                  child: Align(
-                alignment: Alignment.centerLeft,
-                child: FutureBuilder<String>(
-                  future: getnbcliver(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.hasData) {
-                      return const Text(
-                        'nb-cli版本',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      );
-                    } else if (snapshot.hasError) {
-                      return const Text(
-                        'nb-cli版本',
-                        style: TextStyle(
-                            color: Colors.red, fontWeight: FontWeight.bold),
-                      );
-                    } else {
-                      return const Text(
-                        'nb-cli版本',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      );
-                    }
-                  },
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: FutureBuilder<String>(
+                    future: getnbcliver(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      if (snapshot.hasData) {
+                        return const Text(
+                          'nb-cli版本',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        );
+                      } else if (snapshot.hasError) {
+                        return const Text(
+                          'nb-cli版本',
+                          style: TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold),
+                        );
+                      } else {
+                        return const Text(
+                          'nb-cli版本',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        );
+                      }
+                    },
+                  ),
                 ),
-              )),
+              ),
               Expanded(
-                  child: Align(
-                alignment: Alignment.centerRight,
-                child: FutureBuilder<String>(
-                  future: getnbcliver(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.hasData) {
-                      return Text(
-                          snapshot.data.toString().replaceAll('nb:', ''));
-                    } else if (snapshot.hasError) {
-                      return const Text('未检测到nb-cli');
-                    } else {
-                      return const Text('获取中...');
-                    }
-                  },
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: FutureBuilder<String>(
+                    future: getnbcliver(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(
+                            snapshot.data.toString().replaceAll('nb:', ''));
+                      } else if (snapshot.hasError) {
+                        return const Text('未检测到nb-cli');
+                      } else {
+                        return const Text('获取中...');
+                      }
+                    },
+                  ),
                 ),
-              ))
+              ),
             ]),
             const Divider(
               height: 20,
@@ -282,21 +304,23 @@ class _MyCustomFormState extends State<CreatingBot> {
             const Center(child: Text('控制台输出')),
             const SizedBox(height: 4),
             Expanded(
-                child: SizedBox(
-              height: 400,
-              width: 2000,
-              child: Card(
-                color: const Color.fromARGB(255, 31, 28, 28),
-                child: SingleChildScrollView(
+              child: SizedBox(
+                height: 400,
+                width: 2000,
+                child: Card(
+                  color: const Color.fromARGB(255, 31, 28, 28),
+                  child: SingleChildScrollView(
                     child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                    style: const TextStyle(color: Colors.white),
-                    _outputController.text,
+                      padding: const EdgeInsets.all(12.0),
+                      child: Text(
+                        style: const TextStyle(color: Colors.white),
+                        _outputController.text,
+                      ),
+                    ),
                   ),
-                )),
+                ),
               ),
-            )),
+            ),
           ],
         ),
       ),
