@@ -9,36 +9,34 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 void main() {
+  createMainFolder();
   runApp(
-    const MyApp(),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+    MaterialApp(
       home: const HomeScreen(),
       theme: _getTheme(userColorMode()),
-    );
+    ),
+  );
+}
+//
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return
+//   }
+// }
+
+ThemeData _getTheme(mode) {
+  switch (mode) {
+    case 'light':
+      return ThemeData.light();
+    case 'dark':
+      return ThemeData.dark();
+    default:
+      return ThemeData.light();
   }
 }
-
-
-  ThemeData _getTheme(mode) {
-    switch (mode) {
-      case 'light':
-        return ThemeData.light();
-      case 'dark':
-        return ThemeData.dark();
-      default:
-        return ThemeData.light();
-    }
-  }
-
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -53,7 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    createMainFolder();
     refresh();
     _getTheme(userColorMode());
   }
@@ -106,8 +103,8 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: userColorMode() == 'light'
-          ? const Color.fromRGBO(238, 109, 109, 1)
-          : const Color.fromRGBO(127, 86, 151, 1),
+            ? const Color.fromRGBO(238, 109, 109, 1)
+            : const Color.fromRGBO(127, 86, 151, 1),
         leading: IconButton(
           icon: const Icon(Icons.menu),
           tooltip: '更多',
@@ -115,7 +112,6 @@ class _HomeScreenState extends State<HomeScreen> {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return const More();
             }));
-          
           },
           color: Colors.white,
         ),
@@ -211,8 +207,8 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         tooltip: '添加一个bot',
         backgroundColor: userColorMode() == 'light'
-          ? const Color.fromRGBO(238, 109, 109, 1)
-          : const Color.fromRGBO(127, 86, 151, 1),
+            ? const Color.fromRGBO(238, 109, 109, 1)
+            : const Color.fromRGBO(127, 86, 151, 1),
         shape: const CircleBorder(),
         child: const Icon(
           Icons.add,
@@ -222,4 +218,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

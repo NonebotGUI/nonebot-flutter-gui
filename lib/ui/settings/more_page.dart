@@ -51,7 +51,7 @@ class _HomeScreenState extends State<More> {
                     onTap: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return Settings();
+                        return const Settings();
                       }));
                     })),
             SizedBox(
