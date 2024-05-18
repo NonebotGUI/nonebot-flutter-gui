@@ -74,22 +74,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _readConfigFiles() async {
     Directory directory = Directory(configFolder);
-    List<FileSystemEntity> files = await directory.list().toList();
+    // 无敌了 文件夹不存在也不创建 全新的机子直接爆了
+    // DEBUG体验为零
+    if (!await directory.exists()) await directory.create();
+    try {
+      List<FileSystemEntity> files = await directory.list().toList();
 
-    configFileContentsName.clear();
-    configFileContentsPath.clear();
-    configFileContentsRun.clear();
-    configFileContentsTime.clear();
+      configFileContentsName.clear();
+      configFileContentsPath.clear();
+      configFileContentsRun.clear();
+      configFileContentsTime.clear();
 
-    for (FileSystemEntity file in files) {
-      if (file is File) {
-        String content = await file.readAsString();
-        Map<String, dynamic> jsonContent = json.decode(content);
-        configFileContentsName.add(jsonContent['name']);
-        configFileContentsPath.add(jsonContent['path']);
-        configFileContentsRun.add(jsonContent['isrunning']);
-        configFileContentsTime.add(jsonContent['time']);
+      for (FileSystemEntity file in files) {
+        if (file is File) {
+          String content = await file.readAsString();
+          Map<String, dynamic> jsonContent = json.decode(content);
+          configFileContentsName.add(jsonContent['name']);
+          configFileContentsPath.add(jsonContent['path']);
+          configFileContentsRun.add(jsonContent['isrunning']);
+          configFileContentsTime.add(jsonContent['time']);
+        }
       }
+    } catch (e) {
+      //TODO: 草泥马自己处理去 看的我要死了
     }
 
     setState(() {

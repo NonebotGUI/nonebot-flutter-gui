@@ -69,7 +69,7 @@ class _MyCustomFormState extends State<CreateBot> {
     final response =
         await http.get(Uri.parse('https://registry.nonebot.dev/adapters.json'));
     if (response.statusCode == 200) {
-      final decodedBody = systemEncoding.decode(response.bodyBytes);
+      final decodedBody = utf8.decode(response.bodyBytes);
       List<dynamic> adapters = json.decode(decodedBody);
       setState(() {
         adapterList = adapters;
