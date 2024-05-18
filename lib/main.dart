@@ -9,36 +9,34 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 void main() {
+  createMainFolder();
   runApp(
-    const MyApp(),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+    MaterialApp(
       home: const HomeScreen(),
       theme: _getTheme(userColorMode()),
-    );
+    ),
+  );
+}
+//
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return
+//   }
+// }
+
+ThemeData _getTheme(mode) {
+  switch (mode) {
+    case 'light':
+      return ThemeData.light();
+    case 'dark':
+      return ThemeData.dark();
+    default:
+      return ThemeData.light();
   }
 }
-
-
-  ThemeData _getTheme(mode) {
-    switch (mode) {
-      case 'light':
-        return ThemeData.light();
-      case 'dark':
-        return ThemeData.dark();
-      default:
-        return ThemeData.light();
-    }
-  }
-
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -53,7 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    createMainFolder();
     refresh();
     _getTheme(userColorMode());
   }
@@ -74,29 +71,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _readConfigFiles() async {
     Directory directory = Directory(configFolder);
-    // 无敌了 文件夹不存在也不创建 全新的机子直接爆了
-    // DEBUG体验为零
-    if (!await directory.exists()) await directory.create();
-    try {
-      List<FileSystemEntity> files = await directory.list().toList();
+    List<FileSystemEntity> files = await directory.list().toList();
 
-      configFileContentsName.clear();
-      configFileContentsPath.clear();
-      configFileContentsRun.clear();
-      configFileContentsTime.clear();
+    configFileContentsName.clear();
+    configFileContentsPath.clear();
+    configFileContentsRun.clear();
+    configFileContentsTime.clear();
 
-      for (FileSystemEntity file in files) {
-        if (file is File) {
-          String content = await file.readAsString();
-          Map<String, dynamic> jsonContent = json.decode(content);
-          configFileContentsName.add(jsonContent['name']);
-          configFileContentsPath.add(jsonContent['path']);
-          configFileContentsRun.add(jsonContent['isrunning']);
-          configFileContentsTime.add(jsonContent['time']);
-        }
+    for (FileSystemEntity file in files) {
+      if (file is File) {
+        String content = await file.readAsString();
+        Map<String, dynamic> jsonContent = json.decode(content);
+        configFileContentsName.add(jsonContent['name']);
+        configFileContentsPath.add(jsonContent['path']);
+        configFileContentsRun.add(jsonContent['isrunning']);
+        configFileContentsTime.add(jsonContent['time']);
       }
-    } catch (e) {
-      //TODO: 草泥马自己处理去 看的我要死了
     }
 
     setState(() {
@@ -113,8 +103,8 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: userColorMode() == 'light'
-          ? const Color.fromRGBO(238, 109, 109, 1)
-          : const Color.fromRGBO(127, 86, 151, 1),
+            ? const Color.fromRGBO(238, 109, 109, 1)
+            : const Color.fromRGBO(127, 86, 151, 1),
         leading: IconButton(
           icon: const Icon(Icons.menu),
           tooltip: '更多',
@@ -122,7 +112,6 @@ class _HomeScreenState extends State<HomeScreen> {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
               return const More();
             }));
-          
           },
           color: Colors.white,
         ),
@@ -218,8 +207,8 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         tooltip: '添加一个bot',
         backgroundColor: userColorMode() == 'light'
-          ? const Color.fromRGBO(238, 109, 109, 1)
-          : const Color.fromRGBO(127, 86, 151, 1),
+            ? const Color.fromRGBO(238, 109, 109, 1)
+            : const Color.fromRGBO(127, 86, 151, 1),
         shape: const CircleBorder(),
         child: const Icon(
           Icons.add,
@@ -229,4 +218,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
