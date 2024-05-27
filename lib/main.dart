@@ -1,19 +1,20 @@
 import 'dart:io';
+import 'package:NonebotGUI/darts/global.dart';
 import 'package:NonebotGUI/darts/utils.dart';
 import 'dart:convert';
 import 'package:NonebotGUI/ui/createbot.dart';
+import 'package:NonebotGUI/ui/import_bot.dart';
 import 'package:NonebotGUI/ui/settings/more_page.dart';
 import 'package:NonebotGUI/ui/manage_bot.dart';
-import 'package:NonebotGUI/ui/import_bot.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-void main() {
-  createMainFolder();
+void main() async{
+  userDir = await createMainFolder();
   runApp(
     MaterialApp(
       home: const HomeScreen(),
-      theme: _getTheme(userColorMode()),
+      theme: _getTheme(userColorMode(userDir)),
     ),
   );
 }
@@ -30,11 +31,77 @@ void main() {
 ThemeData _getTheme(mode) {
   switch (mode) {
     case 'light':
-      return ThemeData.light();
+      return ThemeData.light().copyWith(
+        primaryColor: const Color.fromRGBO(238, 109, 109, 1),
+        buttonTheme: const ButtonThemeData(
+          buttonColor: Color.fromRGBO(238, 109, 109, 1),
+        ),
+        checkboxTheme: CheckboxThemeData(
+          fillColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+            if (states.contains(MaterialState.selected)) {
+              return Color.fromRGBO(238, 109, 109, 1);
+            }
+            return Colors.white;
+          }),
+          checkColor: MaterialStateProperty.all(Colors.white),
+        ),
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: Color.fromRGBO(238, 109, 109, 1)
+        ),
+        appBarTheme: const AppBarTheme(
+          color: Color.fromRGBO(238, 109, 109, 1)
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Color.fromRGBO(238, 109, 109, 1)
+        ),
+        switchTheme: const SwitchThemeData(
+          trackColor: MaterialStatePropertyAll(Color.fromRGBO(238, 109, 109, 1))
+        )
+      );
     case 'dark':
-      return ThemeData.dark();
+      return ThemeData.dark().copyWith(
+        primaryColor: const Color.fromRGBO(127, 86, 151, 1),
+        buttonTheme: const ButtonThemeData(
+          buttonColor: Color.fromRGBO(127, 86, 151, 1),
+        ),
+        checkboxTheme: const CheckboxThemeData(
+          checkColor: MaterialStatePropertyAll(Color.fromRGBO(127, 86, 151, 1),)
+        ),
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: Color.fromRGBO(127, 86, 151, 1),
+        ),
+        appBarTheme: const AppBarTheme(
+          color: Color.fromRGBO(127, 86, 151, 1),
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Color.fromRGBO(127, 86, 151, 1)
+        ),
+        switchTheme: const SwitchThemeData(
+          trackColor: MaterialStatePropertyAll(Color.fromRGBO(127, 86, 151, 1))
+        )
+      );
     default:
-      return ThemeData.light();
+      return ThemeData.light().copyWith(
+        primaryColor: const Color.fromRGBO(238, 109, 109, 1),
+        buttonTheme: const ButtonThemeData(
+          buttonColor: Color.fromRGBO(238, 109, 109, 1)
+        ),
+        checkboxTheme: const CheckboxThemeData(
+          checkColor: MaterialStatePropertyAll(Color.fromRGBO(238, 109, 109, 1))
+        ),
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: Color.fromRGBO(238, 109, 109, 1)
+        ),
+        appBarTheme: const AppBarTheme(
+          color: Color.fromRGBO(238, 109, 109, 1)
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Color.fromRGBO(238, 109, 109, 1)
+        ),
+        switchTheme: const SwitchThemeData(
+          trackColor: MaterialStatePropertyAll(Color.fromRGBO(238, 109, 109, 1))
+        )
+      );
   }
 }
 
@@ -46,20 +113,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final String configFolder = '${createMainFolderBots()}';
+  final String configFolder = '${createMainFolderBots(userDir)}';
 
   @override
   void initState() {
     super.initState();
     refresh();
-    _getTheme(userColorMode());
   }
 
   void refresh() {
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 3), (timer) {
       _readConfigFiles();
       setState(() {
-        _getTheme(userColorMode());
       });
     });
   }
@@ -90,7 +155,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     setState(() {
-      _getTheme(userColorMode());
     });
   }
 
@@ -99,12 +163,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Nonebot GUI',
+          'NonebotGUI',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: userColorMode() == 'light'
-            ? const Color.fromRGBO(238, 109, 109, 1)
-            : const Color.fromRGBO(127, 86, 151, 1),
         leading: IconButton(
           icon: const Icon(Icons.menu),
           tooltip: '更多',
@@ -130,7 +191,6 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.refresh),
             onPressed: () {
               _readConfigFiles();
-              createMainFolder();
             },
             tooltip: "刷新列表",
             color: Colors.white,
@@ -167,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(color: Colors.green),
                       ),
                       onTap: () {
-                        manageBotOnOpenCfg(name, time);
+                        manageBotOnOpenCfg(userDir, name, time);
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
                           createLog(path);
@@ -186,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         "未运行",
                       ),
                       onTap: () {
-                        manageBotOnOpenCfg(name, time);
+                        manageBotOnOpenCfg(userDir, name, time);
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
                           createLog(path);
@@ -206,9 +266,6 @@ class _HomeScreenState extends State<HomeScreen> {
           }));
         },
         tooltip: '添加一个bot',
-        backgroundColor: userColorMode() == 'light'
-            ? const Color.fromRGBO(238, 109, 109, 1)
-            : const Color.fromRGBO(127, 86, 151, 1),
         shape: const CircleBorder(),
         child: const Icon(
           Icons.add,
