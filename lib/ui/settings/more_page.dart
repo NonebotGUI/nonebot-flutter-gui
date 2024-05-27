@@ -1,7 +1,6 @@
 import 'package:NonebotGUI/ui/settings/about.dart';
 import 'package:NonebotGUI/ui/settings/setting.dart';
 import 'package:flutter/material.dart';
-import 'package:NonebotGUI/darts/utils.dart';
 
 //这段不知道干嘛用的 如果是Test应该放到 /test 文件夹
 // void main() {
@@ -30,9 +29,6 @@ class _HomeScreenState extends State<More> {
           "更多",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: userColorMode() == 'light'
-          ? const Color.fromRGBO(238, 109, 109, 1)
-          : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -85,9 +81,13 @@ class _HomeScreenState extends State<More> {
                     onTap: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return const LicensePage();
+                        return LicensePage(
+                        applicationIcon: Image.asset('lib/assets/logo.png'),
+                        applicationName: 'NonebotGUI',
+                        applicationVersion: '0.1.7',
+                        );
                       }));
-                    })),          
+                    })),
           ],
         ),
       ),

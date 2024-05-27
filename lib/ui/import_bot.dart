@@ -1,6 +1,7 @@
 import 'package:NonebotGUI/darts/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:NonebotGUI/darts/global.dart';
 
 // void main() {
 //   runApp(
@@ -48,14 +49,11 @@ class _HomeScreenState extends State<ImportBot> {
           '导入Bot',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: userColorMode() == 'light'
-            ? const Color.fromRGBO(238, 109, 109, 1)
-            : const Color.fromRGBO(127, 86, 151, 1),
         actions: <Widget>[
           IconButton(
             onPressed: () {
               if (_selectedFolderPath.toString() != 'null') {
-                importbot(name, _selectedFolderPath.toString());
+                importbot(userDir, name, _selectedFolderPath.toString());
                 Navigator.of(context).popUntil((route) => route.isFirst);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(

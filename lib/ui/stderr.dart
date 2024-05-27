@@ -1,4 +1,5 @@
 import 'package:NonebotGUI/darts/utils.dart';
+import 'package:NonebotGUI/darts/global.dart';
 import 'package:flutter/material.dart';
 
 // void main() {
@@ -31,7 +32,7 @@ class _HomeScreenState extends State<StdErr> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "${manageBotReadCfgName()} - nbgui_stderr.log",
+          "${manageBotReadCfgName(userDir)} - nbgui_stderr.log",
           style: const TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
@@ -52,7 +53,7 @@ class _HomeScreenState extends State<StdErr> {
               Expanded(
                   child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(manageBotViewStderr()))),
+                      child: Text(manageBotViewStderr(userDir)))),
             ],
           ),
         ),
@@ -82,7 +83,7 @@ void _showConfirmationDialog(BuildContext context) {
             ),
             onPressed: () {
               Navigator.of(context).pop();
-              deleteStderr();
+              deleteStderr(userDir);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('已删除'),

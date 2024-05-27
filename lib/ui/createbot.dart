@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
-
+import 'package:NonebotGUI/darts/global.dart';
 import 'package:NonebotGUI/darts/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -122,9 +121,6 @@ class _MyCustomFormState extends State<CreateBot> {
     return drivers.keys.map((driver) {
       return CheckboxListTile(
         title: Text(driver),
-        activeColor: userColorMode() == 'light'
-            ? const Color.fromRGBO(238, 109, 109, 1)
-            : const Color.fromRGBO(127, 86, 151, 1),
         value: drivers[driver],
         onChanged: (bool? value) => onDriversChanged(driver, value!),
       );
@@ -164,7 +160,7 @@ class _MyCustomFormState extends State<CreateBot> {
           "创建Bot",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: userColorMode() == 'light'
+        backgroundColor: userColorMode(userDir) == 'light'
             ? const Color.fromRGBO(238, 109, 109, 1)
             : const Color.fromRGBO(127, 86, 151, 1),
         actions: <Widget>[
@@ -172,6 +168,7 @@ class _MyCustomFormState extends State<CreateBot> {
             onPressed: () {
               if (_selectedFolderPath.toString() != 'null') {
                 createBotWriteConfig(
+                  userDir,
                   name,
                   _selectedFolderPath,
                   isVENV,
@@ -182,10 +179,12 @@ class _MyCustomFormState extends State<CreateBot> {
                   dropDownValuePluginDir,
                 );
                 createBotWriteConfigRequirement(
+                  userDir,
                   buildSelectedDriverOptions(),
                   buildSelectedAdapterOptions(),
                 );
                 createFolder(
+                  userDir,
                   _selectedFolderPath,
                   name,
                   dropDownValuePluginDir,
@@ -354,9 +353,6 @@ class _MyCustomFormState extends State<CreateBot> {
                       child: Switch(
                         value: isVENV,
                         onChanged: _toggleVenv,
-                        activeColor: userColorMode() == 'light'
-                            ? const Color.fromRGBO(238, 109, 109, 1)
-                            : const Color.fromRGBO(127, 86, 151, 1),
                         focusColor: Colors.black,
                         inactiveTrackColor: Colors.grey,
                       ),
@@ -381,9 +377,6 @@ class _MyCustomFormState extends State<CreateBot> {
                       child: Switch(
                         value: isDep,
                         onChanged: _toggleDep,
-                        activeColor: userColorMode() == 'light'
-                            ? const Color.fromRGBO(238, 109, 109, 1)
-                            : const Color.fromRGBO(127, 86, 151, 1),
                         focusColor: Colors.black,
                         inactiveTrackColor: Colors.grey,
                       ),
@@ -422,11 +415,8 @@ class _MyCustomFormState extends State<CreateBot> {
               Column(
                 children: [
                   if (loadAdapter)
-                    Center(
+                    const Center(
                       child: CircularProgressIndicator(
-                        color: userColorMode() == 'light'
-                            ? const Color.fromRGBO(238, 109, 109, 1)
-                            : const Color.fromRGBO(127, 86, 151, 1),
                       ),
                     )
                   else
@@ -444,13 +434,9 @@ class _MyCustomFormState extends State<CreateBot> {
                             .replaceAll('-v12', '.v12');
                         String showText = '$name($moduleName)';
                         return CheckboxListTile(
-                          activeColor: userColorMode() == 'light'
-                              ? const Color.fromRGBO(238, 109, 109, 1)
-                              : const Color.fromRGBO(127, 86, 151, 1),
                           title: Text(showText),
                           value: adapterMap[name],
-                          onChanged: (bool? value) =>
-                              onAdaptersChanged(name, value!),
+                          onChanged: (bool? value) => onAdaptersChanged(name, value!),
                         );
                       }).toList(),
                     ),

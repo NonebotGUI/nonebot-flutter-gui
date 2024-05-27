@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:NonebotGUI/assets/my_flutter_app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:NonebotGUI/darts/utils.dart';
+import 'package:NonebotGUI/darts/global.dart';
 
 // void main() {
 //   runApp(const MyApp());
@@ -36,7 +37,7 @@ class _MyHomePageState extends State<AdapterStore> {
   final adapterOutputController = StreamController<String>.broadcast();
   void manageAdapter(String manage, String name) async {
     adapterOutput.clear();
-    List<String> commands = [manageCliAdapter(manage, name)];
+    List<String> commands = [manageCliAdapter(userDir, manage, name)];
     for (String command in commands) {
       List<String> args = command.split(' ');
       String executable = args.removeAt(0);
@@ -44,7 +45,7 @@ class _MyHomePageState extends State<AdapterStore> {
         executable,
         args,
         runInShell: true,
-        workingDirectory: manageBotReadCfgPath(),
+        workingDirectory: manageBotReadCfgPath(userDir),
       );
       process.stdout
           .transform(systemEncoding.decoder)
@@ -120,9 +121,6 @@ class _MyHomePageState extends State<AdapterStore> {
           style: const TextStyle(color: Colors.white),
           onChanged: _searchAdapters,
         ),
-        backgroundColor: userColorMode() == 'light'
-            ? const Color.fromRGBO(238, 109, 109, 1)
-            : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: data.isEmpty
           ? Center(
@@ -279,7 +277,7 @@ class _MyHomePageState extends State<AdapterStore> {
               },
               child: Text(
                 '关闭窗口',
-                style: TextStyle(color: Colors.grey[800]),
+                style: TextStyle(color: Colors.red[400]),
               ),
             )
           ],

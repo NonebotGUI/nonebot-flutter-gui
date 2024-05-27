@@ -1,7 +1,7 @@
 import 'package:NonebotGUI/darts/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
-
+import 'package:NonebotGUI/darts/global.dart';
 // void main() {
 //   runApp(const MyApp());
 // }
@@ -31,7 +31,7 @@ class _MyCustomFormState extends State<ManageCli> {
   final packageOutput = TextEditingController();
   void managePackage(manage, name) async {
     packageOutput.clear();
-    List<String> commands = [manageCliSelf(manage, name)];
+    List<String> commands = [manageCliSelf(userDir, manage, name)];
     for (String command in commands) {
       List<String> args = command.split(' ');
       String executable = args.removeAt(0);
@@ -39,7 +39,7 @@ class _MyCustomFormState extends State<ManageCli> {
         executable,
         args,
         runInShell: true,
-        workingDirectory: manageBotReadCfgPath(),
+        workingDirectory: manageBotReadCfgPath(userDir),
       );
       process.stdout.transform(systemEncoding.decoder).listen((data) {
         packageOutput.text += data;
@@ -70,9 +70,6 @@ class _MyCustomFormState extends State<ManageCli> {
           "管理CLI",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: userColorMode() == 'light'
-            ? const Color.fromRGBO(238, 109, 109, 1)
-            : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: SingleChildScrollView(
         child: Container(

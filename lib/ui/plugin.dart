@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:NonebotGUI/darts/global.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:NonebotGUI/assets/my_flutter_app_icons.dart';
@@ -36,7 +37,7 @@ class _MyHomePageState extends State<PluginStore> {
   final pluginOutputController = StreamController<String>.broadcast();
   void managePlugin(String manage, String name) async {
     pluginOutput.clear();
-    List<String> commands = [manageCliPlugin(manage, name)];
+    List<String> commands = [manageCliPlugin(userDir, manage, name)];
     for (String command in commands) {
       List<String> args = command.split(' ');
       String executable = args.removeAt(0);
@@ -44,7 +45,7 @@ class _MyHomePageState extends State<PluginStore> {
         executable,
         args,
         runInShell: true,
-        workingDirectory: manageBotReadCfgPath(),
+        workingDirectory: manageBotReadCfgPath(userDir),
       );
       process.stdout
           .transform(systemEncoding.decoder)
@@ -91,9 +92,7 @@ class _MyHomePageState extends State<PluginStore> {
         search = data.where((plugin) {
           return plugin['name'].toLowerCase().contains(value.toLowerCase()) ||
               plugin['desc'].toLowerCase().contains(value.toLowerCase()) ||
-              plugin['module_name']
-                  .toLowerCase()
-                  .contains(value.toLowerCase()) ||
+              plugin['module_name'].toLowerCase().contains(value.toLowerCase()) ||
               plugin['author'].toLowerCase().contains(value.toLowerCase());
         }).toList();
       });
@@ -117,9 +116,6 @@ class _MyHomePageState extends State<PluginStore> {
           style: const TextStyle(color: Colors.white),
           onChanged: _searchPlugins,
         ),
-        backgroundColor: userColorMode() == 'light'
-            ? const Color.fromRGBO(238, 109, 109, 1)
-            : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: data.isEmpty
           ? Center(
@@ -278,7 +274,7 @@ class _MyHomePageState extends State<PluginStore> {
               },
               child: Text(
                 '关闭窗口',
-                style: TextStyle(color: Colors.grey[800]),
+                style: TextStyle(color: Colors.red[400]),
               ),
             )
           ],

@@ -1,6 +1,7 @@
 import 'package:NonebotGUI/darts/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:NonebotGUI/darts/global.dart';
 
 // void main() {
 //   runApp(const MyApp());
@@ -31,11 +32,10 @@ class _MyCustomFormState extends State<CreatingBot> {
 
   void _executeCommands() async {
     //读取配置文件
-    String cfg = createBotReadConfig();
+    String cfg = createBotReadConfig(userDir);
     List<String> arg = cfg.split(',');
     String name = arg[0];
     String path = arg[1];
-    //保留备用
     String venv = arg[2];
     String dep = arg[3];
 
@@ -45,12 +45,12 @@ class _MyCustomFormState extends State<CreatingBot> {
       'echo 开始创建Bot：$name',
       'echo 读取配置...',
       createVENVEcho(path, name),
-      createVENV(path, name, venv),
+      createVENV(userDir, path, name, venv),
       'echo 开始安装依赖...',
-      installBot(path, name, venv, dep),
-      writePyProject(path, name),
-      writeENV(path, name),
-      writebot(name, path),
+      installBot(userDir, path, name, venv, dep),
+      writePyProject(userDir, path, name),
+      writeENV(userDir, path, name),
+      writebot(userDir, name, path),
       'echo 安装完成，可退出'
     ];
 
@@ -89,9 +89,6 @@ class _MyCustomFormState extends State<CreatingBot> {
           "确认创建",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: userColorMode() == 'light'
-            ? const Color.fromRGBO(238, 109, 109, 1)
-            : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: Container(
         padding: const EdgeInsets.all(16.0),
@@ -128,7 +125,7 @@ class _MyCustomFormState extends State<CreatingBot> {
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerRight,
-                    child: Text(createBotReadConfigName()),
+                    child: Text(createBotReadConfigName(userDir)),
                   ),
                 )
               ],
@@ -148,7 +145,7 @@ class _MyCustomFormState extends State<CreatingBot> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    createBotReadConfigPath(),
+                    createBotReadConfigPath(userDir),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
@@ -169,7 +166,7 @@ class _MyCustomFormState extends State<CreatingBot> {
               Expanded(
                 child: Align(
                   alignment: Alignment.centerRight,
-                  child: Text(createBotReadConfigVENV()),
+                  child: Text(createBotReadConfigVENV(userDir)),
                 ),
               ),
             ]),
@@ -187,7 +184,7 @@ class _MyCustomFormState extends State<CreatingBot> {
               Expanded(
                 child: Align(
                   alignment: Alignment.centerRight,
-                  child: Text(createBotReadConfigDep()),
+                  child: Text(createBotReadConfigDep(userDir)),
                 ),
               ),
             ]),
@@ -196,7 +193,7 @@ class _MyCustomFormState extends State<CreatingBot> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: FutureBuilder<String>(
-                    future: getPyVer(),
+                    future: getPyVer(userDir),
                     builder:
                         (BuildContext context, AsyncSnapshot<String> snapshot) {
                       if (snapshot.hasData) {
@@ -230,7 +227,7 @@ class _MyCustomFormState extends State<CreatingBot> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: FutureBuilder<String>(
-                    future: getPyVer(),
+                    future: getPyVer(userDir),
                     builder:
                         (BuildContext context, AsyncSnapshot<String> snapshot) {
                       if (snapshot.hasData) {
@@ -250,7 +247,7 @@ class _MyCustomFormState extends State<CreatingBot> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: FutureBuilder<String>(
-                    future: getnbcliver(),
+                    future: getnbcliver(userDir),
                     builder:
                         (BuildContext context, AsyncSnapshot<String> snapshot) {
                       if (snapshot.hasData) {
@@ -278,7 +275,7 @@ class _MyCustomFormState extends State<CreatingBot> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: FutureBuilder<String>(
-                    future: getnbcliver(),
+                    future: getnbcliver(userDir),
                     builder:
                         (BuildContext context, AsyncSnapshot<String> snapshot) {
                       if (snapshot.hasData) {

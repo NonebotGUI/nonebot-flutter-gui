@@ -1,4 +1,4 @@
-package com.example.NonebotGUI
+package com.nightwind.NonebotGUI
 
 import io.flutter.embedding.android.FlutterActivity
 

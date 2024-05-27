@@ -4,6 +4,7 @@ import 'package:NonebotGUI/assets/my_flutter_app_icons.dart';
 import 'dart:io' show Platform;
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:NonebotGUI/darts/global.dart';
 
 class About extends StatefulWidget {
   const About({super.key});
@@ -42,9 +43,6 @@ class _MoreState extends State<About> {
             "关于",
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: userColorMode() == 'light'
-          ? const Color.fromRGBO(238, 109, 109, 1)
-          : const Color.fromRGBO(127, 86, 151, 1),
           actions: <Widget>[
             IconButton(
               onPressed: () {
@@ -109,7 +107,7 @@ class _MoreState extends State<About> {
                   child: Align(
                 alignment: Alignment.centerRight,
                 child: InkWell(
-                  child: const Text('0.1.6'),
+                  child: const Text('0.1.7'),
                   onTap: () {
                     if (showImage) {
                       showDialog(
@@ -187,7 +185,7 @@ class _MoreState extends State<About> {
                   child: Align(
                 alignment: Alignment.centerRight,
                 child: FutureBuilder<String>(
-                  future: getPyVer(),
+                  future: getPyVer(userDir),
                   builder:
                       (BuildContext context, AsyncSnapshot<String> snapshot) {
                     if (snapshot.hasData) {
@@ -217,7 +215,7 @@ class _MoreState extends State<About> {
                   child: Align(
                 alignment: Alignment.centerRight,
                 child: FutureBuilder<String>(
-                  future: getnbcliver(),
+                  future: getnbcliver(userDir),
                   builder:
                       (BuildContext context, AsyncSnapshot<String> snapshot) {
                     if (snapshot.hasData) {

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:NonebotGUI/darts/utils.dart';
+import 'package:NonebotGUI/darts/global.dart';
 import 'package:NonebotGUI/ui/adapter.dart';
 import 'package:NonebotGUI/ui/driver.dart';
 import 'package:NonebotGUI/ui/manage_plugin.dart';
@@ -42,9 +43,6 @@ class _HomeScreenState extends State<ManageCli> {
           style: TextStyle(color: Colors.white),
         ),
         actions: const <Widget>[],
-        backgroundColor: userColorMode() == 'light'
-            ? const Color.fromRGBO(238, 109, 109, 1)
-            : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -175,7 +173,7 @@ class _HomeScreenState extends State<ManageCli> {
                     'nb',
                     ['generate'],
                     runInShell: true,
-                    workingDirectory: manageBotReadCfgPath(),
+                    workingDirectory: manageBotReadCfgPath(userDir),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
