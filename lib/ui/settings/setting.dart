@@ -1,6 +1,8 @@
 import 'package:NonebotGUI/darts/utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:NonebotGUI/darts/global.dart';
+import 'package:flutter/services.dart';
 
 // void main() {
 //   runApp(
@@ -22,7 +24,7 @@ class _HomeScreenState extends State<Settings> {
     final result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
-      setPyPath(result.files.single.path.toString());
+      setPyPath(userDir, result.files.single.path.toString());
     }
   }
 
@@ -30,12 +32,12 @@ class _HomeScreenState extends State<Settings> {
     final result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
-      setNbcliPath(result.files.single.path.toString());
+      setNbcliPath(userDir, result.files.single.path.toString());
     }
   }
 
   final List<String> colorMode = ['light', 'dark'];
-  late String dropDownValue = userColorMode();
+  late String dropDownValue = userColorMode(userDir);
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +47,6 @@ class _HomeScreenState extends State<Settings> {
           "设置",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor:userColorMode() == 'light'
-          ? const Color.fromRGBO(238, 109, 109, 1)
-          : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -72,15 +71,14 @@ class _HomeScreenState extends State<Settings> {
                         onChanged: (String? value) {
                           setState(() {
                             dropDownValue = value!;
-                            setColorMode(dropDownValue);
+                            setColorMode(userDir,dropDownValue);
                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text('已更改，重启应用后生效'),
                             duration: Duration(seconds: 3),
                           ));
                           });
                         },
-                        items: colorMode
-                            .map<DropdownMenuItem<String>>((String value) {
+                        items: colorMode.map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),
@@ -134,7 +132,7 @@ class _HomeScreenState extends State<Settings> {
                       ),
                     ),
                     onTap: () {
-                      setPyPath('default');
+                      setPyPath(userDir, 'default');
                     })),
                     const SizedBox(height: 4,),
             SizedBox(
@@ -178,7 +176,92 @@ class _HomeScreenState extends State<Settings> {
                       ),
                     ),
                     onTap: () {
-                      setNbcliPath('default');
+                      setNbcliPath(userDir, 'default');
+                    })),
+                    const SizedBox(height: 4,),
+            SizedBox(
+                height: 80,
+                child: InkWell(
+                    child: const Card(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(' 旧版本数据迁移指南'),
+                          )),
+                          Expanded(child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(padding: EdgeInsets.all(4),
+                            child: Icon(Icons.account_box_rounded),),
+                          )),
+                        ],
+                      ),
+                    ),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return Material(
+                            color: Colors.transparent,
+                            child: Center(
+                              child: AlertDialog(
+                                title: const Row(
+                                  children: <Widget>[
+                                    Text('旧版本数据移动指南')
+                                  ],
+                                ),
+                                content: SingleChildScrollView(
+                                  child: Column(
+                                    children: <Widget>[
+                                      const Text(
+                                        '''
+                                        NonebotGUI从0.1.7版本开始，开始使用path_provider提供用户目录。这意味着你需要将旧版本的数据迁移至新版本的目录下
+                                        步骤1：打开用户目录
+                                        Windows下：C:\\Users\\用户名
+                                        Linux或MacOS下：/home/用户名
+                                        步骤2：找到.nbgui文件夹 在用户目录中，找到名为.nbgui的文件夹（如果找不到请打开“显示隐藏文件”选项）
+                                        步骤3：将.nbgui文件夹中的所有文件和目录复制到新版本目录下。
+                                        '''
+                                      ),
+                                      const SizedBox(height: 8,),
+                                      const Text('新版本目录路径为：'),
+                                      Center(
+                                        child: Text(userDir),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Clipboard.setData(ClipboardData(
+                                          text:'$userDir'));
+                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                        content: Text('已复制到剪贴板'),
+                                        duration: Duration(seconds: 3),
+                                      ));
+                                    },
+                                    child: Text(
+                                      '复制新版本路径',
+                                      style: TextStyle(color: Colors.red[300]),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: (){
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(
+                                      '关闭',
+                                      style: TextStyle(color: Colors.red[300]),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
                     })),
                     const SizedBox(height: 4,),
           ],
