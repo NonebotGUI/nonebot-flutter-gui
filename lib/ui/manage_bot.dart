@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:async';
 import 'package:NonebotGUI/ui/stderr.dart';
+import 'package:NonebotGUI/darts/global.dart';
 
 // void main() {
 //   runApp(const MyApp());
@@ -22,7 +23,6 @@ import 'package:NonebotGUI/ui/stderr.dart';
 
 class ManageBot extends StatefulWidget {
   const ManageBot({super.key});
-
   @override
   State<ManageBot> createState() => _MyCustomFormState();
 }
@@ -32,18 +32,29 @@ class ManageBot extends StatefulWidget {
 class _MyCustomFormState extends State<ManageBot> {
   Timer? _timer;
   String _log = '[INFO]Welcome to Nonebot GUI!\n';
-  final _filePath = '${manageBotReadCfgPath()}/nbgui_stdout.log';
+  final String _filePath = '${manageBotReadCfgPath(userDir)}/nbgui_stdout.log';
   @override
   void initState() {
+    getDir();
     super.initState();
     _loadFileContent();
     _startRefreshing();
   }
 
-  void _startRefreshing() => _timer ??= Timer.periodic(
-        const Duration(seconds: 1),
-        (Timer t) => _loadFileContent(),
-      );
+  String getDir() {
+    return userDir;
+  }
+
+
+  void _startRefreshing() {
+    if (_timer != null) {
+      _timer?.cancel();
+    }
+    _timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (Timer t) => _loadFileContent(),
+    );
+  }
 
   void _loadFileContent() async {
     File stdoutFile = File(_filePath);
@@ -62,6 +73,14 @@ class _MyCustomFormState extends State<ManageBot> {
     }
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    if (_timer != null) {
+      _timer?.cancel();
+    }
+  }
+
   void _reloadConfig() {
     setState(() {});
   }
@@ -71,7 +90,7 @@ class _MyCustomFormState extends State<ManageBot> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "${manageBotReadCfgName()}",
+          "${manageBotReadCfgName(userDir)}",
           style: const TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
@@ -82,9 +101,6 @@ class _MyCustomFormState extends State<ManageBot> {
             color: Colors.white,
           )
         ],
-        backgroundColor: userColorMode() == 'light'
-            ? const Color.fromRGBO(238, 109, 109, 1)
-            : const Color.fromRGBO(127, 86, 151, 1),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -124,7 +140,7 @@ class _MyCustomFormState extends State<ManageBot> {
                           ),
                           child: Align(
                             alignment: Alignment.centerRight,
-                            child: Text(manageBotReadCfgName().toString()),
+                            child: Text(manageBotReadCfgName(userDir).toString()),
                           ),
                         ),
                       ),
@@ -158,7 +174,7 @@ class _MyCustomFormState extends State<ManageBot> {
                           ),
                           child: Align(
                             alignment: Alignment.centerRight,
-                            child: Text(manageBotReadCfgPath().toString()),
+                            child: Text(manageBotReadCfgPath(userDir).toString()),
                           ),
                         ),
                       ),
@@ -192,7 +208,7 @@ class _MyCustomFormState extends State<ManageBot> {
                           ),
                           child: Align(
                             alignment: Alignment.centerRight,
-                            child: Text(manageBotReadCfgTime().toString()),
+                            child: Text(manageBotReadCfgTime(userDir).toString()),
                           ),
                         ),
                       ),
@@ -218,7 +234,7 @@ class _MyCustomFormState extends State<ManageBot> {
                           ),
                         ),
                       ),
-                      if (manageBotReadCfgStatus() == true)
+                      if (manageBotReadCfgStatus(userDir) == 'true')
                         const Expanded(
                           child: Padding(
                             padding: EdgeInsets.symmetric(
@@ -234,7 +250,7 @@ class _MyCustomFormState extends State<ManageBot> {
                             ),
                           ),
                         ),
-                      if (manageBotReadCfgStatus() == false)
+                      if (manageBotReadCfgStatus(userDir) == 'false')
                         const Expanded(
                           child: Padding(
                             padding: EdgeInsets.symmetric(
@@ -277,7 +293,7 @@ class _MyCustomFormState extends State<ManageBot> {
                           ),
                           child: Align(
                             alignment: Alignment.centerRight,
-                            child: Text(manageBotReadCfgPid().toString()),
+                            child: Text(manageBotReadCfgPid(userDir).toString()),
                           ),
                         ),
                       ),
@@ -303,8 +319,8 @@ class _MyCustomFormState extends State<ManageBot> {
                     children: <Widget>[
                       IconButton(
                         onPressed: () {
-                          if (manageBotReadCfgStatus() == false) {
-                            runBot(manageBotReadCfgPath());
+                          if (manageBotReadCfgStatus(userDir) == 'false') {
+                            runBot(userDir, manageBotReadCfgPath(userDir));
                             _reloadConfig();
                             _startRefreshing();
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -330,8 +346,8 @@ class _MyCustomFormState extends State<ManageBot> {
                       ),
                       IconButton(
                         onPressed: () {
-                          if (manageBotReadCfgStatus() == true) {
-                            stopBot();
+                          if (manageBotReadCfgStatus(userDir) == 'true') {
+                            stopBot(userDir);
                             _reloadConfig();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -354,10 +370,10 @@ class _MyCustomFormState extends State<ManageBot> {
                       ),
                       IconButton(
                         onPressed: () {
-                          if (manageBotReadCfgStatus() == true) {
-                            stopBot();
-                            runBot(manageBotReadCfgPath());
-                            clearLog();
+                          if (manageBotReadCfgStatus(userDir) == 'true') {
+                            stopBot(userDir);
+                            runBot(userDir, manageBotReadCfgPath(userDir));
+                            clearLog(userDir);
                             _reloadConfig();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -380,7 +396,7 @@ class _MyCustomFormState extends State<ManageBot> {
                       ),
                       IconButton(
                         onPressed: () =>
-                            openFolder(manageBotReadCfgPath().toString()),
+                            openFolder(manageBotReadCfgPath(userDir).toString()),
                         tooltip: "打开文件夹",
                         icon: const Icon(Icons.folder),
                         iconSize: 25,
@@ -398,16 +414,14 @@ class _MyCustomFormState extends State<ManageBot> {
                       ),
                       IconButton(
                         onPressed: () {
-                          clearLog();
+                          clearLog(userDir);
                         },
                         tooltip: "清空日志",
                         icon: const Icon(Icons.delete_rounded),
                         iconSize: 25,
                       ),
                       Visibility(
-                        visible: File(
-                          '${manageBotReadCfgPath()}/nbgui_stderr.log',
-                        ).readAsStringSync().isNotEmpty,
+                        visible: File('${manageBotReadCfgPath(userDir)}/nbgui_stderr.log').readAsStringSync().isNotEmpty,
                         child: IconButton(
                           onPressed: () => Navigator.push(
                             context,
@@ -470,7 +484,7 @@ class _MyCustomFormState extends State<ManageBot> {
   }
 }
 
-//终端字体颜色
+///终端字体颜色
 //这一段AI写的我什么也不知道😭
 List<TextSpan> _logSpans(text) {
   RegExp regex = RegExp(
@@ -578,7 +592,7 @@ void _showConfirmationDialog(BuildContext context) {
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).popUntil((route) => route.isFirst);
-              deleteBot();
+              deleteBot(userDir);
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text('Bot已删除'),
                 duration: Duration(seconds: 3),
@@ -593,7 +607,7 @@ void _showConfirmationDialog(BuildContext context) {
             onPressed: () {
               Navigator.of(context).pop();
               Navigator.of(context).popUntil((route) => route.isFirst);
-              deleteBotAll();
+              deleteBotAll(userDir);
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text('Bot已删除'),
                 duration: Duration(seconds: 3),
