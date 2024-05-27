@@ -1,66 +1,53 @@
 import 'dart:io';
 import 'dart:core';
 import 'dart:convert';
+import 'package:NonebotGUI/darts/global.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:toml/toml.dart';
 
+
+
+
 //存放一些小功能的地方
-createMainFolder() {
-  if (Platform.isWindows) {
-    Directory dir = Directory('${Platform.environment['USERPROFILE']!}/.nbgui');
-    if (!dir.existsSync()) {
-      dir.createSync();
-    }
-    Directory.current = dir;
-    File cfgFile = File(
-        '${dir.toString().replaceAll("Directory: ", '').replaceAll("'", '')}/user_config.json');
-    if (!cfgFile.existsSync()) {
-      String cfg = '''
-    {
-      "python":"default",
-      "nbcli":"default",
-      "color":"system"
-    }
-    ''';
-      cfgFile.writeAsStringSync(cfg);
-    }
-    return dir.toString().replaceAll("Directory: ", '').replaceAll("'", '');
-  } else if (Platform.isLinux || Platform.isMacOS) {
-    Directory dir = Directory('${Platform.environment['HOME']!}/.nbgui');
-    if (!dir.existsSync()) {
-      dir.createSync();
-    }
-    Directory.current = dir;
-    File cfgFile = File(
-        '${dir.toString().replaceAll("Directory: ", '').replaceAll("'", '')}/user_config.json');
-    if (!cfgFile.existsSync()) {
-      String cfg = '''
-    {
-      "python":"default",
-      "nbcli":"default",
-      "color":"system"
-    }
-    ''';
-      cfgFile.writeAsStringSync(cfg);
-    }
-    return dir.toString().replaceAll("Directory: ", '').replaceAll("'", '');
+createMainFolder() async {
+  Directory usrDir = await getApplicationSupportDirectory();
+  if (!usrDir.existsSync()) {
+    usrDir.createSync();
   }
+  String dir = usrDir.path;
+  File cfgFile = File('$dir/user_config.json');
+  if (!cfgFile.existsSync()) {
+    String cfg = '''
+  {
+    "python":"default",
+    "nbcli":"default",
+    "color":"light"
+  }
+  ''';
+    cfgFile.writeAsStringSync(cfg);
+  }
+  Directory botDir = Directory('$dir/bots/');
+  if (!botDir.existsSync()) {
+    botDir.createSync();
+  }
+  return dir;
 }
 
-createMainFolderBots() {
+createMainFolderBots(usrDir) {
   if (Platform.isLinux) {
-    String dir = "${createMainFolder()}/bots/";
+    String dir = "${usrDir}/bots/";
     return dir;
   } else if (Platform.isMacOS) {
-    String dir = "${createMainFolder()}/bots/";
+    String dir = "${usrDir}/bots/";
     return dir;
   } else if (Platform.isWindows) {
-    String dir = "${createMainFolder()}\\bots\\";
+    String dir = "${usrDir}\\bots\\";
     return dir;
   }
 }
 
-userReadConfigPython() {
-  File file = File('${createMainFolder()}/user_config.json');
+userReadConfigPython(dir) {
+  File file = File('${dir}/user_config.json');
   Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
   String pyPath = jsonMap['python'].toString();
   if (pyPath == 'default') {
@@ -74,15 +61,15 @@ userReadConfigPython() {
   }
 }
 
-setPyPath(path) {
-  File file = File('${createMainFolder()}/user_config.json');
+setPyPath(dir,path) {
+  File file = File('${dir}/user_config.json');
   Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
   jsonMap['python'] = path;
   file.writeAsStringSync(jsonEncode(jsonMap));
 }
 
-userReadConfigNbcli() {
-  File file = File('${createMainFolder()}/user_config.json');
+userReadConfigNbcli(dir) {
+  File file = File('${dir}/user_config.json');
   Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
   String nbcliPath = jsonMap['nbcli'].toString();
   if (nbcliPath == 'default') {
@@ -92,28 +79,28 @@ userReadConfigNbcli() {
   }
 }
 
-setNbcliPath(path) {
-  File file = File('${createMainFolder()}/user_config.json');
+setNbcliPath(dir,path) {
+  File file = File('${dir}/user_config.json');
   Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
   jsonMap['nbcli'] = path;
   file.writeAsStringSync(jsonEncode(jsonMap));
 }
 
-userColorMode() {
-  File file = File('${createMainFolder()}/user_config.json');
+userColorMode(dir) {
+  File file = File('${dir}/user_config.json');
   Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
   if ( jsonMap.containsKey("color")){
     String colorMode = jsonMap['color'].toString();
     return colorMode;
   }
   else {
-    setColorMode('system');
-    return 'system';
+    setColorMode(dir,'light');
+    return 'light';
   }
 }
 
-setColorMode(mode) {
-  File file = File('${createMainFolder()}/user_config.json');
+setColorMode(dir,mode) {
+  File file = File('${dir}/user_config.json');
   Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
   jsonMap['color'] = mode;
   file.writeAsStringSync(jsonEncode(jsonMap));
@@ -121,15 +108,15 @@ setColorMode(mode) {
 
 
 //检查py
-Future<String> getPyVer() async {
+Future<String> getPyVer(dir) async {
   try {
     if (Platform.isLinux || Platform.isMacOS) {
       ProcessResult results =
-          await Process.run('${userReadConfigPython()}', ['--version']);
+          await Process.run('${userReadConfigPython(dir)}', ['--version']);
       return results.stdout.trim();
     } else if (Platform.isWindows) {
       ProcessResult results =
-          await Process.run('${userReadConfigPython()}', ['--version']);
+          await Process.run('${userReadConfigPython(dir)}', ['--version']);
       return results.stdout.trim();
     } else {
       return '不支持的平台...';
@@ -140,10 +127,10 @@ Future<String> getPyVer() async {
 }
 
 //检查nbcli
-Future<String> getnbcliver() async {
+Future<String> getnbcliver(dir) async {
   try {
     final ProcessResult results =
-        await Process.run('${userReadConfigNbcli()}', ['-V']);
+        await Process.run('${userReadConfigNbcli(dir)}', ['-V']);
     return results.stdout;
   } catch (error) {
     return '你似乎还没有安装nb-cli？';
@@ -151,8 +138,7 @@ Future<String> getnbcliver() async {
 }
 
 //创建bot的配置文件
-Future createBotWriteConfig(
-    name, path, venv, dep, drivers, adapters, template, plugindir) async {
+Future createBotWriteConfig(dir,name, path, venv, dep, drivers, adapters, template, plugindir) async {
   String name_ = name.toString();
   String path_ = path.toString();
   String venv_ = venv.toString();
@@ -161,65 +147,64 @@ Future createBotWriteConfig(
   String adapters_ = adapters.toString();
   String template_ = template.toString();
   String plugindir_ = plugindir.toString();
-  File file = File('${createMainFolder()}/cache_config.txt');
-  File fileDrivers = File('${createMainFolder()}/cache_drivers.txt');
-  File fileAdapters = File('${createMainFolder()}/cache_adapters.txt');
+  File file = File('${dir}/cache_config.txt');
+  File fileDrivers = File('${dir}/cache_drivers.txt');
+  File fileAdapters = File('${dir}/cache_adapters.txt');
   file.writeAsStringSync('$name_,$path_,$venv_,$dep_,$template_,$plugindir_');
   fileDrivers.writeAsStringSync(drivers_);
   fileAdapters.writeAsStringSync(adapters_);
 }
 
-createBotReadConfig() {
-  File file = File('${createMainFolder()}/cache_config.txt');
+createBotReadConfig(dir) {
+  File file = File('${userDir}/cache_config.txt');
   String args = file.readAsStringSync();
   return args;
 }
 
-createBotReadConfigName() {
-  File file = File('${createMainFolder()}/cache_config.txt');
+createBotReadConfigName(dir) {
+  File file = File('${userDir}/cache_config.txt');
   String args = file.readAsStringSync();
   List args_ = args.split(',');
   return args_[0];
 }
 
-createBotReadConfigPath() {
-  File file = File('${createMainFolder()}/cache_config.txt');
+createBotReadConfigPath(dir) {
+  File file = File('${userDir}/cache_config.txt');
   String args = file.readAsStringSync();
   List args_ = args.split(',');
   return args_[1];
 }
 
-createBotReadConfigVENV() {
-  File file = File('${createMainFolder()}/cache_config.txt');
+createBotReadConfigVENV(dir) {
+  File file = File('${userDir}/cache_config.txt');
   String args = file.readAsStringSync();
   List args_ = args.split(',');
   return args_[2];
 }
 
-createBotReadConfigDep() {
-  File file = File('${createMainFolder()}/cache_config.txt');
+createBotReadConfigDep(dir) {
+  File file = File('${userDir}/cache_config.txt');
   String args = file.readAsStringSync();
   List args_ = args.split(',');
   return args_[3];
 }
 
-createBotReadConfigTemplate() {
-  File file = File('${createMainFolder()}/cache_config.txt');
+createBotReadConfigTemplate(dir) {
+  File file = File('${userDir}/cache_config.txt');
   String args = file.readAsStringSync();
   List args_ = args.split(',');
   return args_[4];
 }
 
-createBotReadConfigPluginDir() {
-  File file = File('${createMainFolder()}/cache_config.txt');
+createBotReadConfigPluginDir(dir) {
+  File file = File('${userDir}/cache_config.txt');
   String args = file.readAsStringSync();
   List args_ = args.split(',');
   return args_[5];
 }
 
 //处理适配器和驱动器
-Future<void> createBotWriteConfigRequirement(
-    String drivers, String adapters) async {
+Future<void> createBotWriteConfigRequirement(dir,String drivers, String adapters) async {
   drivers = drivers.toLowerCase();
   String driverlist =
       drivers.split(',').map((driver) => 'nonebot2[$driver]').join(',');
@@ -235,21 +220,21 @@ Future<void> createBotWriteConfigRequirement(
   adapterlist = adapterlist
       .replaceAll('nonebot-adapter-onebot.v11', 'nonebot-adapter-onebot')
       .replaceAll('nonebot-adapter-onebot.v12', 'nonebot-adapter-onebot');
-  File file = File('${createMainFolder()}/requirements.txt');
+  File file = File('${userDir}/requirements.txt');
   file.writeAsStringSync('$driverlist\n$adapterlist');
 }
 
 //判断平台并使用对应的venv指令
-installBot(path, name, venv, dep) {
+installBot(dir,path, name, venv, dep) {
   if (venv == 'true') {
     if (dep == 'true') {
       if (Platform.isLinux) {
         String installbot =
-            '$path/$name/.venv/bin/pip install -r requirements.txt';
+            '$path/$name/.venv/bin/pip install -r $userDir/requirements.txt';
         return installbot;
       } else if (Platform.isWindows) {
         String installbot =
-            '$path\\$name\\.venv\\Scripts\\pip.exe install -r requirements.txt';
+            '$path\\$name\\.venv\\Scripts\\pip.exe install -r $userDir\\requirements.txt';
         return installbot;
       } else if (Platform.isMacOS) {
         String installbot =
@@ -257,21 +242,21 @@ installBot(path, name, venv, dep) {
         return installbot;
       }
     } else if (dep == 'false') {
-      File requirements = File('${createMainFolder()}/requirements.txt');
+      File requirements = File('$userDir/requirements.txt');
       requirements.copy(
-          '${createBotReadConfigPath()}/${createBotReadConfigName()}/requirements.txt');
-      return 'echo 跳过依赖安装，将requirements.txt复制至${createBotReadConfigPath()}/${createBotReadConfigName()}下';
+          '${createBotReadConfigPath(dir)}/${createBotReadConfigName(dir)}/requirements.txt');
+      return 'echo 跳过依赖安装，将requirements.txt复制至${createBotReadConfigPath(dir)}/${createBotReadConfigName(dir)}下';
     }
   } else if (venv == 'false') {
     if (dep == 'true') {
       String installbot =
-          '${userReadConfigPython()} -m pip install -r requirements.txt';
+          '${userReadConfigPython(dir)} -m pip install -r requirements.txt';
       return installbot;
     } else if (dep == 'false') {
-      File requirements = File('${createMainFolder()}/requirements.txt');
+      File requirements = File('$userDir/requirements.txt');
       requirements.copy(
-          '${createBotReadConfigPath()}/${createBotReadConfigName()}/requirements.txt');
-      return 'echo 跳过依赖安装，将requirements.txt复制至${createBotReadConfigPath()}/${createBotReadConfigName()}下';
+          '${createBotReadConfigPath(dir)}/${createBotReadConfigName(dir)}/requirements.txt');
+      return 'echo 跳过依赖安装，将requirements.txt复制至${createBotReadConfigPath(dir)}/${createBotReadConfigName(dir)}下';
     }
   }
 }
@@ -289,15 +274,15 @@ createVENVEcho(path, name) {
   }
 }
 
-createVENV(path, name, venv) {
+createVENV(dir,path, name, venv) {
   if (venv == 'true') {
     if (Platform.isLinux || Platform.isMacOS) {
       String createvenv =
-          '${userReadConfigPython()} -m venv $path/$name/.venv --prompt $name';
+          '${userReadConfigPython(dir)} -m venv $path/$name/.venv --prompt $name';
       return createvenv;
     } else if (Platform.isWindows) {
       String createvenv =
-          '${userReadConfigPython()} -m venv $path\\$name\\.venv --prompt $name';
+          '${userReadConfigPython(dir)} -m venv $path\\$name\\.venv --prompt $name';
       return createvenv;
     }
   } else if (venv == 'false') {
@@ -305,16 +290,16 @@ createVENV(path, name, venv) {
   }
 }
 
-createFolder(path, name, plugindir) {
+createFolder(udir,path, name, plugindir) {
   Directory dir = Directory('$path/$name');
-  Directory dirBots = Directory('${createMainFolder()}/bots');
+  Directory dirBots = Directory('$udir/bots');
   if (!dir.existsSync()) {
     dir.createSync();
   }
   if (!dirBots.existsSync()) {
     dirBots.createSync();
   }
-  if (createBotReadConfigTemplate() == 'simple(插件开发者)') {
+  if (createBotReadConfigTemplate(dir) == 'simple(插件开发者)') {
     if (plugindir == '在[bot名称]/[bot名称]下') {
       Directory dirSrc = Directory('$path/$name/$name');
       Directory dirSrcPlugins = Directory('$path/$name/$name/plugins');
@@ -337,18 +322,18 @@ createFolder(path, name, plugindir) {
   }
 }
 
-writeENV(path, name) {
-  File file = File('${createMainFolder()}/cache_drivers.txt');
+writeENV(dir,path, name) {
+  File file = File('${userDir}/cache_drivers.txt');
   String drivers = file.readAsStringSync();
   drivers = drivers.toLowerCase();
   String driverlist = drivers.split(',').map((driver) => '~$driver').join('+');
-  if (createBotReadConfigTemplate() == 'bootstrap(初学者或用户)') {
+  if (createBotReadConfigTemplate(dir) == 'bootstrap(初学者或用户)') {
     String env = 'DRIVER=$driverlist';
     File fileEnv = File('$path/$name/.env.prod');
     fileEnv.writeAsStringSync(env);
     String echo = "echo 写入.env文件";
     return echo;
-  } else if (createBotReadConfigTemplate() == 'simple(插件开发者)') {
+  } else if (createBotReadConfigTemplate(dir) == 'simple(插件开发者)') {
     String env = 'ENVIRONMENT=dev\nDRIVER=$driverlist';
     File fileEnv = File('$path/$name/.env');
     fileEnv.writeAsStringSync(env);
@@ -361,8 +346,8 @@ writeENV(path, name) {
   }
 }
 
-writePyProject(path, name) {
-  File file = File('${createMainFolder()}/cache_adapters.txt');
+writePyProject(dir,path, name) {
+  File file = File('${dir}/cache_adapters.txt');
   String adapters = file.readAsStringSync();
 
   RegExp regex = RegExp(r'\(([^)]+)\)');
@@ -371,13 +356,9 @@ writePyProject(path, name) {
   for (Match match in matches) {
     adapterlist += '${match.group(1)},';
   }
-  String adapterlist_ = adapterlist
-      .split(',')
-      .map((adapter) =>
-          '{ name = "${adapter.replaceAll('nonebot-adapter-', '').replaceAll('.', ' ')}", module_name = "${adapter.replaceAll('-', '.').replaceAll('adapter', 'adapters')}" }')
-      .join(',');
+  String adapterlist_ = adapterlist.split(',').map((adapter) =>'{ name = "${adapter.replaceAll('nonebot-adapter-', '').replaceAll('.', ' ')}", module_name = "${adapter.replaceAll('-', '.').replaceAll('adapter', 'adapters')}" }') .join(',');
 
-  if (createBotReadConfigTemplate() == 'bootstrap(初学者或用户)') {
+  if (createBotReadConfigTemplate(dir) == 'bootstrap(初学者或用户)') {
     String pyproject = '''
     [project]
     name = "$name"
@@ -400,8 +381,8 @@ writePyProject(path, name) {
         ''.replaceAll('adapter', 'adapters')));
     String echo = "echo 写入pyproject.toml";
     return echo;
-  } else if (createBotReadConfigTemplate() == 'simple(插件开发者)') {
-    if (createBotReadConfigPluginDir() == '在src文件夹下') {
+  } else if (createBotReadConfigTemplate(dir) == 'simple(插件开发者)') {
+    if (createBotReadConfigPluginDir(dir) == '在src文件夹下') {
       String pyproject = '''
     [project]
     name = "$name"
@@ -424,7 +405,7 @@ writePyProject(path, name) {
           ''.replaceAll('adapter', 'adapters')));
       String echo = "echo 写入pyproject.toml";
       return echo;
-    } else if (createBotReadConfigPluginDir() == '在[bot名称]/[bot名称]下') {
+    } else if (createBotReadConfigPluginDir(dir) == '在[bot名称]/[bot名称]下') {
       String pyproject = '''
     [project]
     name = "$name"
@@ -451,11 +432,11 @@ writePyProject(path, name) {
   }
 }
 
-writebot(name, path) {
+writebot(dir,name, path) {
   DateTime now = DateTime.now();
   String time =
       "${now.year}年${now.month}月${now.day}日${now.hour}时${now.minute}分${now.second}秒";
-  File cfgFile = File('${createMainFolder()}/bots/$name.$time.json');
+  File cfgFile = File('${dir}/bots/$name.$time.json');
 
   if (Platform.isWindows) {
     String botInfo = '''
@@ -504,11 +485,11 @@ writebot(name, path) {
 }
 
 //导入
-importbot(name, path) {
+importbot(dir,name, path) {
   DateTime now = DateTime.now();
   String time =
       "${now.year}年${now.month}月${now.day}日${now.hour}时${now.minute}分${now.second}秒";
-  File cfgFile = File('${createMainFolder()}/bots/$name.$time.json');
+  File cfgFile = File('${dir}/bots/$name.$time.json');
 
   if (Platform.isWindows) {
     String botInfo = '''
@@ -542,60 +523,60 @@ importbot(name, path) {
 }
 
 //管理bot的函数
-Future manageBotOnOpenCfg(name, time) async {
+Future manageBotOnOpenCfg(dir,name, time) async {
   String onOpen = '$name.$time';
-  File onOpenFile = File('${createMainFolder()}/on_open.txt');
+  File onOpenFile = File('${dir}/on_open.txt');
   onOpenFile.writeAsStringSync(onOpen);
 }
 
-manageBotReadCfgName() {
-  File cfgFile = File('${createMainFolder()}/on_open.txt');
+manageBotReadCfgName(dir) {
+  File cfgFile = File('${dir}/on_open.txt');
   String cfg = cfgFile.readAsStringSync();
-  File botcfg = File('${createMainFolder()}/bots/$cfg.json');
+  File botcfg = File('${dir}/bots/$cfg.json');
   Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
   return jsonMap['name'].toString();
 }
 
-manageBotReadCfgPath() {
-  File cfgFile = File('${createMainFolder()}/on_open.txt');
+manageBotReadCfgPath(dir) {
+  File cfgFile = File('$userDir/on_open.txt');
   String cfg = cfgFile.readAsStringSync();
-  File botcfg = File('${createMainFolder()}/bots/$cfg.json');
+  File botcfg = File('${dir}/bots/$cfg.json');
   Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
   return jsonMap['path'].toString();
 }
 
-manageBotReadCfgTime() {
-  File cfgFile = File('${createMainFolder()}/on_open.txt');
+manageBotReadCfgTime(dir) {
+  File cfgFile = File('${dir}/on_open.txt');
   String cfg = cfgFile.readAsStringSync();
-  File botcfg = File('${createMainFolder()}/bots/$cfg.json');
+  File botcfg = File('${dir}/bots/$cfg.json');
   Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
   return jsonMap['time'].toString();
 }
 
-manageBotReadCfgStatus() {
-  File cfgFile = File('${createMainFolder()}/on_open.txt');
+manageBotReadCfgStatus(dir) {
+  File cfgFile = File('$dir/on_open.txt');
   String cfg = cfgFile.readAsStringSync();
-  File botcfg = File('${createMainFolder()}/bots/$cfg.json');
+  File botcfg = File('$dir/bots/$cfg.json');
   Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
   return jsonMap['isrunning'].toString();
 }
 
-manageBotReadCfgPid() {
-  File cfgFile = File('${createMainFolder()}/on_open.txt');
+manageBotReadCfgPid(dir) {
+  File cfgFile = File('$dir/on_open.txt');
   String cfg = cfgFile.readAsStringSync();
-  File botcfg = File('${createMainFolder()}/bots/$cfg.json');
+  File botcfg = File('$dir/bots/$cfg.json');
   Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
   return jsonMap['pid'].toString();
 }
 
-manageBotViewStderr() {
-  File stderrfile = File('${manageBotReadCfgPath()}/nbgui_stderr.log');
+manageBotViewStderr(dir) {
+  File stderrfile = File('$dir/nbgui_stderr.log');
   String stderr = stderrfile.readAsStringSync();
   return stderr;
 }
 
-deleteStderr() {
-  File stderrfile = File('${manageBotReadCfgPath()}/nbgui_stderr.log');
+deleteStderr(dir) {
+  File stderrfile = File('$dir/nbgui_stderr.log');
   String clear = "";
   stderrfile.writeAsString(clear);
 }
@@ -610,18 +591,17 @@ Future openFolder(path) async {
   }
 }
 
-//唤起Bot进程
-Future runBot(String path) async {
-  String name = manageBotReadCfgName();
-  String time = manageBotReadCfgTime();
+///唤起Bot进程
+Future runBot(dir,String path) async {
+  String name = manageBotReadCfgName(dir);
+  String time = manageBotReadCfgTime(dir);
   Directory.current = Directory(path);
-  File cfgFile = File('${createMainFolder()}/bots/$name.$time.json');
+  File cfgFile = File('$userDir/bots/$name.$time.json');
   final stdout = File('$path/nbgui_stdout.log');
   final stderr = File('$path/nbgui_stderr.log');
-  Process process = await Process.start('${userReadConfigNbcli()}', ['run'],
-      workingDirectory: path);
+  Process process = await Process.start('${userReadConfigNbcli(dir)}', ['run'],workingDirectory: path);
   int pid = process.pid;
-  // 重写配置文件来更新状态
+  /// 重写配置文件来更新状态
   Map<String, dynamic> jsonMap = jsonDecode(cfgFile.readAsStringSync());
   jsonMap['pid'] = pid;
   jsonMap['isrunning'] = 'true';
@@ -641,91 +621,93 @@ Future runBot(String path) async {
 }
 
 
-//结束bot进程
-Future stopBot() async {
-  //读取配置文件
-  String name = manageBotReadCfgName();
-  String time = manageBotReadCfgTime();
-  File cfgFile = File('${createMainFolder()}/bots/$name.$time.json');
+///结束bot进程
+stopBot(dir) async {
+  ///读取配置文件
+  String name = manageBotReadCfgName(dir);
+  String time = manageBotReadCfgTime(dir);
+  File cfgFile = File('$userDir/bots/$name.$time.json');
   Map botInfo = json.decode(cfgFile.readAsStringSync());
   String pidString = botInfo['pid'].toString();
   int pid = int.parse(pidString);
   Process.killPid(pid);
-  //更新配置文件
+  ///更新配置文件
   botInfo['isrunning'] = 'false';
   botInfo['pid'] = 'Null';
   cfgFile.writeAsStringSync(json.encode(botInfo));
 }
 
-//删除bot
-Future deleteBot() async {
-  String name = manageBotReadCfgName();
-  String time = manageBotReadCfgTime();
-  File cfgFile = File('${createMainFolder()}/bots/$name.$time.json');
+///删除bot配置文件
+deleteBot(dir) async {
+  String name = manageBotReadCfgName(dir);
+  String time = manageBotReadCfgTime(dir);
+  File cfgFile = File('$dir/bots/$name.$time.json');
   cfgFile.delete();
 }
 
-Future deleteBotAll() async {
-  String name = manageBotReadCfgName();
-  String time = manageBotReadCfgTime();
-  File cfgFile = File('${createMainFolder()}/bots/$name.$time.json');
-  String path = manageBotReadCfgPath();
+///连同bot文件夹一起删除
+deleteBotAll(dir) async {
+  String name = manageBotReadCfgName(dir);
+  String time = manageBotReadCfgTime(dir);
+  File cfgFile = File('$userDir/bots/$name.$time.json');
+  String path = manageBotReadCfgPath(dir);
   Directory(path).delete(recursive: true);
   cfgFile.delete();
 }
 
-clearLog() async {
-  String path = manageBotReadCfgPath();
+///清除日志
+clearLog(dir) async {
+  String path = manageBotReadCfgPath(dir);
   File stdout = File('$path/nbgui_stdout.log');
   stdout.delete();
   String info = "[INFO]Welcome to Nonebot GUI!";
   stdout.writeAsString(info);
 }
 
-manageCliPlugin(manage, pluginName) {
+manageCliPlugin(dir,manage, pluginName) {
   if (manage == 'install') {
-    String cmd = '${userReadConfigNbcli()} plugin install $pluginName';
+    String cmd = '${userReadConfigNbcli(dir)} plugin install $pluginName';
     return cmd;
   }
   if (manage == 'uninstall') {
-    String cmd = '${userReadConfigNbcli()} plugin uninstall $pluginName -y';
+    String cmd = '${userReadConfigNbcli(dir)} plugin uninstall $pluginName -y';
     return cmd;
   }
 }
 
-manageCliAdapter(manage, adapterName) {
+manageCliAdapter(dir,manage, adapterName) {
   if (manage == 'install') {
-    String cmd = '${userReadConfigNbcli()} adapter install $adapterName';
+    String cmd = '${userReadConfigNbcli(dir)} adapter install $adapterName';
     return cmd;
   }
   if (manage == 'uninstall') {
-    String cmd = '${userReadConfigNbcli()} adapter uninstall $adapterName -y';
+    String cmd = '${userReadConfigNbcli(dir)} adapter uninstall $adapterName -y';
     return cmd;
   }
 }
 
-manageCliDriver(manage, driverName) {
+manageCliDriver(dir,manage, driverName) {
   if (manage == 'install') {
-    String cmd = '${userReadConfigNbcli()} driver install $driverName';
+    String cmd = '${userReadConfigNbcli(dir)} driver install $driverName';
     return cmd;
   }
   if (manage == 'uninstall') {
-    String cmd = '${userReadConfigNbcli()} driver uninstall $driverName -y';
+    String cmd = '${userReadConfigNbcli(dir)} driver uninstall $driverName -y';
     return cmd;
   }
 }
 
-manageCliSelf(manage, packageName) {
+manageCliSelf(dir,manage, packageName) {
   if (manage == 'install') {
-    String cmd = '${userReadConfigNbcli()} self install $packageName';
+    String cmd = '${userReadConfigNbcli(dir)} self install $packageName';
     return cmd;
   }
   if (manage == 'uninstall') {
-    String cmd = '${userReadConfigNbcli()} self uninstall $packageName -y';
+    String cmd = '${userReadConfigNbcli(dir)} self uninstall $packageName -y';
     return cmd;
   }
   if (manage == 'update') {
-    String cmd = '${userReadConfigNbcli()} self update';
+    String cmd = '${userReadConfigNbcli(dir)} self update';
     return cmd;
   }
 }
@@ -742,9 +724,9 @@ createLog(path) {
   }
 }
 
-//从pyproject.toml中读取插件列表
-getPluginList() {
-  File pyprojectFile = File('${manageBotReadCfgPath()}/pyproject.toml');
+///从pyproject.toml中读取插件列表
+getPluginList(dir) {
+  File pyprojectFile = File('${manageBotReadCfgPath(dir)}/pyproject.toml');
   String pyproject = pyprojectFile.readAsStringSync();
   var toml = TomlDocument.parse(pyproject).toMap();
   var nonebot = toml['tool']['nonebot'];
