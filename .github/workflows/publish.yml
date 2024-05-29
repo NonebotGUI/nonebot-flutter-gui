@@ -23,7 +23,7 @@ jobs:
         uses: flutter-actions/setup-flutter@v3
         with:
           channel: 'stable'
-          version: 3.19.4
+          version: 3.22.1
 
       - name: Install Dependencies
         shell: pwsh
@@ -33,8 +33,8 @@ jobs:
       - name: Setup Inno Setup 6
         shell: pwsh
         run: |-
-          ./tool/is.exe /VERYSLIENT
-          Copy-Item "./tool/ChineseSimplified.isl" -Destination "C:\Program Files (x86)\Inno Setup 6\Languages"
+          ./asset/is.exe /VERYSLIENT
+          Copy-Item "./asset/ChineseSimplified.isl" -Destination "C:\Program Files (x86)\Inno Setup 6\Languages"
       - name: Setup 7ZIP
         shell: pwsh
         run: |-
@@ -61,7 +61,7 @@ jobs:
         uses: flutter-actions/setup-flutter@v3
         with:
           channel: 'stable'
-          version: 3.19.4
+          version: 3.22.1
 
       - name: Install Dependencies
         run: |-
@@ -72,7 +72,7 @@ jobs:
 
       - name: Setup AppImageTool
         run: |-
-          sudo mv tool/appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
+          sudo mv asset/appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
           sudo chmod a+x /usr/local/bin/appimagetool
 
       - name: Pack Installers
@@ -96,7 +96,7 @@ jobs:
         uses: flutter-actions/setup-flutter@v3
         with:
           channel: 'stable'
-          version: 3.19.4
+          version: 3.22.1
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
