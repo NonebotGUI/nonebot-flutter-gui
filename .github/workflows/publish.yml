@@ -38,7 +38,7 @@ jobs:
       - name: Setup 7ZIP
         shell: pwsh
         run: |-
-          ./tools/7z2405-x64.exe /S
+          ./asset/7z2405-x64.exe /S
 
       - name: Pack EXE Installer & Portable Archive
         run: flutter_distributor package --platform windows --target exe,zip
