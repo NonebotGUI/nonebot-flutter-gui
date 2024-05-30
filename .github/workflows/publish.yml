@@ -149,6 +149,14 @@ jobs:
         with:
           name: "MacOS Artifact(Dist)"
           path: dist/
+      - name: Rename
+        run: |
+          mv ./dist/${{ env.NBGUI_VERSION }}/*.exe ./dist/${{ env.NBGUI_VERSION }}/windows-${{ env.NBGUI_VERSION }}-setup.exe
+          mv ./dist/${{ env.NBGUI_VERSION }}/*.zip ./dist/${{ env.NBGUI_VERSION }}/windows-${{ env.NBGUI_VERSION }}.zip
+          mv ./dist/${{ env.NBGUI_VERSION }}/*.deb ./dist/${{ env.NBGUI_VERSION }}/linux-${{ env.NBGUI_VERSION }}.deb
+          mv ./dist/${{ env.NBGUI_VERSION }}/*.rpm ./dist/${{ env.NBGUI_VERSION }}/linux-${{ env.NBGUI_VERSION }}.rpm
+          mv ./dist/${{ env.NBGUI_VERSION }}/*.AppImage ./dist/${{ env.NBGUI_VERSION }}/linux-${{ env.NBGUI_VERSION }}.AppImage
+          mv ./dist/${{ env.NBGUI_VERSION }}/*.dmg ./dist/${{ env.NBGUI_VERSION }}/macos-${{ env.NBGUI_VERSION }}.dmg
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
@@ -164,4 +172,4 @@ jobs:
             ./dist/${{ env.NBGUI_VERSION }}/linux-${{ env.NBGUI_VERSION }}.deb
             ./dist/${{ env.NBGUI_VERSION }}/linux-${{ env.NBGUI_VERSION }}.rpm
             ./dist/${{ env.NBGUI_VERSION }}/linux-${{ env.NBGUI_VERSION }}.AppImage
-            ./dist/${{ env.NBGUI_VERSION }}/linux-${{ env.NBGUI_VERSION }}.dmg
+            ./dist/${{ env.NBGUI_VERSION }}/macos-${{ env.NBGUI_VERSION }}.dmg
