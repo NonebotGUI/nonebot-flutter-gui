@@ -21,6 +21,10 @@ _✨ 新一代Nonebot图形化界面 ✨_
 
 本项目包含了**大量的史山代码**
 
+## 👆🤓 依赖
+本软件运行需要Microsoft Visual C++ Redistributable运行时，如无法打开请尝试从此处下载安装运行时再使用。
+[https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
+
 ## 📖 介绍
 
 新一代Nonebot图形化界面,基于Dart和Flutter进行开发<br>
@@ -76,3 +80,10 @@ flutter build linux
 flutter build macos
 ```
 
+## 📑 TODO List
+
+- [ ]清理史山
+- [ ]使用GetX管理状态
+- [ ]重构新的UI
+- [ ]在主页面直接启动Bot
+- [ ]检查更新
