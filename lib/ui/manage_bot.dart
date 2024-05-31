@@ -61,7 +61,7 @@ class _MyCustomFormState extends State<ManageBot> {
     if (stdoutFile.existsSync()) {
       try {
         final file = File(_filePath);
-        final lines = await file.readAsLines();
+        final lines = await file.readAsLines(encoding: systemEncoding);
         final last50Lines =
             lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
         setState(() {
