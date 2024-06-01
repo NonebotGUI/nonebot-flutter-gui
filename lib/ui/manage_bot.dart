@@ -53,6 +53,7 @@ class _MyCustomFormState extends State<ManageBot> {
     _timer = Timer.periodic(
       const Duration(seconds: 1),
       (Timer t) => _loadFileContent(),
+   
     );
   }
 
@@ -66,6 +67,7 @@ class _MyCustomFormState extends State<ManageBot> {
             lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
         setState(() {
           _log = last50Lines.join('\n');
+          getPyPid(userDir);
         });
       } catch (e) {
         print('Error reading file: $e');
@@ -82,7 +84,9 @@ class _MyCustomFormState extends State<ManageBot> {
   }
 
   void _reloadConfig() {
-    setState(() {});
+    setState(() {
+      getPyPid(userDir);
+    });
   }
 
   @override
@@ -294,6 +298,37 @@ class _MyCustomFormState extends State<ManageBot> {
                           child: Align(
                             alignment: Alignment.centerRight,
                             child: Text(manageBotReadCfgPid(userDir).toString()),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      const Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 8.0,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Python进程',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 8.0,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(manageBotReadCfgPyPid()),
                           ),
                         ),
                       ),
