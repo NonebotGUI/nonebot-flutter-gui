@@ -637,7 +637,7 @@ stopBot(dir) async {
   cfgFile.writeAsStringSync(json.encode(botInfo));
   //如果平台为Windows则释放端口
   if (Platform.isWindows){
-    await Process.start("taskkill.exe", ['/f', '/pid', manageBotReadCfgPyPid().toString()]);
+    await Process.start("taskkill.exe", ['/f', '/pid', manageBotReadCfgPyPid().toString()],runInShell: true);
   }
 }
 
