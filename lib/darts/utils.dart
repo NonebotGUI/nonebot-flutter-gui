@@ -623,7 +623,7 @@ Future runBot(dir,String path) async {
 
 ///结束bot进程
 stopBot(dir) async {
-  ///读取配置文件
+  //读取配置文件
   String name = manageBotReadCfgName(dir);
   String time = manageBotReadCfgTime(dir);
   File cfgFile = File('$userDir/bots/$name.$time.json');
@@ -635,7 +635,43 @@ stopBot(dir) async {
   botInfo['isrunning'] = 'false';
   botInfo['pid'] = 'Null';
   cfgFile.writeAsStringSync(json.encode(botInfo));
+  //如果平台为Windows则释放端口
+  if (Platform.isWindows){
+    await Process.start("taskkill.exe", ['/f', '/pid', manageBotReadCfgPyPid().toString()]);
+  }
 }
+
+getPyPid(dir) {
+  File file = File('${manageBotReadCfgPath(dir)}/nbgui_stdout.log');
+  RegExp regex = RegExp(r'Started server process \[(\d+)\]');
+  Match? match = regex.firstMatch(file.readAsStringSync());
+  if (match != null && match.groupCount >= 1) {
+    String pid = match.group(1)!;
+    setPyPid(pid);
+    return pid;
+  } else {
+    setPyPid("Null");
+    return "Null";
+  }
+}
+
+setPyPid(pid) {
+  File cfgFile = File('$userDir/on_open.txt');
+  String cfg = cfgFile.readAsStringSync();
+  File botcfg = File('$userDir/bots/$cfg.json');
+  Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
+  jsonMap['pypid'] = pid;
+  botcfg.writeAsStringSync(jsonEncode(jsonMap));
+}
+
+manageBotReadCfgPyPid(){
+  File cfgFile = File('$userDir/on_open.txt');
+  String cfg = cfgFile.readAsStringSync();
+  File botcfg = File('$userDir/bots/$cfg.json');
+  Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
+  return jsonMap['pypid'].toString();
+}
+
 
 ///删除bot配置文件
 deleteBot(dir) async {
