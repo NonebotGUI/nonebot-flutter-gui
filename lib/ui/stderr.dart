@@ -53,7 +53,7 @@ class _HomeScreenState extends State<StdErr> {
               Expanded(
                   child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(manageBotViewStderr(userDir)))),
+                      child: Text(manageBotViewStderr(manageBotReadCfgPath(userDir))))),
             ],
           ),
         ),
