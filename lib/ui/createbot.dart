@@ -1,9 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:NonebotGUI/darts/global.dart';
 import 'package:NonebotGUI/darts/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:NonebotGUI/ui/creatingbot.dart';
 import 'package:http/http.dart' as http;
 
 // void main() {
@@ -29,6 +30,49 @@ class CreateBot extends StatefulWidget {
 }
 
 class _MyCustomFormState extends State<CreateBot> {
+  final _output = TextEditingController();
+  final _outputController = StreamController<String>.broadcast();
+
+
+  void _executeCommands() async {
+    //读取配置文件
+    String cfg = createBotReadConfig(userDir);
+    List<String> arg = cfg.split(',');
+    String name = arg[0];
+    String path = arg[1];
+    String venv = arg[2];
+    String dep = arg[3];
+
+    _output.clear();
+
+    List<String> commands = [
+      'echo 开始创建Bot：$name',
+      'echo 读取配置...',
+      createVENVEcho(path, name),
+      createVENV(userDir, path, name, venv),
+      'echo 开始安装依赖...',
+      installBot(userDir, path, name, venv, dep),
+      writePyProject(userDir, path, name),
+      writeENV(userDir, path, name),
+      writebot(userDir, name, path),
+      'echo 安装完成，可退出'
+    ];
+
+    for (String command in commands) {
+      List<String> args = command.split(' ');
+      String executable = args.removeAt(0);
+      Process process = await Process.start(executable, args, runInShell: true);
+      process.stdout
+          .transform(systemEncoding.decoder)
+          .listen((data) => _outputController.add(data));
+      process.stderr
+          .transform(systemEncoding.decoder)
+          .listen((data) => _outputController.add(data));
+      await process.exitCode;
+    }
+  }
+
+
   final myController = TextEditingController();
   bool isVENV = true;
   bool isDep = true;
@@ -129,7 +173,7 @@ class _MyCustomFormState extends State<CreateBot> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
+    // Clean up the controller when the widget is disposed.;
     myController.dispose();
     super.dispose();
   }
@@ -160,9 +204,6 @@ class _MyCustomFormState extends State<CreateBot> {
           "创建Bot",
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: userColorMode(userDir) == 'light'
-            ? const Color.fromRGBO(238, 109, 109, 1)
-            : const Color.fromRGBO(127, 86, 151, 1),
         actions: <Widget>[
           IconButton(
             onPressed: () {
@@ -189,9 +230,77 @@ class _MyCustomFormState extends State<CreateBot> {
                   name,
                   dropDownValuePluginDir,
                 );
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return const CreatingBot();
-                }));
+                  _executeCommands();
+                  showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return Material(
+                                color: Colors.transparent,
+                                child: Center(
+                                  child: AlertDialog(
+                                    title: const Text('正在安装Bot'),
+                                    content: SizedBox(
+                                      height: 600,
+                                      width: 800,
+                                      child: StreamBuilder<String>(
+                                        stream: _outputController.stream,
+                                        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                                          return Card(
+                                            color: const Color.fromARGB(255, 31, 28, 28),
+                                            child: SingleChildScrollView(
+                                              child: StreamBuilder<String>(
+                                                stream: _outputController.stream,
+                                                builder: (BuildContext context,
+                                                    AsyncSnapshot<String> snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    final newText =
+                                                    _output.text + (snapshot.data ?? '');
+                                                    _output.text = newText;
+                                                  }
+                                                  return Card(
+                                                    color: const Color.fromARGB(255, 31, 28, 28),
+                                                    child: SingleChildScrollView(
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.all(8.0),
+                                                        child: Text(
+                                                          _output.text,
+                                                          style: const TextStyle(
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () {
+                                        Navigator.of(context).popUntil((route) => route.isFirst);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('安装进程已在后台运行，请耐心等待安装完成'),
+                                            duration: Duration(seconds: 3),
+                                          ),
+                                        );
+                                        },
+                                        child: Text(
+                                          '关闭窗口',
+                                          style: TextStyle(color: Colors.red[400]),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                        },
+                      );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -449,3 +558,4 @@ class _MyCustomFormState extends State<CreateBot> {
     );
   }
 }
+
