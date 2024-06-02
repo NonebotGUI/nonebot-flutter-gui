@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:NonebotGUI/darts/utils.dart';
 import 'package:NonebotGUI/ui/managecli.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +72,7 @@ class _MyCustomFormState extends State<ManageBot> {
           getPyPid(userDir);
         });
       } catch (e) {
-        print('Error reading file: $e');
+        print('Error: $e');
       }
     }
   }
@@ -456,7 +458,7 @@ class _MyCustomFormState extends State<ManageBot> {
                         iconSize: 25,
                       ),
                       Visibility(
-                        visible: File('${manageBotReadCfgPath(userDir)}/nbgui_stderr.log').readAsStringSync().isNotEmpty,
+                        visible: File('${manageBotReadCfgPath(userDir)}/nbgui_stderr.log').readAsStringSync(encoding: systemEncoding).isNotEmpty,
                         child: IconButton(
                           onPressed: () => Navigator.push(
                             context,

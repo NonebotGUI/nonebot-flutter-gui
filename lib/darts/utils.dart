@@ -571,7 +571,7 @@ manageBotReadCfgPid(dir) {
 
 manageBotViewStderr(dir) {
   File stderrfile = File('$dir/nbgui_stderr.log');
-  String stderr = stderrfile.readAsStringSync();
+  String stderr = stderrfile.readAsStringSync(encoding: systemEncoding);
   return stderr;
 }
 
@@ -639,12 +639,13 @@ stopBot(dir) async {
   if (Platform.isWindows){
     await Process.start("taskkill.exe", ['/f', '/pid', manageBotReadCfgPyPid().toString()],runInShell: true);
   }
+  setPyPid('Null');
 }
 
 getPyPid(dir) {
   File file = File('${manageBotReadCfgPath(dir)}/nbgui_stdout.log');
   RegExp regex = RegExp(r'Started server process \[(\d+)\]');
-  Match? match = regex.firstMatch(file.readAsStringSync());
+  Match? match = regex.firstMatch(file.readAsStringSync(encoding: systemEncoding));
   if (match != null && match.groupCount >= 1) {
     String pid = match.group(1)!;
     setPyPid(pid);
