@@ -19,7 +19,6 @@ class Settings extends StatefulWidget {
 
 class _HomeScreenState extends State<Settings> {
 
-
   void _selectPy() async {
     final result = await FilePicker.platform.pickFiles();
 
@@ -38,6 +37,14 @@ class _HomeScreenState extends State<Settings> {
 
   final List<String> colorMode = ['light', 'dark'];
   late String dropDownValue = userColorMode(userDir);
+  bool checkUpdate = userCheckUpdate();
+
+    void _toggleCheckUpdate(bool newValue) {
+    setState(() {
+      checkUpdate = newValue;
+      setCheckUpdate(checkUpdate);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +94,30 @@ class _HomeScreenState extends State<Settings> {
                       ),
                         ),
                       ))
+                    ],
+                  ),
+                ),
+            ),
+            SizedBox(
+                height: 80,
+                child: Card(
+                  child: Row(
+                    children: <Widget>[
+                      const Expanded(child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('检查更新'),
+                      )),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Switch(
+                        value: checkUpdate,
+                        onChanged: _toggleCheckUpdate,
+                        focusColor: Colors.black,
+                        inactiveTrackColor: Colors.grey,
+                      ),
+                    ),
+                  ),
                     ],
                   ),
                 ),
