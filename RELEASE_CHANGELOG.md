@@ -1,4 +1,5 @@
-## 🌈ChangeLog 2024.06.01🤯
-修复了Windows下控制台无输出的bug
-修复了Windows下创建bot占用飙升的bug
-修复了Windows下关闭bot后仍占用端口的bug
+## 🌈ChangeLog 2024.06.05💪
+2024,祝广大高三学子，高考必胜，金榜题名！
+
+新增更新检查
+现在可以在主页面直接启动和停止bot了
