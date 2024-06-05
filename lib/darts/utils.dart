@@ -9,6 +9,7 @@ import 'package:toml/toml.dart';
 
 
 //存放一些小功能的地方
+///初始化
 createMainFolder() async {
   Directory usrDir = await getApplicationSupportDirectory();
   if (!usrDir.existsSync()) {
@@ -21,7 +22,8 @@ createMainFolder() async {
   {
     "python":"default",
     "nbcli":"default",
-    "color":"light"
+    "color":"light",
+    "checkUpdate": true
   }
   ''';
     cfgFile.writeAsStringSync(cfg);
@@ -98,6 +100,28 @@ userColorMode(dir) {
     return 'light';
   }
 }
+
+setCheckUpdate(tof) {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['checkUpdate'] = tof;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
+
+userCheckUpdate() {
+  File file = File('$userDir/user_config.json');
+  Map jsonMap = jsonDecode(file.readAsStringSync());
+  if ( jsonMap.containsKey("checkUpdate")){
+    bool checkUpdate = jsonMap['checkUpdate'];
+    return checkUpdate;
+  }
+  else {
+    setCheckUpdate(true);
+    return true;
+  }
+}
+
+
 
 setColorMode(dir,mode) {
   File file = File('${dir}/user_config.json');
