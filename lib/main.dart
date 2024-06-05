@@ -7,7 +7,10 @@ import 'package:NonebotGUI/ui/import_bot.dart';
 import 'package:NonebotGUI/ui/settings/more_page.dart';
 import 'package:NonebotGUI/ui/manage_bot.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
+import 'package:http/http.dart' as http;
+
 
 void main() async{
   userDir = await createMainFolder();
@@ -18,16 +21,8 @@ void main() async{
     ),
   );
 }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return
-//   }
-// }
 
+///颜色主题
 ThemeData _getTheme(mode) {
   switch (mode) {
     case 'light':
@@ -39,7 +34,7 @@ ThemeData _getTheme(mode) {
         checkboxTheme: CheckboxThemeData(
           fillColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
             if (states.contains(MaterialState.selected)) {
-              return Color.fromRGBO(238, 109, 109, 1);
+              return const Color.fromRGBO(238, 109, 109, 1);
             }
             return Colors.white;
           }),
@@ -114,11 +109,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final String configFolder = '${createMainFolderBots(userDir)}';
+  final String version = 'v0.1.8';
 
   @override
   void initState() {
     super.initState();
     refresh();
+    check();
   }
 
   void refresh() {
@@ -127,6 +124,65 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
       });
     });
+  }
+
+  ///检查更新
+  Future<void> check() async{
+    //如果“检查更新”为开启则检查
+    if (userCheckUpdate()){
+        try {
+          final response = await http.get(Uri.parse('https://api.github.com/repos/NonebotGUI/nonebot-flutter-gui/releases/latest'));
+          if (response.statusCode == 200) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('发现新版本！'),
+                duration: Duration(seconds: 3),
+              ));
+              final jsonData = jsonDecode(response.body);
+              final tagName = jsonData['tag_name']; 
+              final changeLog = jsonData['body'];
+              final url = jsonData['html_url'];
+              if (tagName != version){
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('有新的版本：$tagName'),
+                    content: Text(changeLog),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('复制url'),
+                        onPressed: (){
+                          Clipboard.setData(ClipboardData(text: url));
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text('已复制到剪贴板'),
+                            duration: Duration(seconds: 3),
+                          ));
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('确定'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+              }
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('检查更新失败（${response.statusCode}）'),
+                duration: const Duration(seconds: 3),
+              ));
+            }
+          } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('错误：$e'),
+                duration: const Duration(seconds: 3),
+              ));
+          }
+    }
   }
 
   List<String> configFileContentsName = [];
@@ -234,7 +290,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           return const ManageBot();
                         }));
                       },
-                      trailing: const Icon(Icons.menu),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.stop_rounded),
+                        onPressed: (){
+                          manageBotOnOpenCfg(userDir, name, time);
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text('Bot已停止'),
+                            duration: Duration(seconds: 3),
+                          ));
+                          setState(() {
+                            stopBot(userDir);
+                          });
+                        },
+                        tooltip: '停止Bot',
+                      ),
                     ),
                   ));
                 } else {
@@ -253,7 +322,20 @@ class _HomeScreenState extends State<HomeScreen> {
                           return const ManageBot();
                         }));
                       },
-                      trailing: const Icon(Icons.menu),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.play_arrow_rounded),
+                        onPressed: (){
+                          manageBotOnOpenCfg(userDir, name, time);
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text('Bot已启动'),
+                            duration: Duration(seconds: 3),
+                          ));
+                          setState(() {
+                            runBot(userDir,manageBotReadCfgPath(userDir));
+                          });
+                        },
+                        tooltip: '运行Bot',
+                      ),
                     ),
                   ));
                 }
