@@ -310,9 +310,9 @@ class _MyCustomFormState extends State<CreateBot> {
                 );
               }
             },
-            icon: const Icon(Icons.arrow_forward),
+            icon: const Icon(Icons.done_rounded),
             color: Colors.white,
-            tooltip: "下一步",
+            tooltip: "完成",
           ),
         ],
       ),
