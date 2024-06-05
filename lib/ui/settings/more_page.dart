@@ -21,20 +21,20 @@ class More extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<More> {
-  final String version = 'v0.1.8';
+  final String version = 'v0.1.8+fix1';
   Future<void> check() async{
         try {
           final response = await http.get(Uri.parse('https://api.github.com/repos/NonebotGUI/nonebot-flutter-gui/releases/latest'));
           if (response.statusCode == 200) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('发现新版本！'),
-                duration: Duration(seconds: 3),
-              ));
               final jsonData = jsonDecode(response.body);
               final tagName = jsonData['tag_name']; 
               final changeLog = jsonData['body'];
               final url = jsonData['html_url'];
               if (tagName != version){
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('发现新版本！'),
+                duration: Duration(seconds: 3),
+              ));
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
