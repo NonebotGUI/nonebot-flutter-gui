@@ -72,7 +72,7 @@ class _MyHomePageState extends State<PluginStore> {
         await http.get(Uri.parse('https://registry.nonebot.dev/plugins.json'));
     if (response.statusCode == 200) {
       setState(() {
-        String decodedBody = systemEncoding.decode(response.bodyBytes);
+        String decodedBody = utf8.decode(response.bodyBytes);
         final List<dynamic> jsonData = json.decode(decodedBody);
         data = jsonData.map((item) => item as Map<String, dynamic>).toList();
         search = data;
