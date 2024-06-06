@@ -21,7 +21,7 @@ class More extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<More> {
-  final String version = 'v0.1.8+fix1';
+  final String version = 'v0.1.8+fix2';
   Future<void> check() async{
         try {
           final response = await http.get(Uri.parse('https://api.github.com/repos/NonebotGUI/nonebot-flutter-gui/releases/latest'));
