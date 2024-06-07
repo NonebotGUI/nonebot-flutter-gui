@@ -83,7 +83,7 @@ void _showConfirmationDialog(BuildContext context) {
             ),
             onPressed: () {
               Navigator.of(context).pop();
-              deleteStderr(userDir);
+              deleteStderr(manageBotReadCfgPath(userDir));
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('已删除'),
