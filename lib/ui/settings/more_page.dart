@@ -21,7 +21,7 @@ class More extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<More> {
-  final String version = 'v0.1.8+fix2';
+  final String version = 'v0.1.8+fix3';
   Future<void> check() async{
         try {
           final response = await http.get(Uri.parse('https://api.github.com/repos/NonebotGUI/nonebot-flutter-gui/releases/latest'));
@@ -62,6 +62,12 @@ class _HomeScreenState extends State<More> {
                   );
                 },
               );
+              }
+              else {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('暂无新版本'),
+                duration: Duration(seconds: 3),
+              ));
               }
             } else {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
