@@ -440,7 +440,7 @@ class _MyCustomFormState extends State<ManageBot> {
                         onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const ManageCli(),
+                            builder: (context) => const manageCli(),
                           ),
                         ),
                         tooltip: "管理CLI",

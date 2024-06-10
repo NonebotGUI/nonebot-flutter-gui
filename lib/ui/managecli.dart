@@ -3,6 +3,7 @@ import 'package:NonebotGUI/darts/utils.dart';
 import 'package:NonebotGUI/darts/global.dart';
 import 'package:NonebotGUI/ui/adapter.dart';
 import 'package:NonebotGUI/ui/driver.dart';
+import 'package:NonebotGUI/ui/manage_cli.dart';
 import 'package:NonebotGUI/ui/manage_plugin.dart';
 import 'package:NonebotGUI/ui/plugin.dart';
 import 'package:flutter/material.dart';
@@ -24,14 +25,14 @@ import 'package:flutter/material.dart';
 //   }
 // }
 
-class ManageCli extends StatefulWidget {
-  const ManageCli({super.key});
+class manageCli extends StatefulWidget {
+  const manageCli({super.key});
 
   @override
-  State<ManageCli> createState() => _HomeScreenState();
+  State<manageCli> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<ManageCli> {
+class _HomeScreenState extends State<manageCli> {
   final myController = TextEditingController();
 
   @override
