@@ -4,16 +4,17 @@ import 'package:NonebotGUI/darts/utils.dart';
 import 'dart:convert';
 import 'package:NonebotGUI/ui/createbot.dart';
 import 'package:NonebotGUI/ui/import_bot.dart';
-import 'package:NonebotGUI/ui/settings/more_page.dart';
+import 'package:NonebotGUI/ui/settings/about.dart';
 import 'package:NonebotGUI/ui/manage_bot.dart';
+import 'package:NonebotGUI/ui/settings/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 
-
-void main() async{
+void main() async {
   userDir = await createMainFolder();
+  nbLog = '';
   runApp(
     MaterialApp(
       home: const HomeScreen(),
@@ -95,7 +96,8 @@ ThemeData _getTheme(mode) {
         ),
         switchTheme: const SwitchThemeData(
           trackColor: MaterialStatePropertyAll(Color.fromRGBO(238, 109, 109, 1))
-        )
+        ),
+        
       );
   }
 }
@@ -108,14 +110,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Timer? _timer;
   final String configFolder = '${createMainFolderBots(userDir)}';
-  final String version = 'v0.1.8+fix4';
+  final String version = 'v0.1.9';
 
   @override
   void initState() {
     super.initState();
     refresh();
     check();
+    _startRefreshing();
   }
 
   void refresh() {
@@ -126,6 +130,34 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _startRefreshing() {
+    if (_timer != null) {
+      _timer?.cancel();
+    }
+    _timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (Timer t) => _loadFileContent(),
+   
+    );
+  }
+
+
+  void _loadFileContent() async {
+    String filePath = '${manageBotReadCfgPath(userDir)}/nbgui_stdout.log';
+    File stdoutFile = File(filePath);
+    if (stdoutFile.existsSync()) {
+      try {
+        File file = File(filePath);
+        final lines = await file.readAsLines(encoding: utf8);
+        final last50Lines =
+            lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
+          nbLog = last50Lines.join('\n');
+          getPyPid(userDir);
+      } catch (e) {
+        print('Error: $e');
+      }
+    }
+  }
   ///检查更新
   Future<void> check() async{
     //如果“检查更新”为开启则检查
@@ -134,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final response = await http.get(Uri.parse('https://api.github.com/repos/NonebotGUI/nonebot-flutter-gui/releases/latest'));
           if (response.statusCode == 200) {
               final jsonData = jsonDecode(response.body);
-              final tagName = jsonData['tag_name']; 
+              final tagName = jsonData['tag_name'];
               final changeLog = jsonData['body'];
               final url = jsonData['html_url'];
               if (tagName != version){
@@ -213,36 +245,15 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
     });
   }
+  int _selectedIndex = 0;
+  String _appBarTitle = 'Nonebot GUI';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'NonebotGUI',
-          style: TextStyle(color: Colors.white),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          tooltip: '更多',
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) {
-              return const More();
-            }));
-          },
-          color: Colors.white,
-        ),
+        title: Text(_appBarTitle,style: const TextStyle(color: Colors.white),),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.file_download_outlined),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const ImportBot();
-              }));
-            },
-            tooltip: "从已有的Bot中导入",
-            color: Colors.white,
-          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
@@ -251,109 +262,181 @@ class _HomeScreenState extends State<HomeScreen> {
             tooltip: "刷新列表",
             color: Colors.white,
           ),
-        ],
+        ]
       ),
-      body: configFileContentsName.isEmpty
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('还没有Bot,点击右下角的“+”来创建'),
-                  SizedBox(height: 3),
-                  Text('如果你已经有了Bot,可以使用右上角的按钮导入'),
-                  SizedBox(height: 3),
-                  Text('如果创建后没有显示请点击右上角的按钮刷新列表'),
-                ],
+      body: Row(
+        children: <Widget>[
+          NavigationRail(
+            onDestinationSelected: (int index) {
+              setState(() {
+                _selectedIndex = index;
+                _appBarTitle =
+                  index == 0 ? 'Nonebot GUI' :
+                  index == 1 ? manageBotReadCfgName(userDir) :
+                  index == 2 ? '添加bot' :
+                  index == 3 ? '导入Bot':
+                  index == 4 ? '设置':
+                  index == 5 ? '关于Nonebot GUI':
+                  index == 6 ? '开源许可证':
+                  'Null';
+              });
+            },
+            destinations: const <NavigationRailDestination>[
+              NavigationRailDestination(
+                icon: Icon(Icons.home_rounded),
+                label: Text('主页'),
               ),
-            )
-          : ListView.builder(
-              itemCount: configFileContentsName.length,
-              itemBuilder: (context, index) {
-                String name = configFileContentsName[index];
-                String status = configFileContentsRun[index];
-                String time = configFileContentsTime[index];
-                String path = configFileContentsPath[index];
-                if (status == 'true') {
-                  return SingleChildScrollView(
-                      child: Card(
-                    child: ListTile(
-                      title: Text(name),
-                      subtitle: const Text(
-                        "运行中",
-                        style: TextStyle(color: Colors.green),
-                      ),
-                      onTap: () {
-                        manageBotOnOpenCfg(userDir, name, time);
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          createLog(path);
-                          return const ManageBot();
-                        }));
-                      },
-                      trailing: IconButton(
-                        icon: const Icon(Icons.stop_rounded),
-                        onPressed: (){
-                          manageBotOnOpenCfg(userDir, name, time);
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text('Bot已停止'),
-                            duration: Duration(seconds: 3),
-                          ));
-                          setState(() {
-                            stopBot(userDir);
-                          });
-                        },
-                        tooltip: '停止Bot',
+              NavigationRailDestination(
+                icon: Icon(Icons.dashboard_rounded),
+                label: Text('管理Bot'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.add_rounded),
+                label: Text('添加bot'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.file_download_outlined),
+                label: Text('导入Bot'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.settings_rounded),
+                label: Text('设置'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.info_outline_rounded),
+                label: Text('关于'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.balance),
+                label: Text('开源许可证'),
+              ),
+            ],
+            selectedIndex: _selectedIndex,
+          ),
+          const VerticalDivider(thickness: 1, width: 1),
+          Expanded(
+            child: IndexedStack(
+              index: _selectedIndex,
+              children: [
+                configFileContentsName.isEmpty
+                          ? const Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('还没有Bot,侧边栏的“+”来创建'),
+                                  SizedBox(height: 3),
+                                  Text('如果你已经有了Bot,可以使用侧边栏的导入按钮导入'),
+                                  SizedBox(height: 3),
+                                  Text('如果创建后没有显示请点击右上角的按钮刷新列表'),
+                                ],
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount: configFileContentsName.length,
+                              itemBuilder: (context, index) {
+                                String name = configFileContentsName[index];
+                                String status = configFileContentsRun[index];
+                                String time = configFileContentsTime[index];
+                                String path = configFileContentsPath[index];
+                                if (status == 'true') {
+                                  return SingleChildScrollView(
+                                      child: Card(
+                                    child: ListTile(
+                                      title: Text(name),
+                                      subtitle: const Text(
+                                        "运行中",
+                                        style: TextStyle(color: Colors.green),
+                                      ),
+                                      onTap: () {
+                                        manageBotOnOpenCfg(userDir, name, time);
+                                        createLog(path);
+                                        _loadFileContent();
+                                        setState(() {
+                                          _selectedIndex = 1;
+                                          _appBarTitle = manageBotReadCfgName(userDir);
+                                        });
+                                      },
+                                      trailing: IconButton(
+                                        icon: const Icon(Icons.stop_rounded),
+                                        onPressed: (){
+                                          manageBotOnOpenCfg(userDir, name, time);
+                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                            content: Text('Bot已停止'),
+                                            duration: Duration(seconds: 3),
+                                          ));
+                                          setState(() {
+                                            stopBot(userDir);
+                                          });
+                                        },
+                                        tooltip: '停止Bot',
+                                      ),
+                                    ),
+                                  ));
+                                } else {
+                                  return SingleChildScrollView(
+                                      child: Card(
+                                    child: ListTile(
+                                      title: Text(name),
+                                      subtitle: const Text(
+                                        "未运行",
+                                      ),
+                                      onTap: () {
+                                        manageBotOnOpenCfg(userDir, name, time);
+                                        _loadFileContent();
+                                        createLog(path);
+                                        _loadFileContent();
+                                        setState(() {
+                                          _selectedIndex = 1;
+                                          _appBarTitle = manageBotReadCfgName(userDir);
+                                        });
+                                      },
+                                      trailing: IconButton(
+                                        icon: const Icon(Icons.play_arrow_rounded),
+                                        onPressed: (){
+                                          manageBotOnOpenCfg(userDir, name, time);
+                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                            content: Text('Bot已启动'),
+                                            duration: Duration(seconds: 3),
+                                          ));
+                                          setState(() {
+                                            runBot(userDir,manageBotReadCfgPath(userDir));
+                                          });
+                                        },
+                                        tooltip: '运行Bot',
+                                      ),
+                                    ),
+                                  ));
+                                }
+                              },
+                            ),
+                File('$userDir/on_open.txt').existsSync()
+                  ? const ManageBot()
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Image.asset('lib/assets/loading.gif'),
+                          const SizedBox(height: 10),
+                          const Text('你还没有选择要打开的bot'),
+                        ],
                       ),
                     ),
-                  ));
-                } else {
-                  return SingleChildScrollView(
-                      child: Card(
-                    child: ListTile(
-                      title: Text(name),
-                      subtitle: const Text(
-                        "未运行",
-                      ),
-                      onTap: () {
-                        manageBotOnOpenCfg(userDir, name, time);
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          createLog(path);
-                          return const ManageBot();
-                        }));
-                      },
-                      trailing: IconButton(
-                        icon: const Icon(Icons.play_arrow_rounded),
-                        onPressed: (){
-                          manageBotOnOpenCfg(userDir, name, time);
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text('Bot已启动'),
-                            duration: Duration(seconds: 3),
-                          ));
-                          setState(() {
-                            runBot(userDir,manageBotReadCfgPath(userDir));
-                          });
-                        },
-                        tooltip: '运行Bot',
-                      ),
-                    ),
-                  ));
-                }
-              },
+                const CreateBot(),
+                const ImportBot(),
+                const Settings(),
+                const About(),
+                LicensePage(
+                        applicationIcon: Image.asset('lib/assets/logo.png'),
+                        applicationName: 'NonebotGUI',
+                        applicationVersion: '0.1.9',
+                        ),
+              ],
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const CreateBot();
-          }));
-        },
-        tooltip: '添加一个bot',
-        shape: const CircleBorder(),
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
+          ),
+        ],
       ),
     );
   }
 }
+
