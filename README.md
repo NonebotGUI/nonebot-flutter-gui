@@ -30,6 +30,12 @@ _✨ 新一代Nonebot图形化界面 ✨_
 
 新一代Nonebot图形化界面,基于Dart和Flutter进行开发<br>
 
+## 🖼️ 使用截图
+
+![img1](img/1.png)
+
+![img](img/2.png)
+
 ## ✨特点
 ### 快速上手，开箱即用
 Nonebot Flutter GUI提供了简洁的UI界面供用户使用，即使是小白也能够轻松上手，从安装到运行，一步到位
