@@ -148,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (stdoutFile.existsSync()) {
       try {
         File file = File(filePath);
-        final lines = await file.readAsLines(encoding: utf8);
+        final lines = await file.readAsLines(encoding: systemEncoding);
         final last50Lines =
             lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
           nbLog = last50Lines.join('\n');
