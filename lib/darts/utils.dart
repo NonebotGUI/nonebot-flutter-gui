@@ -703,6 +703,7 @@ deleteBot(dir) async {
   String name = manageBotReadCfgName(dir);
   String time = manageBotReadCfgTime(dir);
   File cfgFile = File('$dir/bots/$name.$time.json');
+  File('$userDir/on_open.txt').delete();
   cfgFile.delete();
 }
 
@@ -713,6 +714,7 @@ deleteBotAll(dir) async {
   File cfgFile = File('$userDir/bots/$name.$time.json');
   String path = manageBotReadCfgPath(dir);
   Directory(path).delete(recursive: true);
+  File('$userDir/on_open.txt').delete();
   cfgFile.delete();
 }
 
