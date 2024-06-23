@@ -112,7 +112,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Timer? _timer;
   final String configFolder = '${createMainFolderBots(userDir)}';
-  final String version = 'v0.1.9+fix1';
+  final String version = 'v0.1.9+fix2';
 
   @override
   void initState() {
