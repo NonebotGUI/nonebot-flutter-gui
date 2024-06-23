@@ -84,6 +84,6 @@ flutter build macos
 
 - [ ] 清理史山
 - [ ] 使用GetX管理状态
-- [ ] 重构新的UI
+- [X] 重构新的UI
 - [X] 在主页面直接启动Bot
 - [X] 检查更新
