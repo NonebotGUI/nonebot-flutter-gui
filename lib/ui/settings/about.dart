@@ -85,7 +85,7 @@ class _MoreState extends State<About> {
                   child: Align(
                 alignment: Alignment.centerRight,
                 child: InkWell(
-                  child: const Text('0.1.9'),
+                  child: const Text('0.1.9.1'),
                   onTap: () {
                     if (showImage) {
                       showDialog(
