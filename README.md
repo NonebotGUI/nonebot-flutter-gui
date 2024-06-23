@@ -15,6 +15,7 @@ _✨ 新一代Nonebot图形化界面 ✨_
     <img src="https://img.shields.io/github/license/XTxiaoting14332/nonebot-flutter-gui.svg" alt="license">
 </a>
 
+[![Build](https://github.com/NonebotGUI/nonebot-flutter-gui/actions/workflows/build.yml/badge.svg?event=workflow_run)](https://github.com/NonebotGUI/nonebot-flutter-gui/actions/workflows/build.yml)
 </div>
 
 ## ⚠️ 史山警告
