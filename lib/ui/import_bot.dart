@@ -44,40 +44,6 @@ class _HomeScreenState extends State<ImportBot> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          '导入Bot',
-          style: TextStyle(color: Colors.white),
-        ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              if (_selectedFolderPath.toString() != 'null') {
-                importbot(userDir, name, _selectedFolderPath.toString());
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('导入完成'),
-                    duration: Duration(seconds: 3),
-                  ),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('你还没有选择Bot的根目录！'),
-                    duration: Duration(seconds: 3),
-                  ),
-                );
-              }
-            },
-            icon: const Icon(
-              Icons.done_rounded,
-              color: Colors.white,
-            ),
-            tooltip: "导入",
-          )
-        ],
-      ),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(16.0),
@@ -129,6 +95,37 @@ class _HomeScreenState extends State<ImportBot> {
               ),
             ],
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              if (_selectedFolderPath.toString() != 'null') {
+                importbot(userDir, name, _selectedFolderPath.toString());
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('导入完成'),
+                    duration: Duration(seconds: 3),
+                  ),
+                );
+                setState(() {
+                  name = 'ImportedBot';
+                  _selectedFolderPath = null;
+                });
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('你还没有选择Bot的根目录！'),
+                    duration: Duration(seconds: 3),
+                  ),
+                );
+              }
+            },
+            tooltip: "导入",
+        shape: const CircleBorder(),
+        child: const Icon(
+          Icons.done_rounded,
+          color: Colors.white,
         ),
       ),
     );

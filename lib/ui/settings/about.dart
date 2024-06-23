@@ -38,28 +38,6 @@ class _MoreState extends State<About> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "关于",
-            style: TextStyle(color: Colors.white),
-          ),
-          actions: <Widget>[
-            IconButton(
-              onPressed: () {
-                Clipboard.setData(const ClipboardData(
-                    text:
-                        'https://github.com/NonebotGUI/nonebot-flutter-gui'));
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('项目仓库链接已复制到剪贴板'),
-                  duration: Duration(seconds: 3),
-                ));
-              },
-              icon: const Icon(MyFlutterApp.github),
-              tooltip: '项目仓库地址',
-              iconSize: 30,
-            )
-          ],
-        ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(children: <Widget>[
@@ -107,7 +85,7 @@ class _MoreState extends State<About> {
                   child: Align(
                 alignment: Alignment.centerRight,
                 child: InkWell(
-                  child: const Text('0.1.8.4'),
+                  child: const Text('0.1.9'),
                   onTap: () {
                     if (showImage) {
                       showDialog(
@@ -233,6 +211,22 @@ class _MoreState extends State<About> {
             const SizedBox(
               height: 16,
             ),
+            Center(
+              child:             IconButton(
+              onPressed: () {
+                Clipboard.setData(const ClipboardData(
+                    text:
+                        'https://github.com/NonebotGUI/nonebot-flutter-gui'));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('项目仓库链接已复制到剪贴板'),
+                  duration: Duration(seconds: 3),
+                ));
+              },
+              icon: const Icon(MyFlutterApp.github),
+              tooltip: '项目仓库地址',
+              iconSize: 30,
+            ),
+            )
           ]),
         ));
   }

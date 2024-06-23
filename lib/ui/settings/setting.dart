@@ -49,12 +49,6 @@ class _HomeScreenState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "设置",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[

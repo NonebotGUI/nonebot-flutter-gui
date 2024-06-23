@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:NonebotGUI/darts/utils.dart';
 import 'package:NonebotGUI/ui/managecli.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +33,9 @@ class ManageBot extends StatefulWidget {
 // This class holds the data related to the Form.
 class _MyCustomFormState extends State<ManageBot> {
   Timer? _timer;
-  String _log = '[INFO]Welcome to Nonebot GUI!\n';
-  final String _filePath = '${manageBotReadCfgPath(userDir)}/nbgui_stdout.log';
+  final ScrollController _scrollController = ScrollController();
+
+
   @override
   void initState() {
     getDir();
@@ -61,8 +64,8 @@ class _MyCustomFormState extends State<ManageBot> {
     File stdoutFile = File(_filePath);
     if (stdoutFile.existsSync()) {
       try {
-        final file = File(_filePath);
-        final lines = await file.readAsLines(encoding: systemEncoding);
+        File file = File(_filePath);
+        final lines = await file.readAsLines(encoding: utf8);
         final last50Lines =
             lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
         setState(() {
@@ -86,154 +89,167 @@ class _MyCustomFormState extends State<ManageBot> {
   void _reloadConfig() {
     setState(() {
       getPyPid(userDir);
+      _filePath = '${manageBotReadCfgPath(userDir)}/nbgui_stdout.log';
+      _scrollController.addListener(() {
+     });
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(seconds: 1),
+      curve: Curves.easeOut,
+    );
     });
   }
 
+
+  String _filePath = '${manageBotReadCfgPath(userDir)}/nbgui_stdout.log';
+  String _log = '[INFO]Welcome to Nonebot GUI!\n';
   @override
   Widget build(BuildContext context) {
+  Future.delayed(Duration.zero, () {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
+  });
+  final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "${manageBotReadCfgName(userDir)}",
-          style: const TextStyle(color: Colors.white),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () => _showConfirmationDialog(context),
-            tooltip: "删除",
-            color: Colors.white,
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
+      body: Container(
+        padding: const EdgeInsets.all(8),
+        child: Row(
           children: <Widget>[
-            Card(
-              margin: const EdgeInsets.all(4.0),
-              child: Column(
-                children: <Widget>[
-                  const Center(
-                    child: Text(
-                      'Bot信息',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Row(
+              SizedBox(
+                width: size.width * 0.3,
+                child: Card(
+                  child: Column(
                     children: <Widget>[
-                      const Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 8.0,
+                      const Center(
+                        child: Text(
+                          'Bot信息',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold
                           ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '名称',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      SizedBox(height: size.height * 0.1),
+                      const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '名称',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold
                             ),
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 8.0,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(manageBotReadCfgName(userDir).toString()),
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            manageBotReadCfgName(userDir),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 6,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      const Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 8.0,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '路径',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                      const SizedBox(height: 10),
+                      const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '路径',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold
                             ),
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 8.0,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(manageBotReadCfgPath(userDir).toString()),
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            manageBotReadCfgPath(userDir),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 6,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      const Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 8.0,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '创建时间',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                      const SizedBox(height: 10),
+                      const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '创建时间',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold
                             ),
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 8.0,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(manageBotReadCfgTime(userDir).toString()),
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            manageBotReadCfgTime(userDir),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 7,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      const Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 8.0,
+                      const SizedBox(height: 10),
+                      const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '进程ID(Nonebot)',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold
+                            ),
                           ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '状态',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            manageBotReadCfgPid(userDir),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '进程ID(Python)',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            manageBotReadCfgPyPid(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '状态',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold
                             ),
                           ),
                         ),
@@ -241,12 +257,9 @@ class _MyCustomFormState extends State<ManageBot> {
                       if (manageBotReadCfgStatus(userDir) == 'true')
                         const Expanded(
                           child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 8.0,
-                            ),
+                            padding: EdgeInsets.all(4),
                             child: Align(
-                              alignment: Alignment.centerRight,
+                              alignment: Alignment.centerLeft,
                               child: Text(
                                 '运行中',
                                 style: TextStyle(color: Colors.green),
@@ -255,262 +268,227 @@ class _MyCustomFormState extends State<ManageBot> {
                           ),
                         ),
                       if (manageBotReadCfgStatus(userDir) == 'false')
-                        const Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 8.0,
-                            ),
+                          const Padding(
+                            padding: EdgeInsets.all(4),
                             child: Align(
-                              alignment: Alignment.centerRight,
+                              alignment: Alignment.centerLeft,
                               child: Text(
                                 '未运行',
                                 style: TextStyle(color: Colors.red),
                               ),
                             ),
                           ),
+                      SizedBox(
+                        height: size.height * 0.1,
+                      ),
+                      SizedBox(
+                        width: size.width * 0.65,
+                        child: OutlinedButton(
+                          child: const Icon(Icons.delete_rounded),
+                          onPressed: () => _showConfirmationDialog(context),
                         ),
+                      )
                     ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      const Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 8.0,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '进程ID',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 8.0,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(manageBotReadCfgPid(userDir).toString()),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      const Expanded(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 8.0,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Python进程',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 8.0,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(manageBotReadCfgPyPid()),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                  )
+                ),
               ),
-            ),
-            Card(
-              margin: const EdgeInsets.all(4.0),
-              child: Column(
+            Expanded(
+                child: Column(
                 children: <Widget>[
-                  const Center(
-                      child: Text(
-                    '操作',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  )),
-                  const SizedBox(
-                    height: 3,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      IconButton(
-                        onPressed: () {
-                          if (manageBotReadCfgStatus(userDir) == 'false') {
-                            runBot(userDir, manageBotReadCfgPath(userDir));
-                            _reloadConfig();
-                            _startRefreshing();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Nonebot,启动！如果发现控制台无刷新请检查bot目录下的nbgui_stderr.log查看报错',
+                  Card(
+                    child: Column(
+                      children: <Widget>[
+                        const Padding(
+                          padding: EdgeInsets.all(4),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '控制台输出',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 3,
+                        ),
+                        SizedBox(
+                          width: size.width * 0.65,
+                          height: size.height * 0.75,
+                          child: Card(
+                            color: const Color.fromARGB(255, 31, 28, 28),
+                            child: SingleChildScrollView(
+                              controller: _scrollController,
+                              child: Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: RichText(
+                                  text: TextSpan(
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'JetBrainsMono',
+                                    ),
+                                    children: _logSpans(nbLog),
+                                  ),
                                 ),
-                                duration: Duration(seconds: 3),
                               ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Bot已经在运行中了！'),
-                                duration: Duration(seconds: 3),
-                              ),
-                            );
-                          }
-                        },
-                        tooltip: "运行",
-                        icon: const Icon(Icons.play_arrow_rounded),
-                        iconSize: 25,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          if (manageBotReadCfgStatus(userDir) == 'true') {
-                            stopBot(userDir);
-                            _reloadConfig();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Bot已停止'),
-                                duration: Duration(seconds: 3),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Bot未在运行！'),
-                                duration: Duration(seconds: 3),
-                              ),
-                            );
-                          }
-                        },
-                        tooltip: "停止",
-                        icon: const Icon(Icons.stop_rounded),
-                        iconSize: 25,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          if (manageBotReadCfgStatus(userDir) == 'true') {
-                            stopBot(userDir);
-                            runBot(userDir, manageBotReadCfgPath(userDir));
-                            clearLog(userDir);
-                            _reloadConfig();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Bot正在重启...'),
-                                duration: Duration(seconds: 3),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Bot未在运行！'),
-                                duration: Duration(seconds: 3),
-                              ),
-                            );
-                          }
-                        },
-                        tooltip: "重启",
-                        icon: const Icon(Icons.refresh),
-                        iconSize: 25,
-                      ),
-                      IconButton(
-                        onPressed: () =>
-                            openFolder(manageBotReadCfgPath(userDir).toString()),
-                        tooltip: "打开文件夹",
-                        icon: const Icon(Icons.folder),
-                        iconSize: 25,
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const manageCli(),
-                          ),
-                        ),
-                        tooltip: "管理CLI",
-                        icon: const Icon(Icons.terminal_rounded),
-                        iconSize: 25,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          clearLog(userDir);
-                        },
-                        tooltip: "清空日志",
-                        icon: const Icon(Icons.delete_rounded),
-                        iconSize: 25,
-                      ),
-                      Visibility(
-                        visible: File('${manageBotReadCfgPath(userDir)}/nbgui_stderr.log').readAsStringSync(encoding: systemEncoding).isNotEmpty,
-                        child: IconButton(
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const StdErr(),
                             ),
                           ),
-                          tooltip: '查看报错日志',
-                          icon: const Icon(Icons.error_rounded),
-                          color: Colors.red,
-                          iconSize: 25,
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Card(
-              margin: const EdgeInsets.all(4.0),
-              child: Column(
-                children: <Widget>[
-                  const Center(
-                    child: Text(
-                      '控制台输出',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      ],
                     ),
                   ),
                   const SizedBox(
-                    height: 3,
+                    height: 2,
                   ),
-                  SizedBox(
-                    height: 450,
-                    width: 2000,
+                  Expanded(
                     child: Card(
-                      color: const Color.fromARGB(255, 31, 28, 28),
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: RichText(
-                            text: TextSpan(
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'JetBrainsMono',
+                      child: Column(
+                    children: <Widget>[
+                        const Padding(
+                          padding: EdgeInsets.only(left: 8),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '操作',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold
                               ),
-                              children: _logSpans(_log),
                             ),
                           ),
                         ),
+                      Center(
+                        child:                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              IconButton(
+                                onPressed: () {
+                                  if (manageBotReadCfgStatus(userDir) == 'false') {
+                                    runBot(userDir, manageBotReadCfgPath(userDir));
+                                    _reloadConfig();
+                                    _startRefreshing();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Nonebot,启动！如果发现控制台无刷新请检查bot目录下的nbgui_stderr.log查看报错',
+                                        ),
+                                        duration: Duration(seconds: 3),
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Bot已经在运行中了！'),
+                                        duration: Duration(seconds: 3),
+                                      ),
+                                    );
+                                  }
+                                },
+                                tooltip: "运行",
+                                icon: const Icon(Icons.play_arrow_rounded),
+                                iconSize: size.height * 0.04,
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  if (manageBotReadCfgStatus(userDir) == 'true') {
+                                    stopBot(userDir);
+                                    _startRefreshing();
+                                    _reloadConfig();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Bot已停止'),
+                                        duration: Duration(seconds: 3),
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Bot未在运行！'),
+                                        duration: Duration(seconds: 3),
+                                      ),
+                                    );
+                                  }
+                                },
+                                tooltip: "停止",
+                                icon: const Icon(Icons.stop_rounded),
+                                iconSize: size.height * 0.04,
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  if (manageBotReadCfgStatus(userDir) == 'true') {
+                                    stopBot(userDir);
+                                    runBot(userDir, manageBotReadCfgPath(userDir));
+                                    clearLog(userDir);
+                                    _reloadConfig();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Bot正在重启...'),
+                                        duration: Duration(seconds: 3),
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Bot未在运行！'),
+                                        duration: Duration(seconds: 3),
+                                      ),
+                                    );
+                                  }
+                                },
+                                tooltip: "重启",
+                                icon: const Icon(Icons.refresh),
+                                iconSize: size.height * 0.04,
+                              ),
+                              IconButton(
+                                onPressed: () =>
+                                    openFolder(manageBotReadCfgPath(userDir).toString()),
+                                tooltip: "打开文件夹",
+                                icon: const Icon(Icons.folder),
+                                iconSize: size.height * 0.04,
+                              ),
+                              IconButton(
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const manageCli(),
+                                  ),
+                                ),
+                                tooltip: "管理CLI",
+                                icon: const Icon(Icons.terminal_rounded),
+                                iconSize: size.height * 0.04,
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  clearLog(userDir);
+                                },
+                                tooltip: "清空日志",
+                                icon: const Icon(Icons.delete_rounded),
+                                iconSize: size.height * 0.04,
+                              ),
+                              Visibility(
+                                visible: File('${manageBotReadCfgPath(userDir)}/nbgui_stderr.log').readAsStringSync(encoding: systemEncoding).isNotEmpty,
+                                child: IconButton(
+                                  onPressed: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const StdErr(),
+                                    ),
+                                  ),
+                                  tooltip: '查看报错日志',
+                                  icon: const Icon(Icons.error_rounded),
+                                  color: Colors.red,
+                                  iconSize: size.height * 0.04,
+                                ),
+                              ),
+                            ],
+                          ),
+                      )
+                        ],
                       ),
                     ),
-                  ),
+                  )
                 ],
-              ),
+              )
             ),
           ],
         ),
@@ -605,6 +583,8 @@ List<TextSpan> _logSpans(text) {
   return spans;
 }
 
+
+
 void _showConfirmationDialog(BuildContext context) {
   showDialog(
     context: context,
@@ -626,7 +606,6 @@ void _showConfirmationDialog(BuildContext context) {
             ),
             onPressed: () {
               Navigator.of(context).pop();
-              Navigator.of(context).popUntil((route) => route.isFirst);
               deleteBot(userDir);
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text('Bot已删除'),
@@ -641,7 +620,6 @@ void _showConfirmationDialog(BuildContext context) {
             ),
             onPressed: () {
               Navigator.of(context).pop();
-              Navigator.of(context).popUntil((route) => route.isFirst);
               deleteBotAll(userDir);
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text('Bot已删除'),
@@ -654,3 +632,4 @@ void _showConfirmationDialog(BuildContext context) {
     },
   );
 }
+
