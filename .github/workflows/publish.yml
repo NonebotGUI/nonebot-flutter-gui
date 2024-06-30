@@ -137,8 +137,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          apt update
-          apt install zip curl -y
+          sudo apt update
+          sudo apt install zip curl -y
 
 
       - name: Download Build Artifact(Windows)
