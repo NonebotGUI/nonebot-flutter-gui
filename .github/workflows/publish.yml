@@ -197,7 +197,7 @@ jobs:
         run: |
           curl -H "Content-Type: application/zip" \
             -H "Authorization: $NETLIFY_TOKEN" \
-            --data-binary "@nbgui.zip" \  
+            --data-binary "@nbgui.zip" \
             "https://api.netlify.com/api/v1/sites/$NETLIFY_SITEID/deploys"
         env:
           NETLIFY_SITEID: ${{ secrets.NETLIFY_SITEID }}
