@@ -15,6 +15,7 @@ import 'package:http/http.dart' as http;
 void main() async {
   userDir = await createMainFolder();
   nbLog = '';
+  version = 'v0.1.10';
   runApp(
     MaterialApp(
       home: const HomeScreen(),
@@ -112,7 +113,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Timer? _timer;
   final String configFolder = '${createMainFolderBots(userDir)}';
-  final String version = 'v0.1.9+fix2';
 
   @override
   void initState() {
@@ -269,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
               setState(() {
                 _selectedIndex = index;
                 _appBarTitle =
-                  index == 0 ? 'Nonebot GUI' :
+                  index == 0 ? 'NoneBot GUI' :
                   index == 1 ? manageBotReadCfgName(userDir) :
                   index == 2 ? '添加bot' :
                   index == 3 ? '导入Bot':
