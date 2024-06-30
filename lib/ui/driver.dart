@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:NonebotGUI/assets/my_flutter_app_icons.dart';
+import 'package:NoneBotGUI/assets/my_flutter_app_icons.dart';
 import 'package:flutter/services.dart';
-import 'package:NonebotGUI/darts/utils.dart';
-import 'package:NonebotGUI/darts/global.dart';
+import 'package:NoneBotGUI/darts/utils.dart';
+import 'package:NoneBotGUI/darts/global.dart';
 
 // void main() {
 //   runApp(const MyApp());

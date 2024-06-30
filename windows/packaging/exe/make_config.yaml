@@ -1,9 +1,9 @@
 app_id: E74DE52E-9367-42FA-A15C-FF0EE4F5E071
 publisher: 【夜风】NightWind
 publisher_url: https://github.com/XTxiaoting14332/nonebot-flutter-gui
-display_name: NonebotGUI
+display_name: NoneBotGUI
 create_desktop_icon: true
-install_dir_name: NonebotGUI
+install_dir_name: NoneBotGUI
 script_template: inno_setup.iss
 locales:
   - zh

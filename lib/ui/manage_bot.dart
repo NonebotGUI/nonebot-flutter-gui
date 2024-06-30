@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:NonebotGUI/darts/utils.dart';
-import 'package:NonebotGUI/ui/managecli.dart';
+import 'package:NoneBotGUI/darts/utils.dart';
+import 'package:NoneBotGUI/ui/managecli.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:async';
-import 'package:NonebotGUI/ui/stderr.dart';
-import 'package:NonebotGUI/darts/global.dart';
+import 'package:NoneBotGUI/ui/stderr.dart';
+import 'package:NoneBotGUI/darts/global.dart';
 
 // void main() {
 //   runApp(const MyApp());
@@ -56,7 +56,6 @@ class _MyCustomFormState extends State<ManageBot> {
     _timer = Timer.periodic(
       const Duration(seconds: 1),
       (Timer t) => _loadFileContent(),
-   
     );
   }
 
@@ -255,8 +254,7 @@ class _MyCustomFormState extends State<ManageBot> {
                         ),
                       ),
                       if (manageBotReadCfgStatus(userDir) == 'true')
-                        const Expanded(
-                          child: Padding(
+                          const Padding(
                             padding: EdgeInsets.all(4),
                             child: Align(
                               alignment: Alignment.centerLeft,
@@ -266,7 +264,6 @@ class _MyCustomFormState extends State<ManageBot> {
                               ),
                             ),
                           ),
-                        ),
                       if (manageBotReadCfgStatus(userDir) == 'false')
                           const Padding(
                             padding: EdgeInsets.all(4),
@@ -279,10 +276,20 @@ class _MyCustomFormState extends State<ManageBot> {
                             ),
                           ),
                       SizedBox(
-                        height: size.height * 0.1,
+                        height: size.height * 0.05,
                       ),
                       SizedBox(
-                        width: size.width * 0.65,
+                        width: size.width * 0.2,
+                        child: OutlinedButton(
+                          child: const Icon(Icons.delete_rounded),
+                          onPressed: () => _showConfirmationDialog(context),
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.height * 0.01,
+                      ),
+                      SizedBox(
+                        width: size.width * 0.2,
                         child: OutlinedButton(
                           child: const Icon(Icons.delete_rounded),
                           onPressed: () => _showConfirmationDialog(context),
@@ -358,7 +365,7 @@ class _MyCustomFormState extends State<ManageBot> {
                           ),
                         ),
                       Center(
-                        child:                           Row(
+                        child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
                               IconButton(
@@ -386,7 +393,7 @@ class _MyCustomFormState extends State<ManageBot> {
                                 },
                                 tooltip: "运行",
                                 icon: const Icon(Icons.play_arrow_rounded),
-                                iconSize: size.height * 0.04,
+                                iconSize: size.height * 0.03,
                               ),
                               IconButton(
                                 onPressed: () {
@@ -411,7 +418,7 @@ class _MyCustomFormState extends State<ManageBot> {
                                 },
                                 tooltip: "停止",
                                 icon: const Icon(Icons.stop_rounded),
-                                iconSize: size.height * 0.04,
+                                iconSize: size.height * 0.03,
                               ),
                               IconButton(
                                 onPressed: () {
@@ -437,14 +444,14 @@ class _MyCustomFormState extends State<ManageBot> {
                                 },
                                 tooltip: "重启",
                                 icon: const Icon(Icons.refresh),
-                                iconSize: size.height * 0.04,
+                                iconSize: size.height * 0.03,
                               ),
                               IconButton(
                                 onPressed: () =>
                                     openFolder(manageBotReadCfgPath(userDir).toString()),
                                 tooltip: "打开文件夹",
                                 icon: const Icon(Icons.folder),
-                                iconSize: size.height * 0.04,
+                                iconSize: size.height * 0.03,
                               ),
                               IconButton(
                                 onPressed: () => Navigator.push(
@@ -455,7 +462,7 @@ class _MyCustomFormState extends State<ManageBot> {
                                 ),
                                 tooltip: "管理CLI",
                                 icon: const Icon(Icons.terminal_rounded),
-                                iconSize: size.height * 0.04,
+                                iconSize: size.height * 0.03,
                               ),
                               IconButton(
                                 onPressed: () {
@@ -463,7 +470,7 @@ class _MyCustomFormState extends State<ManageBot> {
                                 },
                                 tooltip: "清空日志",
                                 icon: const Icon(Icons.delete_rounded),
-                                iconSize: size.height * 0.04,
+                                iconSize: size.height * 0.03,
                               ),
                               Visibility(
                                 visible: File('${manageBotReadCfgPath(userDir)}/nbgui_stderr.log').readAsStringSync(encoding: systemEncoding).isNotEmpty,
@@ -606,6 +613,9 @@ void _showConfirmationDialog(BuildContext context) {
             ),
             onPressed: () {
               Navigator.of(context).pop();
+              if (manageBotReadCfgStatus(userDir)=='true'){
+                stopBot(userDir);
+              }
               deleteBot(userDir);
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text('Bot已删除'),
@@ -620,6 +630,9 @@ void _showConfirmationDialog(BuildContext context) {
             ),
             onPressed: () {
               Navigator.of(context).pop();
+              if (manageBotReadCfgStatus(userDir)=='true'){
+                stopBot(userDir);
+              }
               deleteBotAll(userDir);
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text('Bot已删除'),

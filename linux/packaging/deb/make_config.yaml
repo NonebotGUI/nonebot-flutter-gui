@@ -1,5 +1,5 @@
-display_name: NonebotGUI
-package_name: NonebotGUI
+display_name: NoneBotGUI
+package_name: NoneBotGUI
 maintainer:
   name: 【夜风】NightWind
   email: HT30332@126.com
@@ -19,7 +19,7 @@ postuninstall_scripts:
 keywords:
   - Nonebot
 
-generic_name: NonebotGUI
+generic_name: NoneBotGUI
 
 categories:
   - Utility

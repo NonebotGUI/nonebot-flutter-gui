@@ -1,5 +1,5 @@
 <div align="center">
-  <a ><img src="lib/assets/logo.png" width="180" height="180" alt="NonebotGUI_Logo"></a>
+  <a ><img src="lib/assets/logo.png" width="180" height="180" alt="NoneBotGUI_Logo"></a>
   <br>
 <div align="center">
 
@@ -15,7 +15,7 @@ _✨ 新一代Nonebot图形化界面 ✨_
     <img src="https://img.shields.io/github/license/XTxiaoting14332/nonebot-flutter-gui.svg" alt="license">
 </a>
 
-[![Build](https://github.com/NonebotGUI/nonebot-flutter-gui/actions/workflows/build.yml/badge.svg?event=workflow_run)](https://github.com/NonebotGUI/nonebot-flutter-gui/actions/workflows/build.yml)
+[![Build](https://github.com/NoneBotGUI/nonebot-flutter-gui/actions/workflows/build.yml/badge.svg?event=workflow_run)](https://github.com/NoneBotGUI/nonebot-flutter-gui/actions/workflows/build.yml)
 </div>
 
 ## ⚠️ 史山警告
@@ -65,7 +65,7 @@ Nonebot Flutter GUI提供了简洁的UI界面供用户使用，即使是小白�
 
 
 ## 🚚 0.1.7 数据迁移指南
-从``0.1.7``版本开始，NonebotGUI将不再使用``用户目录/.nbgui``作为数据文件夹，而是使用``path_provider``提供路径<br>
+从``0.1.7``版本开始，NoneBotGUI将不再使用``用户目录/.nbgui``作为数据文件夹，而是使用``path_provider``提供路径<br>
 你需要**手动**将旧版本``.nbgui``下的所有目录和文件移动到新版本的文件夹中，在应用程序的``更多-设置-旧版本数据迁移指南``中可以看见新版本的路径
 
 ## ⚙️安装

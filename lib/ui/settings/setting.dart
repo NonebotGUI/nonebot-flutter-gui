@@ -1,7 +1,7 @@
-import 'package:NonebotGUI/darts/utils.dart';
+import 'package:NoneBotGUI/darts/utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:NonebotGUI/darts/global.dart';
+import 'package:NoneBotGUI/darts/global.dart';
 import 'package:flutter/services.dart';
 
 // void main() {
@@ -241,7 +241,7 @@ class _HomeScreenState extends State<Settings> {
                                     children: <Widget>[
                                       const Text(
                                         '''
-                                        NonebotGUI从0.1.7版本开始，开始使用path_provider提供用户目录。这意味着你需要将旧版本的数据迁移至新版本的目录下
+                                        NoneBotGUI从0.1.7版本开始，开始使用path_provider提供用户目录。这意味着你需要将旧版本的数据迁移至新版本的目录下
                                         步骤1：打开用户目录
                                         Windows下：C:\\Users\\用户名
                                         Linux或MacOS下：/home/用户名

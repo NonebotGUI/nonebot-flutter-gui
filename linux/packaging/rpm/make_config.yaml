@@ -8,12 +8,12 @@ license: GPL3
 url: https://github.com/XTxiaoting14332/nonebot-flutter-gui
 build_arch: x86_64
 
-display_name: NonebotGUI
+display_name: NoneBotGUI
 
 keywords:
   - Nonebot
 
-generic_name: NonebotGUI
+generic_name: NoneBotGUI
 
 categories:
   - Utility

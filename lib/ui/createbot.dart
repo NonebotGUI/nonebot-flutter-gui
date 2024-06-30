@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:NonebotGUI/darts/global.dart';
-import 'package:NonebotGUI/darts/utils.dart';
+import 'package:NoneBotGUI/darts/global.dart';
+import 'package:NoneBotGUI/darts/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
@@ -32,6 +32,7 @@ class CreateBot extends StatefulWidget {
 class _MyCustomFormState extends State<CreateBot> {
   final _output = TextEditingController();
   final _outputController = StreamController<String>.broadcast();
+  final ScrollController _scrollController = ScrollController();
 
 
   void _executeCommands() async {
@@ -482,6 +483,7 @@ class _MyCustomFormState extends State<CreateBot> {
                                           return Card(
                                             color: const Color.fromARGB(255, 31, 28, 28),
                                             child: SingleChildScrollView(
+                                              controller: _scrollController,
                                               child: StreamBuilder<String>(
                                                 stream: _outputController.stream,
                                                 builder: (BuildContext context,
@@ -494,6 +496,7 @@ class _MyCustomFormState extends State<CreateBot> {
                                                   return Card(
                                                     color: const Color.fromARGB(255, 31, 28, 28),
                                                     child: SingleChildScrollView(
+                                                      controller: _scrollController,
                                                       child: Padding(
                                                         padding: const EdgeInsets.all(8.0),
                                                         child: Text(

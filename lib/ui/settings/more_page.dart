@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:NonebotGUI/ui/settings/about.dart';
-import 'package:NonebotGUI/ui/settings/setting.dart';
+import 'package:NoneBotGUI/ui/settings/about.dart';
+import 'package:NoneBotGUI/ui/settings/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -24,7 +24,7 @@ class _HomeScreenState extends State<More> {
   final String version = 'v0.1.8+fix4';
   Future<void> check() async{
         try {
-          final response = await http.get(Uri.parse('https://api.github.com/repos/NonebotGUI/nonebot-flutter-gui/releases/latest'));
+          final response = await http.get(Uri.parse('https://api.github.com/repos/NoneBotGUI/nonebot-flutter-gui/releases/latest'));
           if (response.statusCode == 200) {
               final jsonData = jsonDecode(response.body);
               final tagName = jsonData['tag_name']; 
@@ -120,7 +120,7 @@ class _HomeScreenState extends State<More> {
                     child: const Card(
                       child: Row(
                         children: <Widget>[
-                          Text('  关于NonebotGUI'),
+                          Text('  关于NoneBotGUI'),
                           Icon(Icons.keyboard_arrow_right_rounded)
                         ],
                       ),
@@ -147,7 +147,7 @@ class _HomeScreenState extends State<More> {
                           MaterialPageRoute(builder: (context) {
                         return LicensePage(
                         applicationIcon: Image.asset('lib/assets/logo.png'),
-                        applicationName: 'NonebotGUI',
+                        applicationName: 'NoneBotGUI',
                         applicationVersion: '0.1.8',
                         );
                       }));

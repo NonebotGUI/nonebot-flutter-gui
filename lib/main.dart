@@ -1,12 +1,12 @@
 import 'dart:io';
-import 'package:NonebotGUI/darts/global.dart';
-import 'package:NonebotGUI/darts/utils.dart';
+import 'package:NoneBotGUI/darts/global.dart';
+import 'package:NoneBotGUI/darts/utils.dart';
 import 'dart:convert';
-import 'package:NonebotGUI/ui/createbot.dart';
-import 'package:NonebotGUI/ui/import_bot.dart';
-import 'package:NonebotGUI/ui/settings/about.dart';
-import 'package:NonebotGUI/ui/manage_bot.dart';
-import 'package:NonebotGUI/ui/settings/setting.dart';
+import 'package:NoneBotGUI/ui/createbot.dart';
+import 'package:NoneBotGUI/ui/import_bot.dart';
+import 'package:NoneBotGUI/ui/settings/about.dart';
+import 'package:NoneBotGUI/ui/manage_bot.dart';
+import 'package:NoneBotGUI/ui/settings/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -117,16 +117,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    refresh();
     check();
+    refresh();
     _startRefreshing();
   }
 
   void refresh() {
-    Timer.periodic(const Duration(seconds: 3), (timer) {
+    Timer.periodic(const Duration(milliseconds: 2500), (timer) {
       _readConfigFiles();
-      setState(() {
-      });
+
     });
   }
 
@@ -137,7 +136,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _timer = Timer.periodic(
       const Duration(seconds: 1),
       (Timer t) => _loadFileContent(),
-   
     );
   }
 
@@ -163,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
     //如果“检查更新”为开启则检查
     if (userCheckUpdate()){
         try {
-          final response = await http.get(Uri.parse('https://api.github.com/repos/NonebotGUI/nonebot-flutter-gui/releases/latest'));
+          final response = await http.get(Uri.parse('https://api.github.com/repos/NoneBotGUI/nonebot-flutter-gui/releases/latest'));
           if (response.statusCode == 200) {
               final jsonData = jsonDecode(response.body);
               final tagName = jsonData['tag_name'];
@@ -338,15 +336,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                 String status = configFileContentsRun[index];
                                 String time = configFileContentsTime[index];
                                 String path = configFileContentsPath[index];
-                                if (status == 'true') {
                                   return SingleChildScrollView(
                                       child: Card(
                                     child: ListTile(
                                       title: Text(name),
-                                      subtitle: const Text(
-                                        "运行中",
-                                        style: TextStyle(color: Colors.green),
-                                      ),
+                                      subtitle:
+                                        status == 'true' ?
+                                          const Text(
+                                            "运行中",
+                                            style: TextStyle(color: Colors.green),
+                                            )
+                                          : const Text(
+                                            "未运行"
+                                          ),
                                       onTap: () {
                                         manageBotOnOpenCfg(userDir, name, time);
                                         createLog(path);
@@ -356,57 +358,38 @@ class _HomeScreenState extends State<HomeScreen> {
                                           _appBarTitle = manageBotReadCfgName(userDir);
                                         });
                                       },
-                                      trailing: IconButton(
-                                        icon: const Icon(Icons.stop_rounded),
-                                        onPressed: (){
-                                          manageBotOnOpenCfg(userDir, name, time);
-                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                            content: Text('Bot已停止'),
-                                            duration: Duration(seconds: 3),
-                                          ));
-                                          setState(() {
-                                            stopBot(userDir);
-                                          });
-                                        },
-                                        tooltip: '停止Bot',
-                                      ),
+                                      trailing:
+                                        status == "true"
+                                          ? IconButton(
+                                              icon: const Icon(Icons.stop_rounded),
+                                              onPressed: (){
+                                                manageBotOnOpenCfg(userDir, name, time);
+                                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                                  content: Text('Bot已停止'),
+                                                  duration: Duration(seconds: 3),
+                                                ));
+                                                setState(() {
+                                                  stopBot(userDir);
+                                                });
+                                              },
+                                              tooltip: '停止Bot',
+                                            )
+                                          : IconButton(
+                                              icon: const Icon(Icons.play_arrow_rounded),
+                                              onPressed: (){
+                                                manageBotOnOpenCfg(userDir, name, time);
+                                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                                  content: Text('Nonebot,启动！如果发现控制台无刷新请检查bot目录下的nbgui_stderr.log查看报错'),
+                                                  duration: Duration(seconds: 3),
+                                                ));
+                                                setState(() {
+                                                  runBot(userDir,manageBotReadCfgPath(userDir));
+                                                });
+                                              },
+                                              tooltip: '停止Bot',
+                                            ),
                                     ),
                                   ));
-                                } else {
-                                  return SingleChildScrollView(
-                                      child: Card(
-                                    child: ListTile(
-                                      title: Text(name),
-                                      subtitle: const Text(
-                                        "未运行",
-                                      ),
-                                      onTap: () {
-                                        manageBotOnOpenCfg(userDir, name, time);
-                                        _loadFileContent();
-                                        createLog(path);
-                                        _loadFileContent();
-                                        setState(() {
-                                          _selectedIndex = 1;
-                                          _appBarTitle = manageBotReadCfgName(userDir);
-                                        });
-                                      },
-                                      trailing: IconButton(
-                                        icon: const Icon(Icons.play_arrow_rounded),
-                                        onPressed: (){
-                                          manageBotOnOpenCfg(userDir, name, time);
-                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                            content: Text('Bot已启动'),
-                                            duration: Duration(seconds: 3),
-                                          ));
-                                          setState(() {
-                                            runBot(userDir,manageBotReadCfgPath(userDir));
-                                          });
-                                        },
-                                        tooltip: '运行Bot',
-                                      ),
-                                    ),
-                                  ));
-                                }
                               },
                             ),
                 File('$userDir/on_open.txt').existsSync()
@@ -428,7 +411,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const About(),
                 LicensePage(
                         applicationIcon: Image.asset('lib/assets/logo.png'),
-                        applicationName: 'NonebotGUI',
+                        applicationName: 'NoneBotGUI',
                         applicationVersion: '0.1.9',
                         ),
               ],

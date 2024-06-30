@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:core';
 import 'dart:convert';
-import 'package:NonebotGUI/darts/global.dart';
+import 'package:NoneBotGUI/darts/global.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:toml/toml.dart';
 

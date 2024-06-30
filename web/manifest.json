@@ -1,6 +1,6 @@
 {
-    "name": "NonebotGUI",
-    "short_name": "NonebotGUI",
+    "name": "NoneBotGUI",
+    "short_name": "NoneBotGUI",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

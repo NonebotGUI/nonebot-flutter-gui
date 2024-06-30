@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:NonebotGUI/darts/utils.dart';
-import 'package:NonebotGUI/assets/my_flutter_app_icons.dart';
+import 'package:NoneBotGUI/darts/utils.dart';
+import 'package:NoneBotGUI/assets/my_flutter_app_icons.dart';
 import 'dart:io' show Platform;
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:NonebotGUI/darts/global.dart';
+import 'package:NoneBotGUI/darts/global.dart';
 
 class About extends StatefulWidget {
   const About({super.key});
@@ -216,7 +216,7 @@ class _MoreState extends State<About> {
               onPressed: () {
                 Clipboard.setData(const ClipboardData(
                     text:
-                        'https://github.com/NonebotGUI/nonebot-flutter-gui'));
+                        'https://github.com/NoneBotGUI/nonebot-flutter-gui'));
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text('项目仓库链接已复制到剪贴板'),
                   duration: Duration(seconds: 3),

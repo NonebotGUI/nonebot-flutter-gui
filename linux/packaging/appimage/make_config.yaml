@@ -1,12 +1,12 @@
-display_name: NonebotGUI
-app_binary_name: NonebotGUI
+display_name: NoneBotGUI
+app_binary_name: NoneBotGUI
 
 icon: asset/icon/icon.png
 
 keywords:
   - Nonebot
 
-generic_name: NonebotGUI
+generic_name: NoneBotGUI
 
 actions: []
 

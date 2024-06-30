@@ -1,5 +1,5 @@
-import 'package:NonebotGUI/darts/utils.dart';
-import 'package:NonebotGUI/darts/global.dart';
+import 'package:NoneBotGUI/darts/utils.dart';
+import 'package:NoneBotGUI/darts/global.dart';
 import 'package:flutter/material.dart';
 
 // void main() {

@@ -1,7 +1,7 @@
-import 'package:NonebotGUI/darts/utils.dart';
+import 'package:NoneBotGUI/darts/utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:NonebotGUI/darts/global.dart';
+import 'package:NoneBotGUI/darts/global.dart';
 // void main() {
 //   runApp(const MyApp());
 // }

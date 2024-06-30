@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.nightwind" "\0"
-            VALUE "FileDescription", "NonebotGUI" "\0"
+            VALUE "FileDescription", "NoneBotGUI" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "NonebotGUI" "\0"
+            VALUE "InternalName", "NoneBotGUI" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.nightwind. All rights reserved." "\0"
-            VALUE "OriginalFilename", "NonebotGUI.exe" "\0"
-            VALUE "ProductName", "NonebotGUI" "\0"
+            VALUE "OriginalFilename", "NoneBotGUI.exe" "\0"
+            VALUE "ProductName", "NoneBotGUI" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
