@@ -5,3 +5,6 @@ late final userDir;
 
 //log
 late String nbLog;
+
+//版本号
+late String version;
