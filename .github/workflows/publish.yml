@@ -187,7 +187,7 @@ jobs:
             change_date=$(date +%Y.%m.%d)
             sed -i "s/NBGUI.DATE/$change_date/g" website/index.html
             sed -i -e ':a;N;$!ba;s/\n/\\n/g' changelog.txt
-            change = $(cat changelog.txt)
+            change=$(cat changelog.txt)
             sed -i 's/NBGUI.CHANGELOG/$change/g' website/index.html
 
       - name: Zip
