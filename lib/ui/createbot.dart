@@ -191,7 +191,7 @@ class _MyCustomFormState extends State<CreateBot> {
     });
   }
 
-  String name = 'Nonebot';
+  String name = 'NoneBot';
   final List<String> template = ['bootstrap(初学者或用户)', 'simple(插件开发者)'];
   late String dropDownValue = template.first;
   final List<String> pluginDir = ['在[bot名称]/[bot名称]下', '在src文件夹下'];
@@ -209,7 +209,7 @@ class _MyCustomFormState extends State<CreateBot> {
               TextField(
                 controller: myController,
                 decoration: const InputDecoration(
-                  hintText: "bot名称，不填则默认为Nonebot",
+                  hintText: "bot名称，不填则默认为NoneBot",
                   border: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Color.fromRGBO(238, 109, 109, 1),
