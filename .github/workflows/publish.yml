@@ -66,7 +66,7 @@ jobs:
       - name: Install Dependencies
         run: |-
           sudo apt-get update
-          sudo apt-get install clang cmake git ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev rpm libayatana-appindicator3-dev patchelf locate libfuse2
+          sudo apt-get install curl clang cmake git ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev rpm libayatana-appindicator3-dev patchelf locate libfuse2
           dart pub global activate -s path tool/flutter_distributor/packages/flutter_distributor
           flutter pub get
 
@@ -134,6 +134,13 @@ jobs:
           sudo snap install yq
           nbgui_version=$(yq eval '.version' pubspec.yaml)
           echo "NBGUI_VERSION=$nbgui_version" >> $GITHUB_ENV
+
+      - name: Install Dependencies
+        run: |
+          apt update
+          apt install zip curl -y
+
+
       - name: Download Build Artifact(Windows)
         uses: actions/download-artifact@v4
         with:
@@ -173,3 +180,26 @@ jobs:
             ./dist/${{ env.NBGUI_VERSION }}/linux-${{ env.NBGUI_VERSION }}.rpm
             ./dist/${{ env.NBGUI_VERSION }}/linux-${{ env.NBGUI_VERSION }}.AppImage
             ./dist/${{ env.NBGUI_VERSION }}/macos-${{ env.NBGUI_VERSION }}.dmg
+
+      - name: Update website
+        run: |
+            sed -i 's/NBGUI.VER/${{ env.NBGUI_VERSION }}/g' website/index.html
+            change_date=$(date +%Y.%m.%d)
+            sed -i "s/NBGUI.DATE/$change_date/g" website/index.html
+            sed -i -e ':a;N;$!ba;s/\n/\\n/g' changelog.txt
+            change = $(cat changelog.txt)
+            sed -i 's/NBGUI.CHANGELOG/$change/g' website/index.html
+
+      - name: Zip
+        run: zip -r nbgui.zip website/*
+
+      - name: Upload Website To Netlify
+        run: |
+          curl -H "Content-Type: application/zip" \
+            -H "Authorization: ${{ secrets.NETLIFY_TOKEN }}" \
+            --data-binary "@nbgui.zip" \
+            https://api.netlify.com/api/v1/sites/${{ secrets.NETLIFY_SITEID }}/deploys
+
+
+
+            
