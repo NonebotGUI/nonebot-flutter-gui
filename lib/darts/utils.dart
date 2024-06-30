@@ -666,6 +666,36 @@ stopBot(dir) async {
   setPyPid('Null');
 }
 
+
+
+///重命名Bot
+renameBot(name) {
+  //暂存数据
+  String time = manageBotReadCfgTime(userDir);
+  String oldName = manageBotReadCfgName(userDir);
+
+  //重写配置文件
+  File botcfg = File('$userDir/bots/$oldName.$time.json');
+  Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
+  jsonMap['name'] = name;
+  botcfg.writeAsStringSync(jsonEncode(jsonMap));
+
+  //重命名文件
+  File('$userDir/bots/$oldName.$time.json')
+  .rename('$userDir/bots/$name.$time.json');
+
+  //更新on_open.txt
+  File cfgFile = File('$userDir/on_open.txt');
+  String newData = "$name.$time";
+  cfgFile.deleteSync();
+  cfgFile.writeAsStringSync(newData);
+
+}
+
+
+
+
+///获取Python PID
 getPyPid(dir) {
   File file = File('${manageBotReadCfgPath(dir)}/nbgui_stdout.log');
   RegExp regex = RegExp(r'Started server process \[(\d+)\]');

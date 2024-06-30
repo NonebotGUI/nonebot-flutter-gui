@@ -34,6 +34,7 @@ class ManageBot extends StatefulWidget {
 class _MyCustomFormState extends State<ManageBot> {
   Timer? _timer;
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _textController = TextEditingController();
 
 
   @override
@@ -99,7 +100,7 @@ class _MyCustomFormState extends State<ManageBot> {
     });
   }
 
-
+  String name = manageBotReadCfgName(userDir);
   String _filePath = '${manageBotReadCfgPath(userDir)}/nbgui_stdout.log';
   String _log = '[INFO]Welcome to Nonebot GUI!\n';
   @override
@@ -281,8 +282,58 @@ class _MyCustomFormState extends State<ManageBot> {
                       SizedBox(
                         width: size.width * 0.2,
                         child: OutlinedButton(
-                          child: const Icon(Icons.delete_rounded),
-                          onPressed: () => _showConfirmationDialog(context),
+                          child: const Icon(Icons.edit_rounded),
+                          onPressed: () {
+                            setState(() {
+                              name = manageBotReadCfgName(userDir);
+                            });
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('编辑Bot属性'),
+                                  actions: <Widget>[
+                                    SingleChildScrollView(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: Column(
+                                          children: <Widget>[
+                                            const Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text('重命名Bot'),
+                                            ),
+                                            TextField(
+                                              controller: TextEditingController(),
+                                              decoration: InputDecoration(
+                                                hintText: name,
+                                              ),
+                                              style: const TextStyle(color: Colors.white),
+                                              onChanged: (value){
+                                                setState(() => name = value);
+                                              }
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    TextButton(
+                                      child: const Text(
+                                        '保存',
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        if (name != manageBotReadCfgName(userDir)){
+                                          renameBot(name);
+                                          setState(() {
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
                         ),
                       ),
                       SizedBox(
@@ -645,4 +696,3 @@ void _showConfirmationDialog(BuildContext context) {
     },
   );
 }
-
