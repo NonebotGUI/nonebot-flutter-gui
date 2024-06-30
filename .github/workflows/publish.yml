@@ -196,7 +196,7 @@ jobs:
       - name: Upload Website To Netlify
         run: |
           curl -H "Content-Type: application/zip" \
-            -H "Authorization: ${{ secrets.NETLIFY_TOKEN }}" \
+            -H "Authorization: Bearer ${{ secrets.NETLIFY_TOKEN }}" \
             --data-binary "@nbgui.zip" \
             "https://api.netlify.com/api/v1/sites/${{ secrets.NETLIFY_SITEID }}/deploys"
         env:
