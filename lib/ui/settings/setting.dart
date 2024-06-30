@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:NoneBotGUI/darts/utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +48,65 @@ class _HomeScreenState extends State<Settings> {
     });
   }
 
+  ///检查更新
+  Future<void> check() async{
+    //如果“检查更新”为开启则检查
+    if (userCheckUpdate()){
+        try {
+          final response = await http.get(Uri.parse('https://api.github.com/repos/NoneBotGUI/nonebot-flutter-gui/releases/latest'));
+          if (response.statusCode == 200) {
+              final jsonData = jsonDecode(response.body);
+              final tagName = jsonData['tag_name'];
+              final changeLog = jsonData['body'];
+              final url = jsonData['html_url'];
+              if (tagName != version){
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('发现新版本！'),
+                duration: Duration(seconds: 3),
+              ));
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('有新的版本：$tagName'),
+                    content: Text(changeLog),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('复制url'),
+                        onPressed: (){
+                          Clipboard.setData(ClipboardData(text: url));
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text('已复制到剪贴板'),
+                            duration: Duration(seconds: 3),
+                          ));
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('确定'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+              }
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('检查更新失败（${response.statusCode}）'),
+                duration: const Duration(seconds: 3),
+              ));
+            }
+          } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('错误：$e'),
+                duration: const Duration(seconds: 3),
+              ));
+          }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +120,7 @@ class _HomeScreenState extends State<Settings> {
                     children: <Widget>[
                       const Expanded(child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text('颜色主题'),
+                        child: Text(' 颜色主题'),
                       )),
                       Expanded(child: Align(
                         alignment: Alignment.centerRight,
@@ -92,6 +153,7 @@ class _HomeScreenState extends State<Settings> {
                   ),
                 ),
             ),
+            const SizedBox(height: 4,),
             SizedBox(
                 height: 80,
                 child: Card(
@@ -99,7 +161,7 @@ class _HomeScreenState extends State<Settings> {
                     children: <Widget>[
                       const Expanded(child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text('检查更新'),
+                        child: Text(' 是否自动检查更新'),
                       )),
                   Expanded(
                     child: Align(
@@ -116,6 +178,7 @@ class _HomeScreenState extends State<Settings> {
                   ),
                 ),
             ),
+            const SizedBox(height: 4,),
             SizedBox(
                 height: 80,
                 child: InkWell(
@@ -202,6 +265,28 @@ class _HomeScreenState extends State<Settings> {
                     ),
                     onTap: () {
                       setNbcliPath(userDir, 'default');
+                    })),
+                    const SizedBox(height: 4,),
+            SizedBox(
+                height: 80,
+                child: InkWell(
+                    child: const Card(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(' 检查更新'),
+                          )),
+                          Expanded(child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(padding: EdgeInsets.all(4),
+                            child: Icon(Icons.update_rounded),),
+                          )),
+                        ],
+                      ),
+                    ),
+                    onTap: () {
+                      check();
                     })),
                     const SizedBox(height: 4,),
             SizedBox(
