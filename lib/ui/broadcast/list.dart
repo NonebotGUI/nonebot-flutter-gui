@@ -14,7 +14,7 @@ class BoradcastList extends StatefulWidget {
 
 class _HomeScreenState extends State<BoradcastList> {
 
-  List<Map<String, dynamic>> data = [];
+  List data = [];
 
 
   //拉取公告列表
@@ -26,14 +26,15 @@ class _HomeScreenState extends State<BoradcastList> {
 
 
   Future<void> fetchData() async {
-    final response =
-        await http.get(Uri.parse('https://api.zobyic.top/api/nbgui/broadcast/list/'));
+final response =
+    await http.get(Uri.parse('https://api.zobyic.top/api/nbgui/broadcast/list/'));
     if (response.statusCode == 200) {
-      setState(() {
-        String decodedBody = utf8.decode(response.bodyBytes);
-        final List<dynamic> jsonData = json.decode(decodedBody);
-        data = jsonData.map((item) => item as Map<String, dynamic>).toList();
-      });
+    setState(() {
+      String decodedBody = utf8.decode(response.bodyBytes);
+      final List jsonData = json.decode(decodedBody);
+      jsonData.sort((a, b) => b['id'] - a['id']); // 按id从大到小排序
+      data = jsonData;
+    });
     } else {
       throw Exception('Failed to load data');
     }
@@ -96,6 +97,18 @@ class _HomeScreenState extends State<BoradcastList> {
               itemBuilder: (BuildContext context, int index) =>
                   list(data[index]),
             ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            data.clear();
+            fetchData();
+          });
+        },
+        tooltip: "刷新列表",
+        shape: const CircleBorder(),
+        child: const Icon(Icons.refresh_rounded,color: Colors.white,),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
