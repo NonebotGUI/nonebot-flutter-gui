@@ -98,7 +98,6 @@ ThemeData _getTheme(mode) {
         switchTheme: const SwitchThemeData(
           trackColor: MaterialStatePropertyAll(Color.fromRGBO(238, 109, 109, 1))
         ),
-        
       );
   }
 }
@@ -220,29 +219,53 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> configFileContentsRun = [];
   List<String> configFileContentsTime = [];
 
+  List<String> configFileContentsNameNew = [];
+  List<String> configFileContentsPathNew = [];
+  List<String> configFileContentsRunNew = [];
+  List<String> configFileContentsTimeNew = [];
+
+
+
+//byd我真是个天才🤓
   void _readConfigFiles() async {
     Directory directory = Directory(configFolder);
     List<FileSystemEntity> files = await directory.list().toList();
-
-    configFileContentsName.clear();
-    configFileContentsPath.clear();
-    configFileContentsRun.clear();
-    configFileContentsTime.clear();
-
+    configFileContentsNameNew.clear();
+    configFileContentsPathNew.clear();
+    configFileContentsRunNew.clear();
+    configFileContentsTimeNew.clear();
     for (FileSystemEntity file in files) {
       if (file is File) {
         String content = await file.readAsString();
         Map<String, dynamic> jsonContent = json.decode(content);
-        configFileContentsName.add(jsonContent['name']);
-        configFileContentsPath.add(jsonContent['path']);
-        configFileContentsRun.add(jsonContent['isrunning']);
-        configFileContentsTime.add(jsonContent['time']);
+        configFileContentsNameNew.add(jsonContent['name']);
+        configFileContentsPathNew.add(jsonContent['path']);
+        configFileContentsRunNew.add(jsonContent['isrunning']);
+        configFileContentsTimeNew.add(jsonContent['time']);
       }
     }
+    //判断新列表和旧列表是否一致
+    if (configFileContentsNameNew != configFileContentsName &&
+        configFileContentsPathNew != configFileContentsPath &&
+        configFileContentsRunNew != configFileContentsRun &&
+        configFileContentsTimeNew != configFileContentsTime)
+        {
+          //如果不一致则刷新UI
+          configFileContentsName.clear();
+          configFileContentsPath.clear();
+          configFileContentsRun.clear();
+          configFileContentsTime.clear();
+          configFileContentsName = List.from(configFileContentsNameNew);
+          configFileContentsPath = List.from(configFileContentsPathNew);
+          configFileContentsRun = List.from(configFileContentsRunNew);
+          configFileContentsTime = List.from(configFileContentsTimeNew);
+          setState(() {
+          });
+        }
 
-    setState(() {
-    });
   }
+
+
   int _selectedIndex = 0;
   String _appBarTitle = 'Nonebot GUI';
 
@@ -273,9 +296,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   index == 1 ? manageBotReadCfgName(userDir) :
                   index == 2 ? '添加bot' :
                   index == 3 ? '导入Bot':
-                  index == 4 ? '设置':
-                  index == 5 ? '关于Nonebot GUI':
-                  index == 6 ? '开源许可证':
+                  index == 4 ? '公告':
+                  index == 5 ? '设置':
+                  index == 6 ? '关于Nonebot GUI':
+                  index == 7 ? '开源许可证':
                   'Null';
               });
             },
@@ -295,6 +319,10 @@ class _HomeScreenState extends State<HomeScreen> {
               NavigationRailDestination(
                 icon: Icon(Icons.file_download_outlined),
                 label: Text('导入Bot'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.messenger_outline_rounded),
+                label: Text('公告'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.settings_rounded),
