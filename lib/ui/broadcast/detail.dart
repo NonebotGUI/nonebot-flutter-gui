@@ -57,6 +57,9 @@ class _HomeScreenState extends State<BroadcastDetail> {
               ),
             )
           : Markdown(
+          styleSheet: MarkdownStyleSheet(
+            textScaleFactor: 1.3
+          ),
             data: md
           )
     );
