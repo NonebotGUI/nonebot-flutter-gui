@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:NoneBotGUI/darts/global.dart';
 import 'package:NoneBotGUI/darts/utils.dart';
+import 'package:NoneBotGUI/ui/broadcast/list.dart';
 import 'dart:convert';
 import 'package:NoneBotGUI/ui/createbot.dart';
 import 'package:NoneBotGUI/ui/import_bot.dart';
@@ -435,6 +436,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                 const CreateBot(),
                 const ImportBot(),
+                const BoradcastList(),
                 const Settings(),
                 const About(),
                 LicensePage(
