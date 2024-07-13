@@ -16,7 +16,7 @@ import 'package:http/http.dart' as http;
 void main() async {
   userDir = await createMainFolder();
   nbLog = '';
-  version = 'v0.1.10';
+  version = 'v0.1.11';
   runApp(
     MaterialApp(
       home: const HomeScreen(),
@@ -275,16 +275,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_appBarTitle,style: const TextStyle(color: Colors.white),),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              _readConfigFiles();
-            },
-            tooltip: "刷新列表",
-            color: Colors.white,
-          ),
-        ]
       ),
       body: Row(
         children: <Widget>[
@@ -354,7 +344,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   SizedBox(height: 3),
                                   Text('如果你已经有了Bot,可以使用侧边栏的导入按钮导入'),
                                   SizedBox(height: 3),
-                                  Text('如果创建后没有显示请点击右上角的按钮刷新列表'),
                                 ],
                               ),
                             )
