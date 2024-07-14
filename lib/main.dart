@@ -8,15 +8,31 @@ import 'package:NoneBotGUI/ui/import_bot.dart';
 import 'package:NoneBotGUI/ui/settings/about.dart';
 import 'package:NoneBotGUI/ui/manage_bot.dart';
 import 'package:NoneBotGUI/ui/settings/setting.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:tray_manager/tray_manager.dart';
+import 'package:window_manager/window_manager.dart';
+
 
 void main() async {
   userDir = await createMainFolder();
   nbLog = '';
-  version = 'v0.1.11';
+  version = 'v0.1.12';
+  WidgetsFlutterBinding.ensureInitialized();
+  doWhenWindowReady(() {
+    final win = appWindow;
+    const initialSize = Size(1024, 750);
+    win.size = initialSize;
+    win.minSize = const Size(100, 100);
+    win.alignment = Alignment.center;
+    win.title = 'NoneBot GUI';
+    win.show();
+  });
   runApp(
     MaterialApp(
       home: const HomeScreen(),
@@ -110,9 +126,10 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListener{
   Timer? _timer;
   final String configFolder = '${createMainFolderBots(userDir)}';
+
 
   @override
   void initState() {
@@ -120,6 +137,43 @@ class _HomeScreenState extends State<HomeScreen> {
     check();
     refresh();
     _startRefreshing();
+    _init();
+    trayManager.addListener(this);
+    windowManager.addListener(this);
+  }
+
+
+
+  @override
+  void onTrayMenuItemClick(MenuItem menuItem) {
+    if (menuItem.key == 'show') {
+        windowManager.show();
+    } else if (menuItem.key == 'exit') {
+       exit(0);
+    }
+  }
+
+  //初始化系统托盘
+  Future<void> _init() async{
+    await trayManager.setIcon(
+      Platform.isWindows
+        ? 'lib/assets/iconWin.ico'
+        : 'lib/assets/icon.png',
+    );
+    Menu menu = Menu(
+      items: [
+        MenuItem(
+          key: 'show',
+          label: '显示主窗口',
+        ),
+        MenuItem.separator(),
+        MenuItem(
+          key: 'exit',
+          label: '退出',
+        ),
+      ],
+    );
+    await trayManager.setContextMenu(menu);
   }
 
   void refresh() {
@@ -155,6 +209,13 @@ class _HomeScreenState extends State<HomeScreen> {
         print('Error: $e');
       }
     }
+  }
+
+
+  @override
+  void onWindowFocus() {
+
+    setState(() {});
   }
   ///检查更新
   Future<void> check() async{
@@ -268,13 +329,73 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   int _selectedIndex = 0;
-  String _appBarTitle = 'Nonebot GUI';
+  String _appBarTitle = 'NoneBot GUI';
 
+
+
+  @override
+  void dispose() {
+    trayManager.removeListener(this);
+    trayManager.destroy();
+    windowManager.removeListener(this);
+    super.dispose();
+  }
+
+
+  //主窗口
+  //为了某用户我重写了整个窗口😭😭😭
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_appBarTitle,style: const TextStyle(color: Colors.white),),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(50),
+        child: Row(
+          children: [
+            Expanded(
+              child: MoveWindow(
+                child: AppBar(
+                  title: Text(
+                    _appBarTitle,
+                    style: const TextStyle(
+                      color: Colors.white
+                    ),
+                  ),
+                  actions: <Widget>[
+                    IconButton(
+                      icon: const Icon(Icons.remove_rounded),
+                      color: Colors.white,
+                      onPressed: () => appWindow.minimize(),
+                      iconSize: 20,
+                      tooltip: "最小化",
+                    ),
+                    appWindow.isMaximized ?
+                      IconButton(
+                        icon: const Icon(Icons.rectangle_outlined),
+                        color: Colors.white,
+                        onPressed: () => appWindow.restore(),
+                        iconSize: 20,
+                        tooltip: "恢复大小",
+                      ) :
+                    IconButton(
+                        icon: const Icon(Icons.rectangle_outlined),
+                        color: Colors.white,
+                        onPressed: () => appWindow.maximize(),
+                        iconSize: 20,
+                        tooltip: "最大化",
+                      ),
+                    IconButton(
+                      icon: const Icon(Icons.close_rounded),
+                      color: Colors.white,
+                      onPressed: () => windowManager.hide(),
+                      iconSize: 20,
+                      tooltip: "关闭",
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       body: Row(
         children: <Widget>[
@@ -404,7 +525,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   runBot(userDir,manageBotReadCfgPath(userDir));
                                                 });
                                               },
-                                              tooltip: '停止Bot',
+                                              tooltip: '运行Bot',
                                             ),
                                     ),
                                   ));
@@ -441,4 +562,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

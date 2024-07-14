@@ -105,8 +105,8 @@ class _MyCustomFormState extends State<ManageBot> {
   String _log = '[INFO]Welcome to Nonebot GUI!\n';
   @override
   Widget build(BuildContext context) {
-  Future.delayed(Duration.zero, () {
-    _scrollController.animateTo(
+    Future.delayed(Duration.zero, () {
+      _scrollController.animateTo(
       _scrollController.position.maxScrollExtent,
       duration: Duration(milliseconds: 500),
       curve: Curves.easeOut,
