@@ -22,7 +22,7 @@ import 'package:window_manager/window_manager.dart';
 void main() async {
   userDir = await createMainFolder();
   nbLog = '';
-  version = 'v0.1.12';
+  version = 'v0.2.0';
   WidgetsFlutterBinding.ensureInitialized();
   doWhenWindowReady(() {
     final win = appWindow;
@@ -552,7 +552,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
                 LicensePage(
                         applicationIcon: Image.asset('lib/assets/logo.png'),
                         applicationName: 'NoneBotGUI',
-                        applicationVersion: '0.1.9',
+                        applicationVersion: version.replaceAll('v', ''),
                         ),
               ],
             ),
