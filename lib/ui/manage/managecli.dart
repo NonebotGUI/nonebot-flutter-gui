@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:NoneBotGUI/darts/utils.dart';
 import 'package:NoneBotGUI/darts/global.dart';
-import 'package:NoneBotGUI/ui/adapter.dart';
-import 'package:NoneBotGUI/ui/driver.dart';
-import 'package:NoneBotGUI/ui/manage_cli.dart';
-import 'package:NoneBotGUI/ui/manage_plugin.dart';
-import 'package:NoneBotGUI/ui/plugin.dart';
+import 'package:NoneBotGUI/ui/manage/adapter.dart';
+import 'package:NoneBotGUI/ui/manage/driver.dart';
+import 'package:NoneBotGUI/ui/manage/manage_cli.dart';
+import 'package:NoneBotGUI/ui/manage/manage_plugin.dart';
+import 'package:NoneBotGUI/ui/manage/plugin.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';

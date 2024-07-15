@@ -2,22 +2,23 @@ import 'dart:convert';
 import 'package:NoneBotGUI/darts/global.dart';
 import 'package:NoneBotGUI/ui/broadcast/detail.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 
-class BoradcastList extends StatefulWidget {
-  const BoradcastList({super.key});
+class FastDeployList extends StatefulWidget {
+  const FastDeployList({super.key});
 
   @override
-  State<BoradcastList> createState() => _HomeScreenState();
+  State<FastDeployList> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<BoradcastList> {
+class _HomeScreenState extends State<FastDeployList> {
 
   List data = [];
 
 
-  //拉取公告列表
+
   @override
   void initState() {
     super.initState();
@@ -27,7 +28,7 @@ class _HomeScreenState extends State<BoradcastList> {
 
   Future<void> fetchData() async {
 final response =
-    await http.get(Uri.parse('https://api.zobyic.top/api/nbgui/broadcast/list/'));
+    await http.get(Uri.parse('https://api.zobyic.top/api/nbgui/deploy/list'));
     if (response.statusCode == 200) {
     setState(() {
       String decodedBody = utf8.decode(response.bodyBytes);
@@ -62,7 +63,7 @@ InkWell list(broadcast) => InkWell(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      broadcast['name'].toString().substring(0,  broadcast['name'].length - 3),
+                      broadcast['name'].toString().substring(0,  broadcast['name'].length - 5),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
@@ -74,11 +75,11 @@ InkWell list(broadcast) => InkWell(
             Positioned(
               left: 0,
               right: 0,
-              bottom: 0,
+              bottom: 25,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  broadcast['time'],
+                  broadcast['desc'],
                   style: TextStyle(
                     fontSize: MediaQuery.of(context).textScaleFactor * 12,
                     color: Colors.grey[550]
@@ -91,6 +92,7 @@ InkWell list(broadcast) => InkWell(
   ),
 );
 
+// ... 其余代码不变
 
 
   @override
@@ -105,7 +107,7 @@ InkWell list(broadcast) => InkWell(
                 ],
               ),
             )
-          :  Container(
+          : Container(
             margin: const EdgeInsets.fromLTRB(32, 20, 32, 12),
             child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -113,13 +115,13 @@ InkWell list(broadcast) => InkWell(
             crossAxisSpacing: 2,
             mainAxisSpacing: 2,
             childAspectRatio: 6 / 1,
-            mainAxisExtent: 100
+            mainAxisExtent: 125
           ),
           itemCount: data.length,
           itemBuilder: (BuildContext context, int index) =>
               list(data[index]),
         ),
-            ),
+          ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {

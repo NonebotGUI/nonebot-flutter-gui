@@ -1,10 +1,10 @@
 
 import 'package:NoneBotGUI/darts/utils.dart';
-import 'package:NoneBotGUI/ui/managecli.dart';
+import 'package:NoneBotGUI/ui/manage/managecli.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:async';
-import 'package:NoneBotGUI/ui/stderr.dart';
+import 'package:NoneBotGUI/ui/manage/stderr.dart';
 import 'package:NoneBotGUI/darts/global.dart';
 
 // void main() {
