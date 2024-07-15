@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:NoneBotGUI/darts/utils.dart';
 import 'package:NoneBotGUI/ui/managecli.dart';
@@ -34,7 +33,6 @@ class ManageBot extends StatefulWidget {
 class _MyCustomFormState extends State<ManageBot> {
   Timer? _timer;
   final ScrollController _scrollController = ScrollController();
-  final TextEditingController _textController = TextEditingController();
 
 
   @override
@@ -64,12 +62,7 @@ class _MyCustomFormState extends State<ManageBot> {
     File stdoutFile = File(_filePath);
     if (stdoutFile.existsSync()) {
       try {
-        File file = File(_filePath);
-        final lines = await file.readAsLines(encoding: systemEncoding);
-        final last50Lines =
-            lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
         setState(() {
-          _log = last50Lines.join('\n');
           getPyPid(userDir);
         });
       } catch (e) {
@@ -102,7 +95,6 @@ class _MyCustomFormState extends State<ManageBot> {
 
   String name = manageBotReadCfgName(userDir);
   String _filePath = '${manageBotReadCfgPath(userDir)}/nbgui_stdout.log';
-  String _log = '[INFO]Welcome to Nonebot GUI!\n';
   @override
   Widget build(BuildContext context) {
     Future.delayed(Duration.zero, () {
