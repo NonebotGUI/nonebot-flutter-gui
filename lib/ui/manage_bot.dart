@@ -307,7 +307,6 @@ class _MyCustomFormState extends State<ManageBot> {
                                               decoration: InputDecoration(
                                                 hintText: name,
                                               ),
-                                              style: const TextStyle(color: Colors.white),
                                               onChanged: (value){
                                                 setState(() => name = value);
                                               }
