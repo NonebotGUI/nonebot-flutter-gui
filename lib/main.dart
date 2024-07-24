@@ -25,6 +25,9 @@ import 'package:watcher/watcher.dart';
 
 void main() async {
   //初始化程序
+  //令人难以理解（
+  WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
   userDir = await createMainFolder();
   deployPage = 0;
   nbLog = '[INFO]Welcome to NoneBot GUI!';
@@ -32,18 +35,29 @@ void main() async {
   barExtended = false;
   version = 'v0.2.0';
   FlutterError.onError = (FlutterErrorDetails details) async {
-    // 获取当前时间
     DateTime now = DateTime.now();
     String timestamp = now.toIso8601String();
-
-    // 构建错误信息字符串
-    String errorMessage = '[ERROR]$timestamp -${details.exception.toString()}';
-
-    // 写入错误信息到文件
+    String errorMessage = '[ERROR]$timestamp -${details.exception.toString()}\n';
     final errorFile = File('$userDir/error.log');
     await errorFile.writeAsString(errorMessage, mode: FileMode.append);
   };
-  WidgetsFlutterBinding.ensureInitialized();
+  WindowOptions windowOptions = const WindowOptions(
+    size: Size(1280, 720),
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.hidden,
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+  runApp(
+    MaterialApp(
+      home: const HomeScreen(),
+      theme: _getTheme(userColorMode(userDir)),
+    ),
+  );
   doWhenWindowReady(() {
     final win = appWindow;
     const initialSize = Size(1280, 720);
@@ -53,12 +67,6 @@ void main() async {
     win.title = 'NoneBot GUI';
     win.show();
   });
-  runApp(
-    MaterialApp(
-      home: const HomeScreen(),
-      theme: _getTheme(userColorMode(userDir)),
-    ),
-  );
 }
 
 ///颜色主题
@@ -153,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
   StreamSubscription<WatchEvent>? _subscription;
   List<String> _events = [];
   final String directoryPath = userDir;
-
+  final TrayManager _trayManager = TrayManager.instance;
 
 
   @override
@@ -165,17 +173,16 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
       });
     });
     check();
-   _startRefreshing();
-   deployPageListener();
+    _startRefreshing();
+    deployPageListener();
     _init();
-    trayManager.addListener(this);
+    _trayManager.addListener(this);
     windowManager.addListener(this);
     stateInit();
+    setState(() {
+      
+    });
   }
-
-
-
-
 
 
   @override
@@ -189,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
 
   //初始化系统托盘
   Future<void> _init() async{
-    await trayManager.setIcon(
+    await _trayManager.setIcon(
       Platform.isWindows
         ? 'lib/assets/iconWin.ico'
         : 'lib/assets/icon.png',
@@ -207,7 +214,13 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
         ),
       ],
     );
-    await trayManager.setContextMenu(menu);
+    await _trayManager.setContextMenu(menu);
+  }
+  
+  @override
+  //右键打开托盘菜单
+  void onTrayIconRightMouseDown() {
+    _trayManager.popUpContextMenu();
   }
 
   void refresh() async{
@@ -307,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
       if (stdoutFile.existsSync()) {
         try {
           File file = File(filePath);
-          final lines = await file.readAsLines(encoding: systemEncoding);
+          final lines = await file.readAsLines(encoding: utf8);
           final last50Lines =
               lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
             protocolLog = last50Lines.join('\n');
@@ -421,8 +434,8 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
 
   @override
   void dispose() {
-    trayManager.removeListener(this);
-    trayManager.destroy();
+    _trayManager.removeListener(this);
+    _trayManager.destroy();
     windowManager.removeListener(this);
     super.dispose();
   }
@@ -800,4 +813,10 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
       ),
     );
     }
+  @override
+  void onWindowFocus() {
+    // Make sure to call once.
+    setState(() {});
+    // do something
+  }
   }

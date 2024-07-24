@@ -501,7 +501,16 @@ class _MyCustomFormState extends State<ManageBot> {
                               ),
                               IconButton(
                                 onPressed: () {
-                                  clearLog(userDir);
+                                  if (manageBotReadCfgStatus() == 'true'){
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('请先停止后再清空！'),
+                                        duration: Duration(seconds: 3),
+                                      ),
+                                    );
+                                  } else {
+                                    clearLog(userDir);
+                                  }
                                 },
                                 tooltip: "清空日志",
                                 icon: const Icon(Icons.delete_rounded),

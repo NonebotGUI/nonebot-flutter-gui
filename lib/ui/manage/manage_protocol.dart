@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:NoneBotGUI/darts/utils.dart';
 import 'package:NoneBotGUI/ui/manage/managecli.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +51,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
       if (stdoutFile.existsSync()) {
         try {
           File file = File(filePath);
-          final lines = await file.readAsLines(encoding: systemEncoding);
+          final lines = await file.readAsLines(encoding: utf8);
           final last50Lines =
               lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
            protocolLog = last50Lines.join('\n');
@@ -470,7 +472,10 @@ class _MyCustomFormState extends State<ManageProtocol> {
                               //   ),
                               IconButton(
                                 onPressed: () {
-                                  clearLog(userDir);
+                                  File stdout = File('${getProtocolPath()}/nbgui_stdout.log');
+                                  stdout.delete();
+                                  String info = "[INFO]Welcome to Nonebot GUI!";
+                                  stdout.writeAsString(info);
                                 },
                                 tooltip: "清空日志",
                                 icon: const Icon(Icons.delete_rounded),
