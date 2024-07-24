@@ -11,4 +11,4 @@ PRODUCT_NAME = NoneBotGUI
 PRODUCT_BUNDLE_IDENTIFIER = com.nightwind.NonebotGUI
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2024 com.nightwind. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2023 com.nightwind. All rights reserved.

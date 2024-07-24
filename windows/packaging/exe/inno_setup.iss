@@ -55,12 +55,12 @@ Source: "{{SOURCE_DIR}}\\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdi
 
 [Icons]
 Name: "{autodesktop}\\{{DISPLAY_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"; Tasks: desktopicon
-Name: "{group}\{{DISPLAY_NAME}}}"; Filename: "{app}\{{EXECUTABLE_NAME}}"
+Name: "{group}\{{DISPLAY_NAME}}"; Filename: "{app}\{{EXECUTABLE_NAME}}"
 Name: "{autoprograms}\\{{DISPLAY_NAME}}"; Filename: "{app}\\{{EXECUTABLE_NAME}}"
 [Run]
 Filename: "{app}\\{{EXECUTABLE_NAME}}"; Description: "{cm:LaunchProgram,{{DISPLAY_NAME}}}"; Flags: {% if PRIVILEGES_REQUIRED == 'admin' %}runascurrentuser{% endif %} nowait postinstall skipifsilent
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}";
-Type: filesandordirs; Name: "{userappdata}/moe.xmcn.nyanana";
-Type: filesandordirs; Name: "{commonappdata}/moe.xmcn.nyanana";
+Type: filesandordirs; Name: "{userappdata}/com.nightwind.NonebotGUI";
+Type: filesandordirs; Name: "{commonappdata}/com.nightwind.NonebotGUI";
