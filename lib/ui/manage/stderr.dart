@@ -1,23 +1,5 @@
 import 'package:NoneBotGUI/darts/utils.dart';
-import 'package:NoneBotGUI/darts/global.dart';
 import 'package:flutter/material.dart';
-
-// void main() {
-//   runApp(
-//     const MyApp(),
-//   );
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       home: StdErr(),
-//     );
-//   }
-// }
 
 class StdErr extends StatefulWidget {
   const StdErr({super.key});
@@ -32,7 +14,7 @@ class _HomeScreenState extends State<StdErr> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "${manageBotReadCfgName(userDir)} - nbgui_stderr.log",
+          "${manageBotReadCfgName()} - nbgui_stderr.log",
           style: const TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
@@ -53,7 +35,7 @@ class _HomeScreenState extends State<StdErr> {
               Expanded(
                   child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(manageBotViewStderr(manageBotReadCfgPath(userDir))))),
+                      child: Text(manageBotViewStderr(manageBotReadCfgPath())))),
             ],
           ),
         ),
@@ -83,7 +65,7 @@ void _showConfirmationDialog(BuildContext context) {
             ),
             onPressed: () {
               Navigator.of(context).pop();
-              deleteStderr(manageBotReadCfgPath(userDir));
+              deleteStderr(manageBotReadCfgPath());
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('已删除'),

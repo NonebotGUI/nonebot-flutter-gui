@@ -18,7 +18,7 @@ class BroadcastDetail extends StatefulWidget {
 class _HomeScreenState extends State<BroadcastDetail> {
 
 
-  //拉取公告列表
+
   @override
   void initState() {
     super.initState();

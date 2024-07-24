@@ -7,21 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
 
-// void main() {
-//   runApp(const MyApp());
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       home: CreateBot(),
-//     );
-//   }
-// }
-
 class CreateBot extends StatefulWidget {
   const CreateBot({super.key});
 
@@ -53,9 +38,9 @@ class _MyCustomFormState extends State<CreateBot> {
       createVENV(userDir, path, name, venv),
       'echo 开始安装依赖...',
       installBot(userDir, path, name, venv, dep),
-      writePyProject(userDir, path, name),
-      writeENV(userDir, path, name),
-      writebot(userDir, name, path),
+      writePyProject(path, name),
+      writeENV(path, name, ''),
+      writebot(userDir, name, path, "default", "none", "none"),
       'echo 安装完成，可退出'
     ];
 

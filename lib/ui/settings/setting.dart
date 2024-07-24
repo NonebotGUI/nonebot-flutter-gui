@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:NoneBotGUI/darts/utils.dart';
 import 'package:file_picker/file_picker.dart';
@@ -6,11 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:NoneBotGUI/darts/global.dart';
 import 'package:flutter/services.dart';
 
-// void main() {
-//   runApp(
-//     Settings(),
-//   );
-// }
+
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -372,6 +369,28 @@ class _HomeScreenState extends State<Settings> {
                           );
                         },
                       );
+                    })),
+                    const SizedBox(height: 4,),
+            SizedBox(
+                height: 80,
+                child: InkWell(
+                    child: const Card(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(' 删除error.log'),
+                          )),
+                          Expanded(child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(padding: EdgeInsets.all(4),
+                            child: Icon(Icons.delete_rounded),),
+                          )),
+                        ],
+                      ),
+                    ),
+                    onTap: () {
+                      File('$userDir/error.log').deleteSync();
                     })),
                     const SizedBox(height: 4,),
           ],

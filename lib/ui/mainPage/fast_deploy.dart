@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:NoneBotGUI/darts/global.dart';
-import 'package:NoneBotGUI/ui/broadcast/detail.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 
@@ -42,15 +40,12 @@ final response =
   }
 
 
-InkWell list(broadcast) => InkWell(
+InkWell list(deploy) => InkWell(
   onTap: () {
-    broadcastId = broadcast['id'];
-    Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const BroadcastDetail(),
-          ),
-        );
+    deployId = deploy['id'];
+    setState(() {
+      deployPage++;
+    });
   },
   child: Card(
         child: Stack(
@@ -63,7 +58,7 @@ InkWell list(broadcast) => InkWell(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      broadcast['name'].toString().substring(0,  broadcast['name'].length - 5),
+                      deploy['name'].toString().substring(0,  deploy['name'].length - 5),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
@@ -79,7 +74,7 @@ InkWell list(broadcast) => InkWell(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  broadcast['desc'],
+                  deploy['desc'],
                   style: TextStyle(
                     fontSize: MediaQuery.of(context).textScaleFactor * 12,
                     color: Colors.grey[550]
@@ -92,7 +87,7 @@ InkWell list(broadcast) => InkWell(
   ),
 );
 
-// ... 其余代码不变
+
 
 
   @override

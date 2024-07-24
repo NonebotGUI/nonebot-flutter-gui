@@ -42,6 +42,13 @@ class _HomeScreenState extends State<ImportBot> {
   }
 
   @override
+  void dispose() {
+    myController.dispose();
+    super.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(

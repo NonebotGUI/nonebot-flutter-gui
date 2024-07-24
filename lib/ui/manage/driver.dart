@@ -47,7 +47,7 @@ class _MyHomePageState extends State<DriverStore> {
         executable,
         args,
         runInShell: true,
-        workingDirectory: manageBotReadCfgPath(userDir),
+        workingDirectory: manageBotReadCfgPath(),
       );
       process.stdout
           .transform(systemEncoding.decoder)

@@ -219,7 +219,7 @@ class _HomeScreenState extends State<manageCli> {
                     'nb',
                     ['generate'],
                     runInShell: true,
-                    workingDirectory: manageBotReadCfgPath(userDir),
+                    workingDirectory: manageBotReadCfgPath(),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

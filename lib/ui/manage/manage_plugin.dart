@@ -183,7 +183,7 @@ void _uninstall(name) async {
       executable,
       args,
       runInShell: true,
-      workingDirectory: manageBotReadCfgPath(userDir),
+      workingDirectory: manageBotReadCfgPath(),
     );
     await process.exitCode;
   }

@@ -8,14 +8,14 @@ import 'package:NoneBotGUI/ui/manage/stderr.dart';
 import 'package:NoneBotGUI/darts/global.dart';
 
 
-class ManageBot extends StatefulWidget {
-  const ManageBot({super.key});
+class ManageProtocol extends StatefulWidget {
+  const ManageProtocol({super.key});
   @override
-  State<ManageBot> createState() => _MyCustomFormState();
+  State<ManageProtocol> createState() => _MyCustomFormState();
 }
 
 
-class _MyCustomFormState extends State<ManageBot> {
+class _MyCustomFormState extends State<ManageProtocol> {
   Timer? _timer;
   final ScrollController _scrollController = ScrollController();
 
@@ -44,7 +44,7 @@ class _MyCustomFormState extends State<ManageBot> {
 
   void loadFileContent() async {
     if (gOnOpen.isNotEmpty){
-      String filePath = '${manageBotReadCfgPath()}/nbgui_stdout.log';
+      String filePath = '${getProtocolPath()}/nbgui_stdout.log';
       File stdoutFile = File(filePath);
       if (stdoutFile.existsSync()) {
         try {
@@ -52,8 +52,7 @@ class _MyCustomFormState extends State<ManageBot> {
           final lines = await file.readAsLines(encoding: systemEncoding);
           final last50Lines =
               lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
-            nbLog = last50Lines.join('\n');
-            getPyPid(userDir);
+           protocolLog = last50Lines.join('\n');
             setState(() {
               
             });
@@ -86,8 +85,8 @@ class _MyCustomFormState extends State<ManageBot> {
     });
   }
 
-  String name = manageBotReadCfgName();
-  String _filePath = '${manageBotReadCfgPath()}/nbgui_stdout.log';
+  String protocolCMD = getProtocolCmd();
+  String _filePath = '${getProtocolPath()}/nbgui_stdout.log';
   @override
   Widget build(BuildContext context) {
     Future.delayed(Duration.zero, () {
@@ -110,35 +109,13 @@ class _MyCustomFormState extends State<ManageBot> {
                     children: <Widget>[
                       const Center(
                         child: Text(
-                          'Bot信息',
+                          '协议端信息',
                           style: TextStyle(
                             fontWeight: FontWeight.bold
                           ),
                         ),
                       ),
                       SizedBox(height: size.height * 0.1),
-                      const Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '名称',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            manageBotReadCfgName(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
                       const Padding(
                         padding: EdgeInsets.all(4),
                         child: Align(
@@ -156,7 +133,29 @@ class _MyCustomFormState extends State<ManageBot> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            manageBotReadCfgPath(),
+                            getProtocolPath()
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '启动命令',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            getProtocolCmd()
                           ),
                         ),
                       ),
@@ -188,7 +187,7 @@ class _MyCustomFormState extends State<ManageBot> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            '进程ID(Nonebot)',
+                            '进程ID',
                             style: TextStyle(
                               fontWeight: FontWeight.bold
                             ),
@@ -200,29 +199,7 @@ class _MyCustomFormState extends State<ManageBot> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            manageBotReadCfgPid(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '进程ID(Python)',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            manageBotReadCfgPyPid(),
+                            getProtocolPid()
                           ),
                         ),
                       ),
@@ -239,7 +216,7 @@ class _MyCustomFormState extends State<ManageBot> {
                           ),
                         ),
                       ),
-                      if (manageBotReadCfgStatus() == 'true')
+                      if (getProtocolStatus())
                           const Padding(
                             padding: EdgeInsets.all(4),
                             child: Align(
@@ -250,7 +227,7 @@ class _MyCustomFormState extends State<ManageBot> {
                               ),
                             ),
                           ),
-                      if (manageBotReadCfgStatus() == 'false')
+                      if (!getProtocolStatus())
                           const Padding(
                             padding: EdgeInsets.all(4),
                             child: Align(
@@ -270,13 +247,13 @@ class _MyCustomFormState extends State<ManageBot> {
                           child: const Icon(Icons.edit_rounded),
                           onPressed: () {
                             setState(() {
-                              name = manageBotReadCfgName();
+                              protocolCMD = getProtocolCmd();
                             });
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: const Text('编辑Bot属性'),
+                                  title: const Text('编辑属性'),
                                   actions: <Widget>[
                                     SingleChildScrollView(
                                       child: Padding(
@@ -285,15 +262,15 @@ class _MyCustomFormState extends State<ManageBot> {
                                           children: <Widget>[
                                             const Align(
                                               alignment: Alignment.centerLeft,
-                                              child: Text('重命名Bot'),
+                                              child: Text('设置启动命令'),
                                             ),
                                             TextField(
                                               controller: TextEditingController(),
                                               decoration: InputDecoration(
-                                                hintText: name,
+                                                hintText: protocolCMD,
                                               ),
                                               onChanged: (value){
-                                                setState(() => name = value);
+                                                setState(() => protocolCMD = value);
                                               }
                                             ),
                                           ],
@@ -306,8 +283,8 @@ class _MyCustomFormState extends State<ManageBot> {
                                       ),
                                       onPressed: () {
                                         Navigator.of(context).pop();
-                                        if (name != manageBotReadCfgName()){
-                                          renameBot(name);
+                                        if (protocolCMD != manageBotReadCfgName()){
+                                          reEditCmd(protocolCMD);
                                           setState(() {
                                           });
                                         }
@@ -323,13 +300,6 @@ class _MyCustomFormState extends State<ManageBot> {
                       SizedBox(
                         height: size.height * 0.01,
                       ),
-                      SizedBox(
-                        width: size.width * 0.2,
-                        child: OutlinedButton(
-                          child: const Icon(Icons.delete_rounded),
-                          onPressed: () => _showConfirmationDialog(context),
-                        ),
-                      )
                     ],
                   )
                 ),
@@ -364,15 +334,13 @@ class _MyCustomFormState extends State<ManageBot> {
                               controller: _scrollController,
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
-                                child: RichText(
-                                  text: TextSpan(
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'JetBrainsMono',
-                                    ),
-                                    children: _logSpans(nbLog),
+                                child: Text(
+                                  protocolLog,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'JetBrainsMono',
                                   ),
-                                ),
+                                )
                               ),
                             ),
                           ),
@@ -405,14 +373,14 @@ class _MyCustomFormState extends State<ManageBot> {
                             children: <Widget>[
                               IconButton(
                                 onPressed: () {
-                                  if (manageBotReadCfgStatus() == 'false') {
-                                    runBot(userDir, manageBotReadCfgPath());
+                                  if (getProtocolStatus() == false) {
+                                    runProtocol();
                                     _reloadConfig();
                                     _startRefreshing();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
-                                          'Nonebot,启动！如果发现控制台无刷新请检查bot目录下的nbgui_stderr.log查看报错',
+                                          '协议端已启动，如果发现控制台无刷新请检查协议端目录下的nbgui_stderr.log查看报错',
                                         ),
                                         duration: Duration(seconds: 3),
                                       ),
@@ -420,7 +388,7 @@ class _MyCustomFormState extends State<ManageBot> {
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text('Bot已经在运行中了！'),
+                                        content: Text('已经在运行中了！'),
                                         duration: Duration(seconds: 3),
                                       ),
                                     );
@@ -432,19 +400,19 @@ class _MyCustomFormState extends State<ManageBot> {
                               ),
                               IconButton(
                                 onPressed: () {
-                                  if (manageBotReadCfgStatus() == 'true') {
-                                    stopBot(userDir);
+                                  if (getProtocolStatus()) {
+                                    stopProtocol();
                                     _reloadConfig();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text('Bot已停止'),
+                                        content: Text('已停止'),
                                         duration: Duration(seconds: 3),
                                       ),
                                     );
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text('Bot未在运行！'),
+                                        content: Text('未在运行！'),
                                         duration: Duration(seconds: 3),
                                       ),
                                     );
@@ -456,22 +424,22 @@ class _MyCustomFormState extends State<ManageBot> {
                               ),
                               IconButton(
                                 onPressed: () {
-                                  if (manageBotReadCfgStatus() == 'true') {
-                                    stopBot(userDir);
-                                    runBot(userDir, manageBotReadCfgPath());
+                                  if (getProtocolStatus()) {
+                                    stopProtocol();
+                                    runProtocol();
                                     clearLog(userDir);
                                     _reloadConfig();
                                     _startRefreshing();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text('Bot正在重启...'),
+                                        content: Text('正在重启...'),
                                         duration: Duration(seconds: 3),
                                       ),
                                     );
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text('Bot未在运行！'),
+                                        content: Text('未在运行！'),
                                         duration: Duration(seconds: 3),
                                       ),
                                     );
@@ -483,22 +451,23 @@ class _MyCustomFormState extends State<ManageBot> {
                               ),
                               IconButton(
                                 onPressed: () =>
-                                    openFolder(manageBotReadCfgPath().toString()),
+                                    openFolder(getProtocolPath().toString()),
                                 tooltip: "打开文件夹",
                                 icon: const Icon(Icons.folder),
                                 iconSize: size.height * 0.03,
                               ),
-                              IconButton(
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const manageCli(),
-                                  ),
-                                ),
-                                tooltip: "管理CLI",
-                                icon: const Icon(Icons.terminal_rounded),
-                                iconSize: size.height * 0.03,
-                              ),
+                              // 下次一定（
+                              // IconButton(
+                              //  onPressed: () => Navigator.push(
+                              //  context,
+                              //  MaterialPageRoute(
+                              //  builder: (context) => const manageCli(),
+                              //   ),
+                              //   ),
+                              //   tooltip: "显示登录二维码",
+                              //   icon: const Icon(Icons.qr_code_rounded),
+                              //   iconSize: size.height * 0.03,
+                              //   ),
                               IconButton(
                                 onPressed: () {
                                   clearLog(userDir);
@@ -539,144 +508,6 @@ class _MyCustomFormState extends State<ManageBot> {
   }
 }
 
-///终端字体颜色
-//这一段AI写的我什么也不知道😭
-List<TextSpan> _logSpans(text) {
-  RegExp regex = RegExp(
-    r'(\[[A-Z]+\])|(nonebot \|)|(uvicorn \|)|(Env: dev)|(Env: prod)|(Config)|(nonebot_plugin_[\S]+)|("nonebot_plugin_[\S]+)|(使用 Python: [\S]+)|(Loaded adapters: [\S]+)|(\d{2}-\d{2} \d{2}:\d{2}:\d{2})|(Calling API [\S]+)',
-  );
-  List<TextSpan> spans = [];
-  int lastEnd = 0;
-
-  for (Match match in regex.allMatches(text)) {
-    if (match.start > lastEnd) {
-      spans.add(TextSpan(
-        text: text.substring(lastEnd, match.start),
-        style: const TextStyle(color: Colors.white),
-      ));
-    }
-
-    Color color;
-    switch (match.group(0)) {
-      case '[SUCCESS]':
-        color = Colors.greenAccent;
-        break;
-      case '[INFO]':
-        color = Colors.white;
-        break;
-      case '[WARNING]':
-        color = Colors.orange;
-        break;
-      case '[ERROR]':
-        color = Colors.red;
-        break;
-      case '[DEBUG]':
-        color = Colors.blue;
-        break;
-      case 'nonebot |':
-        color = Colors.green;
-        break;
-      case 'uvicorn |':
-        color = Colors.green;
-        break;
-      case 'Env: dev':
-        color = Colors.orange;
-        break;
-      case 'Env: prod':
-        color = Colors.orange;
-        break;
-      case 'Config':
-        color = Colors.orange;
-        break;
-      default:
-        if (match.group(0)!.startsWith('nonebot_plugin_')) {
-          color = Colors.yellow;
-        } else if (match.group(0)!.startsWith('"nonebot_plugin_')) {
-          color = Colors.yellow;
-        } else if (match.group(0)!.startsWith('Loaded adapters:')) {
-          color = Colors.greenAccent;
-        } else if (match.group(0)!.startsWith('使用 Python:')) {
-          color = Colors.greenAccent;
-        } else if (match.group(0)!.startsWith('Calling API')) {
-          color = Colors.purple;
-        } else if (match.group(0)!.contains('-') &&
-            match.group(0)!.contains(':')) {
-          color = Colors.green;
-        } else {
-          color = Colors.white;
-        }
-        break;
-    }
-
-    spans.add(TextSpan(
-      text: match.group(0),
-      style: TextStyle(color: color),
-    ));
-
-    lastEnd = match.end;
-  }
-  if (lastEnd < text.length) {
-    spans.add(TextSpan(
-      text: text.substring(lastEnd),
-      style: const TextStyle(color: Colors.white),
-    ));
-  }
-
-  return spans;
-}
 
 
 
-void _showConfirmationDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('删除'),
-        content: const Text('你确定要删除这个Bot吗？'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('取消'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: const Text(
-              '确定',
-              style: TextStyle(color: Color.fromRGBO(238, 109, 109, 1)),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-              if (manageBotReadCfgStatus()=='true'){
-                stopBot(userDir);
-              }
-              deleteBot(userDir);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Bot已删除'),
-                duration: Duration(seconds: 3),
-              ));
-            },
-          ),
-          TextButton(
-            child: const Text(
-              '确定（连同bot目录一起删除）',
-              style: TextStyle(color: Color.fromRGBO(255, 0, 0, 1)),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-              if (manageBotReadCfgStatus()=='true'){
-                stopBot(userDir);
-              }
-              deleteBotAll(userDir);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Bot已删除'),
-                duration: Duration(seconds: 3),
-              ));
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
