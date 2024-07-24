@@ -7,9 +7,11 @@ import 'package:toml/toml.dart';
 
 
 
+//超～级～大～史～山～
+//存放一些"小"功能的地方
 
-//存放一些小功能的地方
-///初始化
+
+///初始化用户文件夹
 createMainFolder() async {
   Directory usrDir = await getApplicationSupportDirectory();
   if (!usrDir.existsSync()) {
@@ -35,15 +37,15 @@ createMainFolder() async {
   return dir;
 }
 
-createMainFolderBots(usrDir) {
+createMainFolderBots() {
   if (Platform.isLinux) {
-    String dir = "${usrDir}/bots/";
+    String dir = "$userDir/bots/";
     return dir;
   } else if (Platform.isMacOS) {
-    String dir = "${usrDir}/bots/";
+    String dir = "$userDir/bots/";
     return dir;
   } else if (Platform.isWindows) {
-    String dir = "${usrDir}\\bots\\";
+    String dir = "$userDir\\bots\\";
     return dir;
   }
 }
@@ -228,7 +230,7 @@ createBotReadConfigPluginDir(dir) {
 }
 
 //处理适配器和驱动器
-Future<void> createBotWriteConfigRequirement(dir,String drivers, String adapters) async {
+createBotWriteConfigRequirement(dir,String drivers, String adapters){
   drivers = drivers.toLowerCase();
   String driverlist =
       drivers.split(',').map((driver) => 'nonebot2[$driver]').join(',');
@@ -346,23 +348,24 @@ createFolder(udir,path, name, plugindir) {
   }
 }
 
-writeENV(dir,path, name) {
-  File file = File('${userDir}/cache_drivers.txt');
+writeENV(path, name, port) {
+  File file = File('$userDir/cache_drivers.txt');
   String drivers = file.readAsStringSync();
   drivers = drivers.toLowerCase();
   String driverlist = drivers.split(',').map((driver) => '~$driver').join('+');
-  if (createBotReadConfigTemplate(dir) == 'bootstrap(初学者或用户)') {
-    String env = 'DRIVER=$driverlist';
+  if (createBotReadConfigTemplate(userDir) == 'bootstrap(初学者或用户)') {
+    String env = port.toString().isNotEmpty ? 'DRIVER=$driverlist' : 'DRIVER=$driverlist\n\n\n\n\nPORT=$port';
     File fileEnv = File('$path/$name/.env.prod');
     fileEnv.writeAsStringSync(env);
     String echo = "echo 写入.env文件";
     return echo;
-  } else if (createBotReadConfigTemplate(dir) == 'simple(插件开发者)') {
+  } else if (createBotReadConfigTemplate(userDir) == 'simple(插件开发者)') {
     String env = 'ENVIRONMENT=dev\nDRIVER=$driverlist';
     File fileEnv = File('$path/$name/.env');
     fileEnv.writeAsStringSync(env);
     File fileEnvdev = File('$path/$name/.env.dev');
-    fileEnvdev.writeAsStringSync('LOG_LEVEL=DEBUG');
+    String devEnv = port.toString().isNotEmpty ? 'LOG_LEVEL=DEBUG' : 'LOG_LEVEL=DEBUG\n\n\n\n\nPORT=$port';
+    fileEnvdev.writeAsStringSync(devEnv);
     File fileEnvprod = File('$path/$name/.env.prod');
     fileEnvprod.createSync();
     String echo = "echo 写入.env文件";
@@ -370,8 +373,8 @@ writeENV(dir,path, name) {
   }
 }
 
-writePyProject(dir,path, name) {
-  File file = File('${dir}/cache_adapters.txt');
+writePyProject(path, name) {
+  File file = File('$userDir/cache_adapters.txt');
   String adapters = file.readAsStringSync();
 
   RegExp regex = RegExp(r'\(([^)]+)\)');
@@ -382,7 +385,7 @@ writePyProject(dir,path, name) {
   }
   String adapterlist_ = adapterlist.split(',').map((adapter) =>'{ name = "${adapter.replaceAll('nonebot-adapter-', '').replaceAll('.', ' ')}", module_name = "${adapter.replaceAll('-', '.').replaceAll('adapter', 'adapters')}" }') .join(',');
 
-  if (createBotReadConfigTemplate(dir) == 'bootstrap(初学者或用户)') {
+  if (createBotReadConfigTemplate(userDir) == 'bootstrap(初学者或用户)') {
     String pyproject = '''
     [project]
     name = "$name"
@@ -405,8 +408,8 @@ writePyProject(dir,path, name) {
         ''.replaceAll('adapter', 'adapters')));
     String echo = "echo 写入pyproject.toml";
     return echo;
-  } else if (createBotReadConfigTemplate(dir) == 'simple(插件开发者)') {
-    if (createBotReadConfigPluginDir(dir) == '在src文件夹下') {
+  } else if (createBotReadConfigTemplate(userDir) == 'simple(插件开发者)') {
+    if (createBotReadConfigPluginDir(userDir) == '在src文件夹下') {
       String pyproject = '''
     [project]
     name = "$name"
@@ -429,7 +432,7 @@ writePyProject(dir,path, name) {
           ''.replaceAll('adapter', 'adapters')));
       String echo = "echo 写入pyproject.toml";
       return echo;
-    } else if (createBotReadConfigPluginDir(dir) == '在[bot名称]/[bot名称]下') {
+    } else if (createBotReadConfigPluginDir(userDir) == '在[bot名称]/[bot名称]下') {
       String pyproject = '''
     [project]
     name = "$name"
@@ -456,7 +459,8 @@ writePyProject(dir,path, name) {
   }
 }
 
-writebot(dir,name, path) {
+///写入Bot的json文件
+writebot(dir,name, path, type, protocolPath, cmd) {
   DateTime now = DateTime.now();
   String time =
       "${now.year}年${now.month}月${now.day}日${now.hour}时${now.minute}分${now.second}秒";
@@ -469,7 +473,13 @@ writebot(dir,name, path) {
   "path": "${path.replaceAll('\\', '\\\\')}\\\\$name",
   "time": "$time",
   "isrunning": "false",
-  "pid": "Null"
+  "pid": "Null",
+  "type": "$type",
+  "protocolPath": "$protocolPath",
+  "cmd": "$cmd",
+  "protocolPid": "Null",
+  "protocolIsrunning": false
+
 }
 ''';
     cfgFile.writeAsStringSync(botInfo);
@@ -484,7 +494,12 @@ writebot(dir,name, path) {
   "path": "$path/$name",
   "time": "$time",
   "isrunning": "false",
-  "pid": "Null"
+  "pid": "Null",
+  "type": "$type",
+  "protocolPath": "$protocolPath",
+  "cmd": "$cmd",
+  "protocolPid": "Null",
+  "protocolIsrunning": false
 }
 ''';
     cfgFile.writeAsStringSync(botInfo);
@@ -499,7 +514,12 @@ writebot(dir,name, path) {
   "path": "$path/$name",
   "time": "$time",
   "isrunning": "false",
-  "pid": "Null"
+  "pid": "Null",
+  "type": "$type",
+  "protocolPath": "$protocolPath",
+  "cmd": "$cmd",
+  "protocolPid": "Null",
+  "protocolIsrunning": false
 }
 ''';
     cfgFile.writeAsStringSync(botInfo);
@@ -522,7 +542,12 @@ importbot(dir,name, path) {
   "path": "${path.replaceAll('\\', '\\\\')}",
   "time": "$time",
   "isrunning": "false",
-  "pid": "Null"
+  "pid": "Null",
+  "type": "imported",
+  "protocolPath": "none",
+  "cmd": "none",
+  "protocolPid": "Null",
+  "protocolIsrunning": false
 }
 ''';
     cfgFile.writeAsStringSync(botInfo);
@@ -537,7 +562,12 @@ importbot(dir,name, path) {
   "path": "$path",
   "time": "$time",
   "isrunning": "false",
-  "pid": "Null"
+  "pid": "Null",
+  "type": "imported",
+  "protocolPath": "none",
+  "cmd": "none",
+  "protocolPid": "Null",
+  "protocolIsrunning": false
 }
 ''';
     cfgFile.writeAsStringSync(botInfo);
@@ -547,48 +577,42 @@ importbot(dir,name, path) {
 }
 
 //管理bot的函数
-Future manageBotOnOpenCfg(dir,name, time) async {
-  String onOpen = '$name.$time';
-  File onOpenFile = File('${dir}/on_open.txt');
-  onOpenFile.writeAsStringSync(onOpen);
+Future manageBotOnOpenCfg(name, time) async {
+  gOnOpen = '$name.$time';
 }
 
-manageBotReadCfgName(dir) {
-  File cfgFile = File('${dir}/on_open.txt');
-  String cfg = cfgFile.readAsStringSync();
-  File botcfg = File('${dir}/bots/$cfg.json');
+manageBotReadCfgName() {
+  File botcfg = File('$userDir/bots/$gOnOpen.json');
   Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
   return jsonMap['name'].toString();
 }
 
-manageBotReadCfgPath(dir) {
-  File cfgFile = File('$userDir/on_open.txt');
-  String cfg = cfgFile.readAsStringSync();
-  File botcfg = File('${dir}/bots/$cfg.json');
+manageBotReadCfgPath() {
+  String cfg = gOnOpen;
+  if (gOnOpen.isNotEmpty){
+  File botcfg = File('$userDir/bots/$cfg.json');
   Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
   return jsonMap['path'].toString();
+  }
 }
 
-manageBotReadCfgTime(dir) {
-  File cfgFile = File('${dir}/on_open.txt');
-  String cfg = cfgFile.readAsStringSync();
-  File botcfg = File('${dir}/bots/$cfg.json');
+manageBotReadCfgTime() {
+  String cfg = gOnOpen;
+  File botcfg = File('$userDir/bots/$cfg.json');
   Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
   return jsonMap['time'].toString();
 }
 
-manageBotReadCfgStatus(dir) {
-  File cfgFile = File('$dir/on_open.txt');
-  String cfg = cfgFile.readAsStringSync();
-  File botcfg = File('$dir/bots/$cfg.json');
+manageBotReadCfgStatus() {
+  String cfg = gOnOpen;
+  File botcfg = File('$userDir/bots/$cfg.json');
   Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
   return jsonMap['isrunning'].toString();
 }
 
-manageBotReadCfgPid(dir) {
-  File cfgFile = File('$dir/on_open.txt');
-  String cfg = cfgFile.readAsStringSync();
-  File botcfg = File('$dir/bots/$cfg.json');
+manageBotReadCfgPid() {
+  String cfg = gOnOpen;
+  File botcfg = File('$userDir/bots/$cfg.json');
   Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
   return jsonMap['pid'].toString();
 }
@@ -617,8 +641,8 @@ Future openFolder(path) async {
 
 ///唤起Bot进程
 Future runBot(dir,String path) async {
-  String name = manageBotReadCfgName(dir);
-  String time = manageBotReadCfgTime(dir);
+  String name = manageBotReadCfgName();
+  String time = manageBotReadCfgTime();
   Directory.current = Directory(path);
   File cfgFile = File('$userDir/bots/$name.$time.json');
   final stdout = File('$path/nbgui_stdout.log');
@@ -648,8 +672,8 @@ Future runBot(dir,String path) async {
 ///结束bot进程
 stopBot(dir) async {
   //读取配置文件
-  String name = manageBotReadCfgName(dir);
-  String time = manageBotReadCfgTime(dir);
+  String name = manageBotReadCfgName();
+  String time = manageBotReadCfgTime();
   File cfgFile = File('$userDir/bots/$name.$time.json');
   Map botInfo = json.decode(cfgFile.readAsStringSync());
   String pidString = botInfo['pid'].toString();
@@ -671,8 +695,8 @@ stopBot(dir) async {
 ///重命名Bot
 renameBot(name) {
   //暂存数据
-  String time = manageBotReadCfgTime(userDir);
-  String oldName = manageBotReadCfgName(userDir);
+  String time = manageBotReadCfgTime();
+  String oldName = manageBotReadCfgName();
 
   //重写配置文件
   File botcfg = File('$userDir/bots/$oldName.$time.json');
@@ -685,10 +709,8 @@ renameBot(name) {
   .rename('$userDir/bots/$name.$time.json');
 
   //更新on_open.txt
-  File cfgFile = File('$userDir/on_open.txt');
   String newData = "$name.$time";
-  cfgFile.deleteSync();
-  cfgFile.writeAsStringSync(newData);
+  gOnOpen = newData;
 
 }
 
@@ -697,7 +719,7 @@ renameBot(name) {
 
 ///获取Python PID
 getPyPid(dir) {
-  File file = File('${manageBotReadCfgPath(dir)}/nbgui_stdout.log');
+  File file = File('${manageBotReadCfgPath()}/nbgui_stdout.log');
   RegExp regex = RegExp(r'Started server process \[(\d+)\]');
   Match? match = regex.firstMatch(file.readAsStringSync(encoding: systemEncoding));
   if (match != null && match.groupCount >= 1) {
@@ -711,18 +733,14 @@ getPyPid(dir) {
 }
 
 setPyPid(pid) {
-  File cfgFile = File('$userDir/on_open.txt');
-  String cfg = cfgFile.readAsStringSync();
-  File botcfg = File('$userDir/bots/$cfg.json');
+  File botcfg = File('$userDir/bots/$gOnOpen.json');
   Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
   jsonMap['pypid'] = pid;
   botcfg.writeAsStringSync(jsonEncode(jsonMap));
 }
 
 manageBotReadCfgPyPid(){
-  File cfgFile = File('$userDir/on_open.txt');
-  String cfg = cfgFile.readAsStringSync();
-  File botcfg = File('$userDir/bots/$cfg.json');
+  File botcfg = File('$userDir/bots/$gOnOpen.json');
   Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
   return jsonMap['pypid'].toString();
 }
@@ -730,27 +748,27 @@ manageBotReadCfgPyPid(){
 
 ///删除bot配置文件
 deleteBot(dir) async {
-  String name = manageBotReadCfgName(dir);
-  String time = manageBotReadCfgTime(dir);
+  String name = manageBotReadCfgName();
+  String time = manageBotReadCfgTime();
   File cfgFile = File('$dir/bots/$name.$time.json');
-  File('$userDir/on_open.txt').delete();
+  gOnOpen = '';
   cfgFile.delete();
 }
 
 ///连同bot文件夹一起删除
 deleteBotAll(dir) async {
-  String name = manageBotReadCfgName(dir);
-  String time = manageBotReadCfgTime(dir);
+  String name = manageBotReadCfgName();
+  String time = manageBotReadCfgTime();
   File cfgFile = File('$userDir/bots/$name.$time.json');
-  String path = manageBotReadCfgPath(dir);
+  String path = manageBotReadCfgPath();
   Directory(path).delete(recursive: true);
-  File('$userDir/on_open.txt').delete();
+  gOnOpen = '';
   cfgFile.delete();
 }
 
 ///清除日志
 clearLog(dir) async {
-  String path = manageBotReadCfgPath(dir);
+  String path = manageBotReadCfgPath();
   File stdout = File('$path/nbgui_stdout.log');
   stdout.delete();
   String info = "[INFO]Welcome to Nonebot GUI!";
@@ -819,10 +837,237 @@ createLog(path) {
 
 ///从pyproject.toml中读取插件列表
 getPluginList(dir) {
-  File pyprojectFile = File('${manageBotReadCfgPath(dir)}/pyproject.toml');
+  File pyprojectFile = File('${manageBotReadCfgPath()}/pyproject.toml');
   String pyproject = pyprojectFile.readAsStringSync();
   var toml = TomlDocument.parse(pyproject).toMap();
   var nonebot = toml['tool']['nonebot'];
   List pluginsList = nonebot['plugins'];
   return pluginsList;
+}
+
+
+setDeployPath(path, name){
+  if (Platform.isWindows){
+    deployPath = '${path.toString().replaceAll('\\', '\\\\')}\\\\$name';
+  }
+  else if (Platform.isLinux || Platform.isMacOS){
+    deployPath = '$path/$name';
+  }
+}
+
+
+///获取协议端路径
+getProtocolPath(){
+  File botcfg = File('$userDir/bots/$gOnOpen.json');
+  Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
+  return jsonMap['protocolPath'].toString();
+}
+
+///获取协议端启动命令
+getProtocolCmd(){
+  File botcfg = File('$userDir/bots/$gOnOpen.json');
+  Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
+  return jsonMap['cmd'].toString();
+}
+
+///启动协议端进程
+Future runProtocol() async {
+  Directory.current = Directory(getProtocolPath());
+  File cfgFile = File('$userDir/bots/$gOnOpen.json');
+  String ucmd = getProtocolCmd();
+  //分解cmd
+  List<String> cmdList = ucmd.split(' ').toList();
+  String pcmd = '';
+  List<String> args = [];
+  if (cmdList.length > 1){
+    pcmd = cmdList[0];
+    args = cmdList.sublist(1);
+  } else {
+    pcmd = cmdList[0];
+    args = [];
+  }
+  final stdout = File('${getProtocolPath()}/nbgui_stdout.log');
+  final stderr = File('${getProtocolPath()}/nbgui_stderr.log');
+  Process process = await Process.start(pcmd, args,workingDirectory: getProtocolPath());
+  int pid = process.pid;
+  /// 重写配置文件来更新状态
+  Map<String, dynamic> jsonMap = jsonDecode(cfgFile.readAsStringSync());
+  jsonMap['protocolPid'] = pid;
+  jsonMap['protocolIsrunning'] = true;
+  cfgFile.writeAsStringSync(jsonEncode(jsonMap));
+
+  final outputSink = stdout.openWrite();
+  final errorSink = stderr.openWrite();
+
+  // 直接监听原始字节输出
+  process.stdout.listen((data) {
+    outputSink.add(data);
+  });
+
+  process.stderr.listen((data) {
+    errorSink.add(data);
+  });
+}
+
+
+///结束协议端进程
+stopProtocol() async {
+  //读取配置文件
+  File cfgFile = File('$userDir/bots/$gOnOpen.json');
+  Map botInfo = json.decode(cfgFile.readAsStringSync());
+  String pidString = botInfo['protocolPid'].toString();
+  int pid = int.parse(pidString);
+  Process.killPid(pid,ProcessSignal.sigkill);
+  ///更新配置文件
+  botInfo['protocolIsrunning'] = false;
+  botInfo['protocolPid'] = 'Null';
+  cfgFile.writeAsStringSync(json.encode(botInfo));
+}
+
+///获取协议端进程id
+getProtocolPid(){
+  File cfgFile = File('$userDir/bots/$gOnOpen.json');
+  Map botInfo = json.decode(cfgFile.readAsStringSync());
+  String pidString = botInfo['protocolPid'].toString();
+  return pidString;
+}
+
+///获取协议端运行状态
+getProtocolStatus(){
+  File cfgFile = File('$userDir/bots/$gOnOpen.json');
+  Map botInfo = json.decode(cfgFile.readAsStringSync());
+  bool protocolStatus = botInfo['protocolIsrunning'];
+  return protocolStatus;
+}
+
+
+//我真服了...
+setCmd(jsonMap){
+  if (Platform.isWindows){
+    cmd = jsonMap['cmdWin'];
+    if (needQQ){
+      cmd = cmd.replaceAll('NBGUI.QQNUM', botQQ);
+    }
+  }
+  else if (Platform.isLinux || Platform.isMacOS){
+    cmd = jsonMap['cmd'];
+    if (needQQ){
+      cmd = cmd.replaceAll('NBGUI.QQNUM', botQQ);
+    }
+  }
+}
+
+
+
+///写入协议端配置文件
+writeProtocolConfig(){
+  //配置文件绝对路径
+  String path = '$extDir/$configPath';
+  File pcfg = File(needQQ ? path.replaceAll('NBGUI.QQNUM', botQQ) : path);
+  // 将wsPort转为int类型
+  String content = botConfig.toString().replaceAll('NBGUI.HOST:NBGUI.PORT', "$wsHost:$wsPort")
+                            .replaceAll('"NBGUI.PORT"', wsPort)
+                            .replaceAll('NBGUI.HOST', wsHost);
+  pcfg.writeAsStringSync(content);
+  if (Platform.isLinux || Platform.isMacOS){
+    // 给予执行权限
+    Process.run('chmod', ['+x', cmd],workingDirectory: extDir,runInShell: true);
+  }
+  return 'echo 配置协议端';
+}
+
+
+
+///写入requirements.txt和pyproject.toml
+writeReq(name, adapter, drivers){
+  drivers = drivers.toLowerCase();
+    String driverlist =
+        drivers.split(',').map((driver) => 'nonebot2[$driver]').join(',');
+    driverlist = driverlist.replaceAll(',', '\n');
+    File('$userDir/cache_drivers.txt').writeAsStringSync(drivers);
+    String reqs = "$driverlist\n$adapter";
+    File('$userDir/requirements.txt').writeAsStringSync(reqs);
+  if (deployTemplate == 'bootstrap(初学者或用户)') {
+    String pyproject = '''
+    [project]
+    name = "$name"
+    version = "0.1.0"
+    description = "$name"
+    readme = "README.md"
+    requires-python = ">=3.8, <4.0"
+
+    [tool.nonebot]
+    adapters = [
+        { name = "onebot v11", module_name = "nonebot.adapters.onebot.v11" }
+    ]
+    plugins = []
+    plugin_dirs = []
+    builtin_plugins = ["echo"]
+  ''';
+    File('$deployPath/pyproject.toml').writeAsStringSync(pyproject);
+  } else if (deployTemplate == 'simple(插件开发者)') {
+    if (deployPluginDir == '在src文件夹下') {
+      String pyproject = '''
+    [project]
+    name = "$name"
+    version = "0.1.0"
+    description = "$name"
+    readme = "README.md"
+    requires-python = ">=3.8, <4.0"
+
+    [tool.nonebot]
+    adapters = [
+        { name = "$adapter", module_name = "nonebot.adapters.onebot.v11" }
+    ]
+    plugins = []
+    plugin_dirs = ["src/plugins"]
+    builtin_plugins = ["echo"]
+  ''';
+      File('$deployPath/pyproject.toml').writeAsStringSync(pyproject);
+    } else if (deployTemplate == '在[bot名称]/[bot名称]下') {
+      String pyproject = '''
+    [project]
+    name = "$name"
+    version = "0.1.0"
+    description = "$name"
+    readme = "README.md"
+    requires-python = ">=3.8, <4.0"
+
+    [tool.nonebot]
+    adapters = [
+        { name = "onebot v11", module_name = "nonebot.adapters.onebot.v11" }
+    ]
+    plugins = []
+    plugin_dirs = ["$name/plugins"]
+    builtin_plugins = ["echo"]
+    ''';
+    File('$deployPath/pyproject.toml').writeAsStringSync(pyproject);
+    }
+  }
+  return 'echo 写入依赖...';
+}
+
+
+///更改启动命令
+reEditCmd(cmd) {
+  //重写配置文件
+  File botcfg = File('$userDir/bots/$gOnOpen.json');
+  Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
+  jsonMap['cmd'] = cmd;
+  botcfg.writeAsStringSync(jsonEncode(jsonMap));
+
+}
+
+
+///检查bot的type键
+//适配老东西（
+checkBotType(){
+  File botcfg = File('$userDir/bots/$gOnOpen.json');
+  Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
+  if (jsonMap.containsKey('type')){
+    return (jsonMap['type'] == 'deployed') ? true : false;
+  }
+  else {
+    return false;
+  }
 }
