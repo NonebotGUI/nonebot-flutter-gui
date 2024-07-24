@@ -1,6 +1,6 @@
 import Cocoa
 import FlutterMacOS
-import window_manager
+
 import bitsdojo_window_macos
 
 class MainFlutterWindow: BitsdojoWindow {
@@ -21,8 +21,4 @@ class MainFlutterWindow: BitsdojoWindow {
 
     super.awakeFromNib()
   }
-      override public func order(_ place: NSWindow.OrderingMode, relativeTo otherWin: Int) {
-        super.order(place, relativeTo: otherWin)
-        hiddenWindowAtLaunch()
-   }
 }
