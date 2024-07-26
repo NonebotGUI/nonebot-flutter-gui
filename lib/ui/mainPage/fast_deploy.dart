@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:NoneBotGUI/darts/global.dart';
+import 'package:NoneBotGUI/darts/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -29,7 +30,7 @@ final response =
     await http.get(Uri.parse('https://api.zobyic.top/api/nbgui/deploy/list'));
     if (response.statusCode == 200) {
     setState(() {
-      String decodedBody = utf8.decode(response.bodyBytes);
+      String decodedBody = userHttpEncoding().decode(response.bodyBytes);
       final List jsonData = json.decode(decodedBody);
       jsonData.sort((a, b) => b['id'] - a['id']); // 按id从大到小排序
       data = jsonData;

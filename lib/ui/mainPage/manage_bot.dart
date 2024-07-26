@@ -49,7 +49,7 @@ class _MyCustomFormState extends State<ManageBot> {
       if (stdoutFile.existsSync()) {
         try {
           File file = File(filePath);
-          final lines = await file.readAsLines(encoding: systemEncoding);
+          final lines = await file.readAsLines(encoding: userEncoding());
           final last50Lines =
               lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
             nbLog = last50Lines.join('\n');

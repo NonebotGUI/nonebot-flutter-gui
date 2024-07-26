@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:NoneBotGUI/darts/utils.dart';
-import 'package:NoneBotGUI/darts/global.dart';
 import 'package:NoneBotGUI/ui/manage/adapter.dart';
 import 'package:NoneBotGUI/ui/manage/driver.dart';
 import 'package:NoneBotGUI/ui/manage/manage_cli.dart';

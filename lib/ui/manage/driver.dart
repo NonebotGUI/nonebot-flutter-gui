@@ -125,7 +125,7 @@ class _MyHomePageState extends State<DriverStore> {
                   title: TextField(
                     controller: _searchController,
                     decoration: const InputDecoration(
-                      hintText: '搜索适配器...',
+                      hintText: '搜索驱动器...',
                       hintStyle: TextStyle(color: Colors.white),
                     ),
                     style: const TextStyle(color: Colors.white),

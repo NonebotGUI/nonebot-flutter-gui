@@ -10,20 +10,6 @@ import 'package:flutter/services.dart';
 import 'package:NoneBotGUI/darts/utils.dart';
 import 'package:window_manager/window_manager.dart';
 
-// void main() {
-//   runApp(const MyApp());
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       home: PluginStore(),
-//     );
-//   }
-// }
 
 class PluginStore extends StatefulWidget {
   const PluginStore({super.key});
@@ -74,7 +60,7 @@ class _MyHomePageState extends State<PluginStore> {
         await http.get(Uri.parse('https://registry.nonebot.dev/plugins.json'));
     if (response.statusCode == 200) {
       setState(() {
-        String decodedBody = utf8.decode(response.bodyBytes);
+        String decodedBody = userHttpEncoding().decode(response.bodyBytes);
         final List<dynamic> jsonData = json.decode(decodedBody);
         data = jsonData.map((item) => item as Map<String, dynamic>).toList();
         search = data;
@@ -118,7 +104,7 @@ class _MyHomePageState extends State<PluginStore> {
                   title: TextField(
                     controller: _searchController,
                     decoration: const InputDecoration(
-                      hintText: '搜索适配器...',
+                      hintText: '搜索插件...',
                       hintStyle: TextStyle(color: Colors.white),
                     ),
                     style: const TextStyle(color: Colors.white),

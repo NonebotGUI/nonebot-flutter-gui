@@ -49,10 +49,10 @@ class _MyCustomFormState extends State<CreateBot> {
       String executable = args.removeAt(0);
       Process process = await Process.start(executable, args, runInShell: true);
       process.stdout
-          .transform(systemEncoding.decoder)
+          .transform(userEncoding().decoder)
           .listen((data) => _outputController.add(data));
       process.stderr
-          .transform(systemEncoding.decoder)
+          .transform(userEncoding().decoder)
           .listen((data) => _outputController.add(data));
       await process.exitCode;
     }
@@ -98,7 +98,7 @@ class _MyCustomFormState extends State<CreateBot> {
     final response =
         await http.get(Uri.parse('https://registry.nonebot.dev/adapters.json'));
     if (response.statusCode == 200) {
-      final decodedBody = utf8.decode(response.bodyBytes);
+      final decodedBody = userHttpEncoding().decode(response.bodyBytes);
       List<dynamic> adapters = json.decode(decodedBody);
       setState(() {
         adapterList = adapters;

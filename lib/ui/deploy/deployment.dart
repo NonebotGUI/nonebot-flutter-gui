@@ -92,7 +92,7 @@ class _HomeScreenState extends State<Deployment> {
     if (response.statusCode == 200) {
       couldNext = true;
       setState(() {
-        String decodedBody = utf8.decode(response.bodyBytes);
+        String decodedBody = userHttpEncoding().decode(response.bodyBytes);
         Map<String, dynamic> jsonMap = json.decode(decodedBody);
         raw = json.encode(jsonMap);
         tip = jsonMap['tip'];
