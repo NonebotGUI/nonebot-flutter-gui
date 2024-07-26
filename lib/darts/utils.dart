@@ -1113,7 +1113,7 @@ checkBotType(){
 ///获取extdir
 getExtDir(String path){
   if (Platform.isWindows){
-    return path.replaceAll("/", "\\").replaceAll("Protocol\\", "Protocol\\\\");
+    return path.replaceAll("/", "\\\\").replaceAll("Protocol\\", "Protocol\\\\");
   }
   else {
     return path;
