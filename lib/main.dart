@@ -33,11 +33,13 @@ void main() async {
   nbLog = '[INFO]Welcome to NoneBot GUI!';
   protocolLog = '[INFO]Welcome to NoneBot GUI!';
   barExtended = false;
-  version = 'v0.2.0';
+  version = 'v0.2.0+fix1';
+  userEncoding();
+  userHttpEncoding();
   FlutterError.onError = (FlutterErrorDetails details) async {
     DateTime now = DateTime.now();
     String timestamp = now.toIso8601String();
-    String errorMessage = '[ERROR]$timestamp -${details.exception.toString()}\n';
+    String errorMessage = '[ERROR]$timestamp -${details.exception.toString()}\n\n';
     final errorFile = File('$userDir/error.log');
     await errorFile.writeAsString(errorMessage, mode: FileMode.append);
   };
@@ -160,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
   final colorMode = userColorMode(userDir);
   StreamSubscription<WatchEvent>? _subscription;
   List<String> _events = [];
-  final String directoryPath = userDir;
+  final String directoryPath = "$userDir/bots";
   final TrayManager _trayManager = TrayManager.instance;
 
 
@@ -231,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
   }
 
   void stateInit() async{
-    Future.delayed(const Duration(seconds: 3));
+    Future.delayed(const Duration(seconds: 1));
     refresh();
   }
 
@@ -239,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
   void _startWatching() async{
     final watcher = DirectoryWatcher(directoryPath);
     _subscription = watcher.events.listen((event) async{
-      refresh();
+    refresh();
     });
   }
 
@@ -297,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
       if (stdoutFile.existsSync()) {
         try {
           File file = File(filePath);
-          final lines = await file.readAsLines(encoding: systemEncoding);
+          final lines = await file.readAsLines(encoding: userEncoding());
           final last50Lines =
               lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
             nbLog = last50Lines.join('\n');
@@ -320,7 +322,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
       if (stdoutFile.existsSync()) {
         try {
           File file = File(filePath);
-          final lines = await file.readAsLines(encoding: utf8);
+          final lines = await file.readAsLines(encoding: userEncoding());
           final last50Lines =
               lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
             protocolLog = last50Lines.join('\n');
