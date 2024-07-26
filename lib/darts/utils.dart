@@ -25,7 +25,9 @@ createMainFolder() async {
     "python":"default",
     "nbcli":"default",
     "color":"light",
-    "checkUpdate": true
+    "checkUpdate": true,
+    "encoding": "systemEncoding",
+    "httpencoding": "utf8"
   }
   ''';
     cfgFile.writeAsStringSync(cfg);
@@ -102,6 +104,51 @@ userColorMode(dir) {
     return 'light';
   }
 }
+setColorMode(dir,mode) {
+  File file = File('${dir}/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['color'] = mode;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
+
+userEncoding() {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  if ( jsonMap.containsKey("encoding")){
+    String encoding = jsonMap['encoding'].toString();
+    return (encoding == 'utf8') ? utf8 : systemEncoding;
+  }
+  else {
+    setEncoding('systemEncoding');
+    return systemEncoding;
+  }
+}
+setEncoding(mode) {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['encoding'] = mode;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
+
+userHttpEncoding() {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  if ( jsonMap.containsKey("httpencoding")){
+    String encoding = jsonMap['httpencoding'].toString();
+    return (encoding == 'utf8') ? utf8 : systemEncoding;
+  }
+  else {
+    setHttpEncoding('utf8');
+    return utf8;
+  }
+}
+setHttpEncoding(mode) {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['httpencoding'] = mode;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
+
 
 setCheckUpdate(tof) {
   File file = File('$userDir/user_config.json');
@@ -121,15 +168,6 @@ userCheckUpdate() {
     setCheckUpdate(true);
     return true;
   }
-}
-
-
-
-setColorMode(dir,mode) {
-  File file = File('${dir}/user_config.json');
-  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
-  jsonMap['color'] = mode;
-  file.writeAsStringSync(jsonEncode(jsonMap));
 }
 
 

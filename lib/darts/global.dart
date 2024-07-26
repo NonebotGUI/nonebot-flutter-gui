@@ -1,6 +1,7 @@
 //全局变量
 
 //用户目录
+
 late final userDir;
 
 //log
@@ -14,7 +15,6 @@ late String version;
 
 //当前打开的Bot
 String gOnOpen = '';
-
 
 
 //以下全局变量全都是由于不会传参导致的（byd全局变量太好用了
