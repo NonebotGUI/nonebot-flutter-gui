@@ -33,7 +33,7 @@ void main() async {
   nbLog = '[INFO]Welcome to NoneBot GUI!';
   protocolLog = '[INFO]Welcome to NoneBot GUI!';
   barExtended = false;
-  version = 'v0.2.0+fix1';
+  version = 'v0.2.0+fix2';
   userEncoding();
   userHttpEncoding();
   FlutterError.onError = (FlutterErrorDetails details) async {
