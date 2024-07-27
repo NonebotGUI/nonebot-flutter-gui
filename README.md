@@ -43,13 +43,23 @@ _✨ 新一代 NoneBot 图形化界面 ✨_
 - 支持多 Bot 管理
 - 快速部署，一键连接
 
+
+## 🤓安装前置
+### Windows
+本软件运行需要安装 Microsoft Visual C++ Redistributable 依赖，如无法打开请尝试从此处下载安装运行后使用。
+[https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
+
+### Linux
+请使用以下命令安装依赖(以 Debian 系为例)
+
+```bash
+sudo apt-get install appindicator3-0.1 libappindicator3-dev
+```
+
+
 ## ⚙️安装
 
 即刻前往：[Release](https://github.com/NonebotGUI/nonebot-flutter-gui/releases)
-
-> [!tip]
-> 本软件运行需要安装 Microsoft Visual C++ Redistributable 依赖，如无法打开请尝试从此处下载安装运行后使用。
-[https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
 
 
 ## 🖼️ 使用截图
