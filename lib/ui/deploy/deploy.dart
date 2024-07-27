@@ -15,6 +15,7 @@ class Deploy extends StatefulWidget {
 
 class _DeployState extends State<Deploy> {
   final _output = TextEditingController();
+  final _outputController = StreamController<String>.broadcast();
   late String dropDownValueDL = dlLink.first;
   bool _isDownloading = false;
   bool _couldDeploy = false;
@@ -90,23 +91,13 @@ class _DeployState extends State<Deploy> {
     for (String command in commands) {
       List<String> args = command.split(' ');
       String executable = args.removeAt(0);
-      Process process = await Process.start(executable, args, runInShell: true, workingDirectory: path);
-      process.stdout.transform(systemEncoding.decoder).listen((data) {
-        setState(() {
-          _output.text += data;
-          _output.selection = TextSelection.fromPosition(
-            TextPosition(offset: _output.text.length),
-          );
-        });
-      });
-      process.stderr.transform(systemEncoding.decoder).listen((data) {
-        setState(() {
-          _output.text += data;
-          _output.selection = TextSelection.fromPosition(
-            TextPosition(offset: _output.text.length),
-          );
-        });
-      });
+      Process process = await Process.start(executable, args, runInShell: true);
+      process.stdout
+          .transform(userDeployEncoding().decoder)
+          .listen((data) => _outputController.add(data));
+      process.stderr
+          .transform(userDeployEncoding().decoder)
+          .listen((data) => _outputController.add(data));
       await process.exitCode;
     }
 
@@ -333,18 +324,36 @@ class _DeployState extends State<Deploy> {
                             SizedBox(
                               height: size.height * 0.555,
                               width: size.width * 0.64,
-                              child: Card(
-                                color: const Color.fromARGB(255, 31, 28, 28),
-                                child: SingleChildScrollView(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Text(
-                                      style: const TextStyle(color: Colors.white),
-                                      _output.text,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              child: StreamBuilder<String>(
+                                        stream: _outputController.stream,
+                                        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                                          return Card(
+                                            color: const Color.fromARGB(255, 31, 28, 28),
+                                            child: SingleChildScrollView(
+                                              child: StreamBuilder<String>(
+                                                stream: _outputController.stream,
+                                                builder: (BuildContext context,
+                                                    AsyncSnapshot<String> snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    final newText =
+                                                    _output.text + (snapshot.data ?? '');
+                                                    _output.text = newText;
+                                                  }
+                                                  return  Padding(
+                                                        padding: const EdgeInsets.all(8.0),
+                                                        child: Text(
+                                                          _output.text,
+                                                          style: const TextStyle(
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      );
+                                                },
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
                             ),
                           ],
                         ),

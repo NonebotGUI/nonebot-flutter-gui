@@ -27,7 +27,10 @@ createMainFolder() async {
     "color":"light",
     "checkUpdate": true,
     "encoding": "systemEncoding",
-    "httpencoding": "utf8"
+    "httpencoding": "utf8",
+    "botEncoding": "systemEncoding",
+    "protocolEncoding": "utf8",
+    "deployEncoding": "systemEncoding"
   }
   ''';
     cfgFile.writeAsStringSync(cfg);
@@ -111,6 +114,10 @@ setColorMode(dir,mode) {
   file.writeAsStringSync(jsonEncode(jsonMap));
 }
 
+
+
+
+
 userEncoding() {
   File file = File('$userDir/user_config.json');
   Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
@@ -123,6 +130,7 @@ userEncoding() {
     return systemEncoding;
   }
 }
+
 setEncoding(mode) {
   File file = File('$userDir/user_config.json');
   Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
@@ -148,6 +156,66 @@ setHttpEncoding(mode) {
   jsonMap['httpencoding'] = mode;
   file.writeAsStringSync(jsonEncode(jsonMap));
 }
+
+userBotEncoding() {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  if ( jsonMap.containsKey("botEncoding")){
+    String encoding = jsonMap['botEcoding'].toString();
+    return (encoding == 'utf8') ? utf8 : systemEncoding;
+  }
+  else {
+    setBotEncoding('systemEncoding');
+    return systemEncoding;
+  }
+}
+setBotEncoding(mode) {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['botEncoding'] = mode;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
+
+
+userProtocolEncoding() {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  if ( jsonMap.containsKey("protocolEncoding")){
+    String encoding = jsonMap['protocolEncoding'].toString();
+    return (encoding == 'utf8') ? utf8 : systemEncoding;
+  }
+  else {
+    setProtocolEncoding('utf8');
+    return utf8;
+  }
+}
+setProtocolEncoding(mode) {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['protocolEncoding'] = mode;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
+
+userDeployEncoding() {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  if ( jsonMap.containsKey("deployEncoding")){
+    String encoding = jsonMap['deployEncoding'].toString();
+    return (encoding == 'utf8') ? utf8 : systemEncoding;
+  }
+  else {
+    setDeployEncoding('systemEncoding');
+    return systemEncoding;
+  }
+}
+setDeployEncoding(mode) {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['deployEncoding'] = mode;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
+
+
 
 
 setCheckUpdate(tof) {

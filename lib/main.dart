@@ -33,9 +33,13 @@ void main() async {
   nbLog = '[INFO]Welcome to NoneBot GUI!';
   protocolLog = '[INFO]Welcome to NoneBot GUI!';
   barExtended = false;
-  version = 'v0.2.0+fix2';
+  version = 'v0.2.0+beta3';
+  //初始化编码
   userEncoding();
   userHttpEncoding();
+  userBotEncoding();
+  userProtocolEncoding();
+  userDeployEncoding();
   FlutterError.onError = (FlutterErrorDetails details) async {
     DateTime now = DateTime.now();
     String timestamp = now.toIso8601String();
@@ -44,7 +48,7 @@ void main() async {
     await errorFile.writeAsString(errorMessage, mode: FileMode.append);
   };
   WindowOptions windowOptions = const WindowOptions(
-    size: Size(1280, 720),
+    size: Size(1280, 730),
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
@@ -62,7 +66,7 @@ void main() async {
   );
   doWhenWindowReady(() {
     final win = appWindow;
-    const initialSize = Size(1280, 720);
+    const initialSize = Size(1280, 730);
     win.size = initialSize;
     win.minSize = initialSize;
     win.alignment = Alignment.center;
@@ -299,7 +303,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
       if (stdoutFile.existsSync()) {
         try {
           File file = File(filePath);
-          final lines = await file.readAsLines(encoding: userEncoding());
+          final lines = await file.readAsLines(encoding: userBotEncoding());
           final last50Lines =
               lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
             nbLog = last50Lines.join('\n');
@@ -322,7 +326,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
       if (stdoutFile.existsSync()) {
         try {
           File file = File(filePath);
-          final lines = await file.readAsLines(encoding: userEncoding());
+          final lines = await file.readAsLines(encoding: userProtocolEncoding());
           final last50Lines =
               lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
             protocolLog = last50Lines.join('\n');
