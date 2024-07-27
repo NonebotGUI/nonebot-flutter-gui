@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:NoneBotGUI/darts/global.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:toml/toml.dart';
+import 'package:path/path.dart' as path;
 
 
 
@@ -27,7 +28,10 @@ createMainFolder() async {
     "color":"light",
     "checkUpdate": true,
     "encoding": "systemEncoding",
-    "httpencoding": "utf8"
+    "httpencoding": "utf8",
+    "botEncoding": "systemEncoding",
+    "protocolEncoding": "utf8",
+    "deployEncoding": "systemEncoding"
   }
   ''';
     cfgFile.writeAsStringSync(cfg);
@@ -111,6 +115,10 @@ setColorMode(dir,mode) {
   file.writeAsStringSync(jsonEncode(jsonMap));
 }
 
+
+
+
+
 userEncoding() {
   File file = File('$userDir/user_config.json');
   Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
@@ -123,6 +131,7 @@ userEncoding() {
     return systemEncoding;
   }
 }
+
 setEncoding(mode) {
   File file = File('$userDir/user_config.json');
   Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
@@ -148,6 +157,66 @@ setHttpEncoding(mode) {
   jsonMap['httpencoding'] = mode;
   file.writeAsStringSync(jsonEncode(jsonMap));
 }
+
+userBotEncoding() {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  if ( jsonMap.containsKey("botEncoding")){
+    String encoding = jsonMap['botEcoding'].toString();
+    return (encoding == 'utf8') ? utf8 : systemEncoding;
+  }
+  else {
+    setBotEncoding('systemEncoding');
+    return systemEncoding;
+  }
+}
+setBotEncoding(mode) {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['botEncoding'] = mode;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
+
+
+userProtocolEncoding() {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  if ( jsonMap.containsKey("protocolEncoding")){
+    String encoding = jsonMap['protocolEncoding'].toString();
+    return (encoding == 'utf8') ? utf8 : systemEncoding;
+  }
+  else {
+    setProtocolEncoding('utf8');
+    return utf8;
+  }
+}
+setProtocolEncoding(mode) {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['protocolEncoding'] = mode;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
+
+userDeployEncoding() {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  if ( jsonMap.containsKey("deployEncoding")){
+    String encoding = jsonMap['deployEncoding'].toString();
+    return (encoding == 'utf8') ? utf8 : systemEncoding;
+  }
+  else {
+    setDeployEncoding('systemEncoding');
+    return systemEncoding;
+  }
+}
+setDeployEncoding(mode) {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['deployEncoding'] = mode;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
+
+
 
 
 setCheckUpdate(tof) {
@@ -386,18 +455,18 @@ createFolder(udir,path, name, plugindir) {
   }
 }
 
-writeENV(path, name, port) {
+writeENV(path, name, port, template) {
   File file = File('$userDir/cache_drivers.txt');
   String drivers = file.readAsStringSync();
   drivers = drivers.toLowerCase();
   String driverlist = drivers.split(',').map((driver) => '~$driver').join('+');
-  if (createBotReadConfigTemplate(userDir) == 'bootstrap(初学者或用户)') {
+  if (template == 'bootstrap(初学者或用户)') {
     String env = port.toString().isNotEmpty ? 'DRIVER=$driverlist' : 'DRIVER=$driverlist\n\n\n\n\nPORT=$port';
     File fileEnv = File('$path/$name/.env.prod');
     fileEnv.writeAsStringSync(env);
     String echo = "echo 写入.env文件";
     return echo;
-  } else if (createBotReadConfigTemplate(userDir) == 'simple(插件开发者)') {
+  } else if (template == 'simple(插件开发者)') {
     String env = 'ENVIRONMENT=dev\nDRIVER=$driverlist';
     File fileEnv = File('$path/$name/.env');
     fileEnv.writeAsStringSync(env);
@@ -998,20 +1067,28 @@ setCmd(jsonMap){
 
 
 ///写入协议端配置文件
-writeProtocolConfig(){
-  //配置文件绝对路径
+Future<void> writeProtocolConfig() async {
+  if (extDir == null) {
+    print('extDir is null');
+    return;
+  }
+
+  // 配置文件绝对路径
   String path = '$extDir/$configPath';
   File pcfg = File(needQQ ? path.replaceAll('NBGUI.QQNUM', botQQ) : path);
+
   // 将wsPort转为int类型
-  String content = botConfig.toString().replaceAll('NBGUI.HOST:NBGUI.PORT', "$wsHost:$wsPort")
-                            .replaceAll('"NBGUI.PORT"', wsPort)
-                            .replaceAll('NBGUI.HOST', wsHost);
-  pcfg.writeAsStringSync(content);
-  if (Platform.isLinux || Platform.isMacOS){
+  String content = botConfig.toString()
+      .replaceAll('NBGUI.HOST:NBGUI.PORT', "$wsHost:$wsPort")
+      .replaceAll('"NBGUI.PORT"', wsPort)
+      .replaceAll('NBGUI.HOST', wsHost);
+
+  await pcfg.writeAsString(content);
+
+  if (Platform.isLinux || Platform.isMacOS) {
     // 给予执行权限
-    Process.run('chmod', ['+x', cmd],workingDirectory: extDir,runInShell: true);
+    await Process.run('chmod', ['+x', cmd], workingDirectory: extDir, runInShell: true);
   }
-  return 'echo 配置协议端';
 }
 
 
@@ -1110,12 +1187,39 @@ checkBotType(){
   }
 }
 
-///获取extdir
-getExtDir(String path){
-  if (Platform.isWindows){
-    return path.replaceAll("/", "\\").replaceAll("Protocol\\", "Protocol\\\\");
+
+//获取extDir
+Future<String?> getExtDir(String fileName, String searchDirectory) async {
+  Directory dir = Directory(searchDirectory);
+
+  if (await dir.exists()) {
+    List<FileSystemEntity> entities = dir.listSync(recursive: true);
+    for (FileSystemEntity entity in entities) {
+      if (entity is File && path.basename(entity.path) == fileName) {
+        String normalizedPath = path.normalize(path.dirname(entity.absolute.path));
+        String escapedPath = normalizedPath.replaceAll(r'\', r'\\');
+        return escapedPath;
+      }
+    }
+  } else {
+    print('Directory does not exist: $searchDirectory');
   }
-  else {
-    return path;
+  return null;
+}
+
+
+///获取协议端文件名
+getProtocolFileName(){
+  String ucmd = cmd.replaceAll('./', '').replaceAll('.\\', '');
+  List<String> cmdList = ucmd.split(' ').toList();
+  String pcmd = '';
+  List<String> args = [];
+  if (cmdList.length > 1){
+    pcmd = cmdList[0];
+    args = cmdList.sublist(1);
+  } else {
+    pcmd = cmdList[0];
+    args = [];
   }
+  protocolFileName = pcmd;
 }

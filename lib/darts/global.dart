@@ -89,5 +89,7 @@ late String deployTemplate;
 //插件存放位置
 late String deployPluginDir;
 
+//协议端文件名
+late String protocolFileName;
 
 

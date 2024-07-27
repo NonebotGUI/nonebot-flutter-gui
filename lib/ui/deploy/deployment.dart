@@ -26,7 +26,7 @@ class _HomeScreenState extends State<Deployment> {
   final qqController = TextEditingController();
   final List<String> template = ['bootstrap(初学者或用户)', 'simple(插件开发者)'];
   final List<String> pluginDir = ['在[bot名称]/[bot名称]下', '在src文件夹下'];
-  final List<String> mirror = ['https://github.com', 'https://hub.xb6868.com'];
+  final List<String> mirror = ['https://github.com', 'https://hub.xb6868.com','https://mirror.ghproxy.com/https://github.com'];
   late String dropDownValue = template.first;
   late String dropDownValuePluginDir = pluginDir.first;
   late String dropDownValueMirror = 'https://github.com';
@@ -51,7 +51,6 @@ class _HomeScreenState extends State<Deployment> {
     if (folderPath != null) {
       setState(() {
         _selectedFolderPath = folderPath.toString();
-        setDeployPath(_selectedFolderPath, name);
       });
     }
   }
@@ -105,7 +104,7 @@ class _HomeScreenState extends State<Deployment> {
         var decodedJson = jsonDecode(botConfigRaw);
         botConfig = const JsonEncoder.withIndent('   ').convert(decodedJson);
         dlLinkRaw = jsonMap['dl'].toString().replaceAll('[', '').replaceAll(']', '');
-        dlLink = dlLinkRaw.toString().replaceAll('https://github.com', dropDownValueMirror)
+        dlLink = dlLinkRaw.toString().split('/').last
                                       .split(',').map((item) => item.trim())
                                       .toList();
         extDir = jsonMap['dir'];
@@ -486,6 +485,7 @@ class _HomeScreenState extends State<Deployment> {
                     }
                   }
                   deployName = name;
+                  setDeployPath(_selectedFolderPath, deployName);
                   selectPath = _selectedFolderPath.toString();
                   setState(() {
                     deployPage++;

@@ -15,56 +15,59 @@ class Deploy extends StatefulWidget {
 
 class _DeployState extends State<Deploy> {
   final _output = TextEditingController();
+  final _outputController = StreamController<String>.broadcast();
   late String dropDownValueDL = dlLink.first;
   bool _isDownloading = false;
   bool _couldDeploy = false;
   double _dlProgress = 0;
   bool isDeploying = false;
 
-  Future<void> download() async {
-    Dio dio = Dio();
-    try {
-      setState(() {
-        _couldDeploy = false;
-        _isDownloading = true;
-      });
-      Response response = await dio.download(
-        dropDownValueDL,
-        '$deployPath/Protocol.zip',
-        onReceiveProgress: (int received, int total) {
-          setState(() {
-            _dlProgress = (received / total).toDouble();
-          });
-        },
-      );
+Future<void> download() async {
+  Dio dio = Dio();
+  try {
+    setState(() {
+      _couldDeploy = true;
+      _isDownloading = true;
+    });
+    Response response = await dio.download(
+      dropDownValueDL,
+      '$deployPath/Protocol.zip',
+      onReceiveProgress: (int received, int total) {
+        setState(() {
+          _dlProgress = (received / total).toDouble();
+        });
+      },
+    );
 
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('协议端下载完成')),
-        );
-        extractFileToDisk('$deployPath/Protocol.zip', '$deployPath/Protocol');
-        Directory dir = Directory('$deployPath/Protocol');
-        await for (FileSystemEntity entity in dir.list()) {
-          if (entity is Directory) {
-            setState(() {
-              extDir = getExtDir(entity.path);
-              _couldDeploy = true;
-            });
-          }
-        }
-      }
-      writeProtocolConfig();
-      writeReq(deployName, deployAdapter, deployDriver);
-    } catch (e) {
+    if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('下载失败: $e')),
+        const SnackBar(content: Text('协议端下载完成')),
       );
-    } finally {
-      setState(() {
-        _isDownloading = false;
-      });
+      extractFileToDisk('$deployPath/Protocol.zip', '$deployPath/Protocol');
+      getProtocolFileName();
+      String? dirPath = await getExtDir(protocolFileName, '$deployPath/Protocol');
+      if (dirPath != null) {
+        extDir = dirPath.toString().replaceAll('\\', '\\\\');
+        _couldDeploy = true;
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('未能找到协议端目录')),
+        );
+      }
     }
+    await writeProtocolConfig();
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('下载失败: $e')),
+    );
+  } finally {
+    setState(() {
+      _isDownloading = false;
+    });
   }
+}
+
+
 
   void _executeCommands(name, path, venv, cmd, port) async {
     setState(() {
@@ -81,32 +84,21 @@ class _DeployState extends State<Deploy> {
       'echo 开始安装依赖',
       writeReq(name, deployAdapter, deployDriver),
       installBot(userDir, selectPath, name, venv.toString(), 'true'),
-      writeENV(selectPath, name, selectPath),
+      writeENV(selectPath, name, selectPath, deployTemplate),
       writebot(userDir, name, selectPath, "deployed", extDir, cmd),
-      writeProtocolConfig(),
       'echo 部署完成，可退出'
     ];
 
     for (String command in commands) {
       List<String> args = command.split(' ');
       String executable = args.removeAt(0);
-      Process process = await Process.start(executable, args, runInShell: true, workingDirectory: path);
-      process.stdout.transform(systemEncoding.decoder).listen((data) {
-        setState(() {
-          _output.text += data;
-          _output.selection = TextSelection.fromPosition(
-            TextPosition(offset: _output.text.length),
-          );
-        });
-      });
-      process.stderr.transform(systemEncoding.decoder).listen((data) {
-        setState(() {
-          _output.text += data;
-          _output.selection = TextSelection.fromPosition(
-            TextPosition(offset: _output.text.length),
-          );
-        });
-      });
+      Process process = await Process.start(executable, args, runInShell: true);
+      process.stdout
+          .transform(userDeployEncoding().decoder)
+          .listen((data) => _outputController.add(data));
+      process.stderr
+          .transform(userDeployEncoding().decoder)
+          .listen((data) => _outputController.add(data));
       await process.exitCode;
     }
 
@@ -114,6 +106,7 @@ class _DeployState extends State<Deploy> {
       isDeploying = false;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +135,7 @@ class _DeployState extends State<Deploy> {
                       .map<DropdownMenuItem<String>>(
                         (String value) => DropdownMenuItem<String>(
                           value: value,
-                          child: Text(value, maxLines: 1, overflow: TextOverflow.clip),
+                          child: Text(value.toString().split('/').last, maxLines: 1, overflow: TextOverflow.clip),
                         ),
                       )
                       .toList(),
@@ -333,18 +326,36 @@ class _DeployState extends State<Deploy> {
                             SizedBox(
                               height: size.height * 0.555,
                               width: size.width * 0.64,
-                              child: Card(
-                                color: const Color.fromARGB(255, 31, 28, 28),
-                                child: SingleChildScrollView(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Text(
-                                      style: const TextStyle(color: Colors.white),
-                                      _output.text,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              child: StreamBuilder<String>(
+                                        stream: _outputController.stream,
+                                        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                                          return Card(
+                                            color: const Color.fromARGB(255, 31, 28, 28),
+                                            child: SingleChildScrollView(
+                                              child: StreamBuilder<String>(
+                                                stream: _outputController.stream,
+                                                builder: (BuildContext context,
+                                                    AsyncSnapshot<String> snapshot) {
+                                                  if (snapshot.hasData) {
+                                                    final newText =
+                                                    _output.text + (snapshot.data ?? '');
+                                                    _output.text = newText;
+                                                  }
+                                                  return  Padding(
+                                                        padding: const EdgeInsets.all(8.0),
+                                                        child: Text(
+                                                          _output.text,
+                                                          style: const TextStyle(
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      );
+                                                },
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
                             ),
                           ],
                         ),

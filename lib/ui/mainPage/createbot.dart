@@ -39,7 +39,7 @@ class _MyCustomFormState extends State<CreateBot> {
       'echo 开始安装依赖...',
       installBot(userDir, path, name, venv, dep),
       writePyProject(path, name),
-      writeENV(path, name, ''),
+      writeENV(path, name, 8080, dropDownValue),
       writebot(userDir, name, path, "default", "none", "none"),
       'echo 安装完成，可退出'
     ];
