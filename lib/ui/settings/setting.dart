@@ -37,9 +37,15 @@ class _HomeScreenState extends State<Settings> {
   final List<String> colorMode = ['light', 'dark'];
   final List<String> encoding = ['systemEncoding', 'utf8'];
   final List<String> httpEncoding = ['utf8', 'systemEncoding'];
+  final List<String> deployEncoding= ['utf8', 'systemEncoding'];
+  final List<String> botEcoding = ['systemEncoding', 'utf8'];
+  final List<String> protocolEncoding = ['utf8', 'systemEncoding'];
   late String dropDownValue = userColorMode(userDir);
   late String dropDownValueEncoding = (userEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
   late String dropDownValueHttpEncoding = (userHttpEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
+  late String dropDownValueBotEncoding = (userBotEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
+  late String dropDownValueProtocolEncoding = (userProtocolEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
+  late String dropDownValueDeployEncoding = (userDeployEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
   bool checkUpdate = userCheckUpdate();
 
     void _toggleCheckUpdate(bool newValue) {
@@ -134,7 +140,7 @@ class _HomeScreenState extends State<Settings> {
                         onChanged: (String? value) {
                           setState(() {
                             dropDownValueEncoding = value!;
-                            setEncoding(dropDownValueEncoding);;
+                            setEncoding(dropDownValueEncoding);
                           });
                         },
                         items: encoding.map<DropdownMenuItem<String>>((String value) {
@@ -175,6 +181,117 @@ class _HomeScreenState extends State<Settings> {
                           });
                         },
                         items: httpEncoding.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                        ),
+                      ))
+                    ],
+                  ),
+                ),
+            ),
+            const SizedBox(height: 4,),
+            SizedBox(
+                height: 80,
+                child: Card(
+                  child: Row(
+                    children: <Widget>[
+                      const Expanded(child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(' Bot控制台编码'),
+                      )),
+                      Expanded(child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child:  DropdownButton<String>(
+                        value: dropDownValueBotEncoding,
+                        icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                        elevation: 16,
+                        onChanged: (String? value) {
+                          setState(() {
+                            dropDownValueBotEncoding = value!;
+                            setBotEncoding(dropDownValueBotEncoding);
+                          });
+                        },
+                        items: botEcoding.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                        ),
+                      ))
+                    ],
+                  ),
+                ),
+            ),
+            const SizedBox(height: 4,),
+            SizedBox(
+                height: 80,
+                child: Card(
+                  child: Row(
+                    children: <Widget>[
+                      const Expanded(child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(' 协议端控制台编码'),
+                      )),
+                      Expanded(child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child:  DropdownButton<String>(
+                        value: dropDownValueProtocolEncoding,
+                        icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                        elevation: 16,
+                        onChanged: (String? value) {
+                          setState(() {
+                            dropDownValueHttpEncoding = value!;
+                            setProtocolEncoding(dropDownValueProtocolEncoding);
+                          });
+                        },
+                        items: protocolEncoding.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                        ),
+                      ))
+                    ],
+                  ),
+                ),
+            ),
+            const SizedBox(height: 4,),
+            SizedBox(
+                height: 80,
+                child: Card(
+                  child: Row(
+                    children: <Widget>[
+                      const Expanded(child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(' 部署控制台编码'),
+                      )),
+                      Expanded(child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child:  DropdownButton<String>(
+                        value: dropDownValueDeployEncoding,
+                        icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                        elevation: 16,
+                        onChanged: (String? value) {
+                          setState(() {
+                            dropDownValueDeployEncoding = value!;
+                            setDeployEncoding(dropDownValueDeployEncoding);
+                          });
+                        },
+                        items: deployEncoding.map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),
@@ -477,4 +594,3 @@ class _HomeScreenState extends State<Settings> {
     );
   }
 }
-

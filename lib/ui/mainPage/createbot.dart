@@ -49,10 +49,10 @@ class _MyCustomFormState extends State<CreateBot> {
       String executable = args.removeAt(0);
       Process process = await Process.start(executable, args, runInShell: true);
       process.stdout
-          .transform(userEncoding().decoder)
+          .transform(systemEncoding.decoder)
           .listen((data) => _outputController.add(data));
       process.stderr
-          .transform(userEncoding().decoder)
+          .transform(systemEncoding.decoder)
           .listen((data) => _outputController.add(data));
       await process.exitCode;
     }
@@ -542,4 +542,3 @@ class _MyCustomFormState extends State<CreateBot> {
     );
   }
 }
-

@@ -51,7 +51,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
       if (stdoutFile.existsSync()) {
         try {
           File file = File(filePath);
-          final lines = await file.readAsLines(encoding: userEncoding());
+          final lines = await file.readAsLines(encoding: userProtocolEncoding());
           final last50Lines =
               lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
            protocolLog = last50Lines.join('\n');
@@ -512,7 +512,3 @@ class _MyCustomFormState extends State<ManageProtocol> {
     );
   }
 }
-
-
-
-
