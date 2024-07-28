@@ -6,6 +6,8 @@ import 'package:NoneBotGUI/darts/global.dart';
 import 'package:archive/archive_io.dart';
 import 'dart:io';
 
+
+
 class Deploy extends StatefulWidget {
   const Deploy({super.key});
 
@@ -17,10 +19,15 @@ class _DeployState extends State<Deploy> {
   final _output = TextEditingController();
   final _outputController = StreamController<String>.broadcast();
   late String dropDownValueDL = dlLink.first;
+  String extensionName = '';
   bool _isDownloading = false;
   bool _couldDeploy = false;
   double _dlProgress = 0;
   bool isDeploying = false;
+
+
+
+
 
 Future<void> download() async {
   Dio dio = Dio();
@@ -31,7 +38,7 @@ Future<void> download() async {
     });
     Response response = await dio.download(
       dropDownValueDL,
-      '$deployPath/Protocol.zip',
+      '$deployPath/${dropDownValueDL.split('/').last}',
       onReceiveProgress: (int received, int total) {
         setState(() {
           _dlProgress = (received / total).toDouble();
@@ -43,7 +50,7 @@ Future<void> download() async {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('协议端下载完成')),
       );
-      extractFileToDisk('$deployPath/Protocol.zip', '$deployPath/Protocol');
+      await extractFileToDisk('$deployPath/${dropDownValueDL.split('/').last}', '$deployPath/Protocol');
       getProtocolFileName();
       String? dirPath = await getExtDir(protocolFileName, '$deployPath/Protocol');
       if (dirPath != null) {
@@ -135,7 +142,10 @@ Future<void> download() async {
                       .map<DropdownMenuItem<String>>(
                         (String value) => DropdownMenuItem<String>(
                           value: value,
-                          child: Text(value.toString().split('/').last, maxLines: 1, overflow: TextOverflow.clip),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Text(value.split('/').last),
+                          ),
                         ),
                       )
                       .toList(),
@@ -158,7 +168,13 @@ Future<void> download() async {
                               ? ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text('已经在下载中了！')),
                                 )
-                              : download();
+                              : ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('开始下载，请注意：部署过程中有可能出现应用程序卡住的现象，请不要关闭程序，耐心等待部署完成'),
+                                    duration: Duration(seconds: 5),
+                                  ),
+                                );
+                                download();
                         },
                         child: const Text(
                           '下载',

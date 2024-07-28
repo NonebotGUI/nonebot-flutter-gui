@@ -232,7 +232,10 @@ class _MyCustomFormState extends State<CreateBot> {
                             .map<DropdownMenuItem<String>>(
                               (String value) => DropdownMenuItem<String>(
                                 value: value,
-                                child: Text(value),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Text(value),
+                                )
                               ),
                             )
                             .toList(),
@@ -273,7 +276,10 @@ class _MyCustomFormState extends State<CreateBot> {
                               .map<DropdownMenuItem<String>>(
                                 (String value) => DropdownMenuItem<String>(
                                   value: value,
-                                  child: Text(value),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(value),
+                                  )
                                 ),
                               )
                               .toList(),

@@ -458,18 +458,13 @@ class _MyCustomFormState extends State<ManageProtocol> {
                                 icon: const Icon(Icons.folder),
                                 iconSize: size.height * 0.03,
                               ),
-                              // 下次一定（
-                              // IconButton(
-                              //  onPressed: () => Navigator.push(
-                              //  context,
-                              //  MaterialPageRoute(
-                              //  builder: (context) => const manageCli(),
-                              //   ),
-                              //   ),
-                              //   tooltip: "显示登录二维码",
-                              //   icon: const Icon(Icons.qr_code_rounded),
-                              //   iconSize: size.height * 0.03,
-                              //   ),
+                              // 这次一定
+                              IconButton(
+                                onPressed: () => showDialogWithQRCode(context),
+                                tooltip: "显示登录二维码",
+                                icon: const Icon(Icons.qr_code_rounded),
+                                iconSize: size.height * 0.03,
+                                ),
                               IconButton(
                                 onPressed: () {
                                   File stdout = File('${getProtocolPath()}/nbgui_stdout.log');
@@ -512,3 +507,53 @@ class _MyCustomFormState extends State<ManageProtocol> {
     );
   }
 }
+
+
+  void showDialogWithQRCode(BuildContext context) {
+    List<FileSystemEntity> entities = Directory(getProtocolPath()).listSync();
+    List<FileSystemEntity> qrCodePath = entities.whereType<File>().where((file) => file.path.endsWith('.png')).toList();
+
+    // 检查是否找到二维码图片
+    if (qrCodePath.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('找不到二维码'),
+            content: Image.asset(
+                  'lib/assets/loading.gif',
+                ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('关闭'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('QRCode'),
+            content: Image.file(
+              File(qrCodePath[0].path),
+              fit: BoxFit.cover,
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('关闭'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }

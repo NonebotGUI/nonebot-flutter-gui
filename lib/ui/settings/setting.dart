@@ -146,7 +146,10 @@ class _HomeScreenState extends State<Settings> {
                         items: encoding.map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Text(value),
+                            ),
                           );
                         }).toList(),
                       ),
@@ -183,7 +186,10 @@ class _HomeScreenState extends State<Settings> {
                         items: httpEncoding.map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Text(value),
+                            ),
                           );
                         }).toList(),
                       ),
@@ -220,7 +226,10 @@ class _HomeScreenState extends State<Settings> {
                         items: botEcoding.map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Text(value),
+                            ),
                           );
                         }).toList(),
                       ),
@@ -257,7 +266,10 @@ class _HomeScreenState extends State<Settings> {
                         items: protocolEncoding.map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Text(value),
+                            ),
                           );
                         }).toList(),
                       ),
@@ -294,7 +306,10 @@ class _HomeScreenState extends State<Settings> {
                         items: deployEncoding.map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Text(value),
+                            ),
                           );
                         }).toList(),
                       ),
@@ -335,7 +350,10 @@ class _HomeScreenState extends State<Settings> {
                         items: colorMode.map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Text(value),
+                            ),
                           );
                         }).toList(),
                       ),
