@@ -459,7 +459,7 @@ class _MyCustomFormState extends State<ManageBot> {
                                   if (manageBotReadCfgStatus() == 'true') {
                                     stopBot(userDir);
                                     runBot(userDir, manageBotReadCfgPath());
-                                    clearLog(userDir);
+                                    clearLog();
                                     _reloadConfig();
                                     _startRefreshing();
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -509,7 +509,7 @@ class _MyCustomFormState extends State<ManageBot> {
                                       ),
                                     );
                                   } else {
-                                    clearLog(userDir);
+                                    clearLog();
                                   }
                                 },
                                 tooltip: "清空日志",

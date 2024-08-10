@@ -96,7 +96,7 @@ class _MyCustomFormState extends State<CreateBot> {
   bool loadAdapter = true;
   Future<void> _fetchAdapters() async {
     final response =
-        await http.get(Uri.parse('https://registry.nonebot.dev/adapters.json'));
+        await http.get(Uri.parse('${userMirror()}/adapters.json'));
     if (response.statusCode == 200) {
       final decodedBody = userHttpEncoding().decode(response.bodyBytes);
       List<dynamic> adapters = json.decode(decodedBody);

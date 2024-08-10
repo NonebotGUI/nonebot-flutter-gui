@@ -3,22 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:NoneBotGUI/darts/global.dart';
 
-// void main() {
-//   runApp(
-//     const MyApp(),
-//   );
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       home: ImportBot(),
-//     );
-//   }
-// }
 
 class ImportBot extends StatefulWidget {
   const ImportBot({super.key});
@@ -30,6 +14,7 @@ class ImportBot extends StatefulWidget {
 class _HomeScreenState extends State<ImportBot> {
   String name = 'ImportedBot';
   final myController = TextEditingController();
+  final myCmdController = TextEditingController();
   String? _selectedFolderPath;
 
   Future<void> _pickFolder() async {
@@ -37,6 +22,29 @@ class _HomeScreenState extends State<ImportBot> {
     if (folderPath != null) {
       setState(() {
         _selectedFolderPath = folderPath.toString();
+      });
+    }
+  }
+
+
+  bool withProtocol = false;
+  String? _selectedProtocolPath;
+  String _cmd = '';
+
+
+
+
+  void _toggleProtocol(bool newValue) {
+    setState(() {
+      withProtocol = newValue;
+    });
+  }
+
+  Future<void> _pickProtocolFolder() async {
+    String? folderPath = await FilePicker.platform.getDirectoryPath();
+    if (folderPath != null) {
+      setState(() {
+        _selectedProtocolPath = folderPath.toString();
       });
     }
   }
@@ -100,6 +108,93 @@ class _HomeScreenState extends State<ImportBot> {
                   ),
                 ],
               ),
+              const SizedBox(
+                height: 12,
+              ),
+              Row(
+                children: <Widget>[
+                  const Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '是否带有协议端',
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Switch(
+                        value: withProtocol,
+                        onChanged: _toggleProtocol,
+                        focusColor: Colors.black,
+                        inactiveTrackColor: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 12,
+              ),
+              if (withProtocol)
+                Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '协议端根目录[$_selectedProtocolPath]',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              onPressed: _pickProtocolFolder,
+                              tooltip: "选择协议端的根目录",
+                              icon: const Icon(Icons.folder),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        const Expanded(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '协议端启动命令',
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: SizedBox(
+                        width: 150,
+                        child: TextField(
+                        controller: myCmdController,
+                        onChanged: (value) {
+                          setState(() => _cmd = value);
+                        },
+                      ),
+                      )
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                )
             ],
           ),
         ),
@@ -107,7 +202,7 @@ class _HomeScreenState extends State<ImportBot> {
       floatingActionButton: FloatingActionButton(
             onPressed: () {
               if (_selectedFolderPath.toString() != 'null') {
-                importbot(userDir, name, _selectedFolderPath.toString());
+                importbot(userDir, name, _selectedFolderPath.toString(), withProtocol, _selectedProtocolPath, _cmd);
                 Navigator.of(context).popUntil((route) => route.isFirst);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -117,7 +212,9 @@ class _HomeScreenState extends State<ImportBot> {
                 );
                 setState(() {
                   name = 'ImportedBot';
+                  _selectedProtocolPath = null;
                   _selectedFolderPath = null;
+                  withProtocol = false;
                 });
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
