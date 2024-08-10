@@ -33,7 +33,7 @@ void main() async {
   nbLog = '[INFO]Welcome to NoneBot GUI!';
   protocolLog = '[INFO]Welcome to NoneBot GUI!';
   barExtended = false;
-  version = 'v0.2.1';
+  version = 'v0.2.2';
   //初始化编码
   userEncoding();
   userHttpEncoding();
