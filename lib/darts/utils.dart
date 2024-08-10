@@ -31,7 +31,8 @@ createMainFolder() async {
     "httpencoding": "utf8",
     "botEncoding": "systemEncoding",
     "protocolEncoding": "utf8",
-    "deployEncoding": "systemEncoding"
+    "deployEncoding": "systemEncoding",
+    "mirror": "https://registry.nonebot.dev"
   }
   ''';
     cfgFile.writeAsStringSync(cfg);
@@ -115,7 +116,25 @@ setColorMode(dir,mode) {
   file.writeAsStringSync(jsonEncode(jsonMap));
 }
 
+userMirror() {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  if ( jsonMap.containsKey("mirror")){
+    String mirror = jsonMap['mirror'].toString();
+    return mirror;
+  }
+  else {
+    setMirror('https://registry.nonebot.dev');
+    return 'https://registry.nonebot.dev';
+  }
+}
 
+setMirror(mirror) {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['mirror'] = mirror;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
 
 
 
@@ -636,12 +655,12 @@ writebot(dir,name, path, type, protocolPath, cmd) {
 }
 
 //导入
-importbot(dir,name, path) {
+importbot(dir,name, path, withProtocol, protocolPath, cmd) {
   DateTime now = DateTime.now();
   String time =
       "${now.year}年${now.month}月${now.day}日${now.hour}时${now.minute}分${now.second}秒";
   File cfgFile = File('${dir}/bots/$name.$time.json');
-
+  String type = withProtocol ? 'deployed' : 'imported';
   if (Platform.isWindows) {
     String botInfo = '''
 {
@@ -650,9 +669,9 @@ importbot(dir,name, path) {
   "time": "$time",
   "isrunning": "false",
   "pid": "Null",
-  "type": "imported",
-  "protocolPath": "none",
-  "cmd": "none",
+  "type": "$type",
+  "protocolPath": "$protocolPath",
+  "cmd": "$cmd",
   "protocolPid": "Null",
   "protocolIsrunning": false
 }
@@ -670,9 +689,9 @@ importbot(dir,name, path) {
   "time": "$time",
   "isrunning": "false",
   "pid": "Null",
-  "type": "imported",
-  "protocolPath": "none",
-  "cmd": "none",
+  "type": "$type",
+  "protocolPath": "$protocolPath",
+  "cmd": "$cmd",
   "protocolPid": "Null",
   "protocolIsrunning": false
 }
@@ -874,7 +893,7 @@ deleteBotAll(dir) async {
 }
 
 ///清除日志
-clearLog(dir) async {
+clearLog() async {
   String path = manageBotReadCfgPath();
   File stdout = File('$path/nbgui_stdout.log');
   stdout.delete();
