@@ -429,7 +429,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
                                   if (getProtocolStatus()) {
                                     stopProtocol();
                                     runProtocol();
-                                    clearLog(userDir);
+                                    clearLog();
                                     _reloadConfig();
                                     _startRefreshing();
                                     ScaffoldMessenger.of(context).showSnackBar(

@@ -57,7 +57,7 @@ class _MyHomePageState extends State<PluginStore> {
 
   Future<void> fetchData() async {
     final response =
-        await http.get(Uri.parse('https://registry.nonebot.dev/plugins.json'));
+        await http.get(Uri.parse('${userMirror()}/plugins.json'));
     if (response.statusCode == 200) {
       setState(() {
         String decodedBody = userHttpEncoding().decode(response.bodyBytes);

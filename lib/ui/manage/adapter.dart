@@ -71,7 +71,7 @@ class _MyHomePageState extends State<AdapterStore> {
 
   Future<void> fetchData() async {
     final response =
-        await http.get(Uri.parse('https://registry.nonebot.dev/adapters.json'));
+        await http.get(Uri.parse('${userMirror()}/adapters.json'));
     if (response.statusCode == 200) {
       setState(() {
         String decodedBody = userHttpEncoding().decode(response.bodyBytes);

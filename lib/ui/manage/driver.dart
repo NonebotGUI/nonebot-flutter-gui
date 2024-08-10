@@ -71,7 +71,7 @@ class _MyHomePageState extends State<DriverStore> {
 
   Future<void> fetchData() async {
     final response =
-        await http.get(Uri.parse('https://registry.nonebot.dev/drivers.json'));
+        await http.get(Uri.parse('${userMirror()}/drivers.json'));
     if (response.statusCode == 200) {
       setState(() {
         String decodedBody = utf8.decode(response.bodyBytes);
