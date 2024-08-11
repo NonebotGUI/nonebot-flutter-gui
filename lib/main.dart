@@ -33,7 +33,7 @@ void main() async {
   nbLog = '[INFO]Welcome to NoneBot GUI!';
   protocolLog = '[INFO]Welcome to NoneBot GUI!';
   barExtended = false;
-  version = 'v0.2.2';
+  version = 'v0.2.2+1';
   //初始化编码
   userEncoding();
   userHttpEncoding();
@@ -185,9 +185,8 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
     _trayManager.addListener(this);
     windowManager.addListener(this);
     stateInit();
-    setState(() {
-      
-    });
+    alwaysRefresh();
+    refresh();
   }
 
 
@@ -196,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
     if (menuItem.key == 'show') {
         windowManager.show();
     } else if (menuItem.key == 'exit') {
-       exit(0);
+        exit(0);
     }
   }
 
@@ -230,7 +229,6 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
   }
 
   void refresh() async{
-    await Future.delayed(const Duration(milliseconds: 1500));
     setState(() {
       _readConfigFiles();
     });
@@ -243,11 +241,29 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
 
   //使用Watcher监听目录
   void _startWatching() async{
+    if ( userRefreshMode() == 'auto'){
     final watcher = DirectoryWatcher(directoryPath);
-    _subscription = watcher.events.listen((event) async{
-    refresh();
+    _subscription = watcher.events.listen((event) {
+        _readConfigFiles();
+        setState(() {
+        });
     });
+    }
   }
+
+  void alwaysRefresh() {
+    if (userRefreshMode() == 'always'){
+      if (_timer != null) {
+        _timer?.cancel();
+      }
+      _timer = Timer.periodic(const Duration(microseconds: 1500), (timer) {
+        _readConfigFiles();
+        setState(() {
+        });
+      });
+    }
+  }
+
 
   //监听bot Log
   void logListener() async{
@@ -309,7 +325,6 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
             nbLog = last50Lines.join('\n');
             getPyPid(userDir);
             setState(() {
-              
             });
         } catch (e) {
           print('Error: $e');
@@ -465,6 +480,17 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
                     ),
                   ),
                   actions: <Widget>[
+                    ( _selectedIndex == 0) ? IconButton(
+                      icon: const Icon(Icons.refresh_rounded),
+                      color: Colors.white,
+                      onPressed: () {
+                        setState(() {
+                          _readConfigFiles();
+                        });
+                      },
+                      iconSize: 20,
+                      tooltip: "手动刷新",
+                    ) : const SizedBox(),
                     IconButton(
                       icon: const Icon(Icons.remove_rounded),
                       color: Colors.white,
@@ -498,6 +524,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
                   leading: _selectedIndex == 3 && deployPage != 0 ?
                   IconButton(
                     icon: const Icon(Icons.arrow_back),
+                    color: Colors.white,
                     onPressed: () {
                       setState(() {
                         deployPage--;

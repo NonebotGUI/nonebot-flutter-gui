@@ -40,7 +40,11 @@ class _HomeScreenState extends State<Settings> {
   final List<String> botEcoding = ['systemEncoding', 'utf8'];
   final List<String> protocolEncoding = ['utf8', 'systemEncoding'];
   final List<String> mirror = ['https://registry.nonebot.dev', 'https://api.zobyic.top/api/nbgui/proxy'];
+  final List<String> refreshMode = ['auto', 'always'];
 
+
+
+  late String dropDownValueRefresh = userRefreshMode();
   late String dropDownValueMirror = userMirror();
   late String dropDownValue = userColorMode(userDir);
   late String dropDownValueEncoding =
@@ -165,6 +169,39 @@ class _HomeScreenState extends State<Settings> {
             ),
           ),
           const SizedBox(height: 4),
+          ListTile(
+            title: Row(
+              children: <Widget>[
+                const Text('刷新策略'),
+                const SizedBox(width: 4),
+                IconButton(
+                  icon: const Icon(Icons.help_outline_rounded),
+                  onPressed: () => refreshToolTip(context),
+                  iconSize: 20,
+                )
+              ],
+            ),
+            trailing: DropdownButton<String>(
+              value: dropDownValueRefresh,
+              onChanged: (String? newValue) {
+                setState(() {
+                  dropDownValueRefresh = newValue!;
+                  setRefreshMode(newValue);
+                  Clipboard.setData(ClipboardData(text: userDir));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('已更改，重启后生效'),
+                    duration: Duration(seconds: 3),
+                  ));
+                });
+              },
+              items: refreshMode.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
           ListTile(
             title: const Text('是否自动检查更新'),
             trailing: Switch(
@@ -554,6 +591,31 @@ void donate_alipay(BuildContext context) {
             'lib/assets/donate_alipay.png',
             fit: BoxFit.cover,
           ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('关闭'),
+          )
+        ],
+      );
+    },
+  );
+}
+
+void refreshToolTip(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('关于刷新策略'),
+        content: const Text(
+          '''
+          auto(推荐): 当数据目录下的文件发生变化时自动刷新，有时候可能会出现无法刷新的情况;磁盘io占用较低
+          always: 无脑刷新，每1.5s刷新一次页面，同时进行一次文件读写，磁盘io频率较高
+          '''
+        ),
         actions: <Widget>[
           TextButton(
             onPressed: () {

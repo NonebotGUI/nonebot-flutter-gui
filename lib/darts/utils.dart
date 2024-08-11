@@ -32,7 +32,8 @@ createMainFolder() async {
     "botEncoding": "systemEncoding",
     "protocolEncoding": "utf8",
     "deployEncoding": "systemEncoding",
-    "mirror": "https://registry.nonebot.dev"
+    "mirror": "https://registry.nonebot.dev",
+    "refreshMode": "auto"
   }
   ''';
     cfgFile.writeAsStringSync(cfg);
@@ -136,7 +137,25 @@ setMirror(mirror) {
   file.writeAsStringSync(jsonEncode(jsonMap));
 }
 
+userRefreshMode() {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  if ( jsonMap.containsKey("refreshMode")){
+    String refreshMode = jsonMap['refreshMode'].toString();
+    return refreshMode;
+  }
+  else {
+    setRefreshMode('auto');
+    return 'auto';
+  }
+}
 
+setRefreshMode(mode) {
+  File file = File('$userDir/user_config.json');
+  Map<String, dynamic> jsonMap = jsonDecode(file.readAsStringSync());
+  jsonMap['refreshMode'] = mode;
+  file.writeAsStringSync(jsonEncode(jsonMap));
+}
 
 userEncoding() {
   File file = File('$userDir/user_config.json');
