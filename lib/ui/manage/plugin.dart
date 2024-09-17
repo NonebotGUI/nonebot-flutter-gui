@@ -1,13 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:NoneBotGUI/darts/global.dart';
+import 'package:NoneBotGUI/utils/global.dart';
+import 'package:NoneBotGUI/utils/manage.dart';
+import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:NoneBotGUI/assets/my_flutter_app_icons.dart';
 import 'package:flutter/services.dart';
-import 'package:NoneBotGUI/darts/utils.dart';
+
 import 'package:window_manager/window_manager.dart';
 
 
@@ -25,7 +27,7 @@ class _MyHomePageState extends State<PluginStore> {
   final pluginOutputController = StreamController<String>.broadcast();
   void managePlugin(String manage, String name) async {
     pluginOutput.clear();
-    List<String> commands = [manageCliPlugin(userDir, manage, name)];
+    List<String> commands = [Cli.plugin(manage, name)];
     for (String command in commands) {
       List<String> args = command.split(' ');
       String executable = args.removeAt(0);
@@ -33,7 +35,7 @@ class _MyHomePageState extends State<PluginStore> {
         executable,
         args,
         runInShell: true,
-        workingDirectory: manageBotReadCfgPath(),
+        workingDirectory: Bot.path(),
       );
       process.stdout
           .transform(systemEncoding.decoder)
@@ -57,10 +59,10 @@ class _MyHomePageState extends State<PluginStore> {
 
   Future<void> fetchData() async {
     final response =
-        await http.get(Uri.parse('${userMirror()}/plugins.json'));
+        await http.get(Uri.parse('${UserConfig.mirror()}/plugins.json'));
     if (response.statusCode == 200) {
       setState(() {
-        String decodedBody = userHttpEncoding().decode(response.bodyBytes);
+        String decodedBody = UserConfig.httpEncoding().decode(response.bodyBytes);
         final List<dynamic> jsonData = json.decode(decodedBody);
         data = jsonData.map((item) => item as Map<String, dynamic>).toList();
         search = data;

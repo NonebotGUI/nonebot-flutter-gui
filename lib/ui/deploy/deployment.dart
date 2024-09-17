@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:NoneBotGUI/darts/global.dart';
-import 'package:NoneBotGUI/darts/utils.dart';
+import 'package:NoneBotGUI/utils/core.dart';
+import 'package:NoneBotGUI/utils/deployBot.dart';
+import 'package:NoneBotGUI/utils/global.dart';
+
+import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
@@ -72,14 +75,14 @@ class _HomeScreenState extends State<Deployment> {
   @override
   void initState() {
     super.initState();
-    needQQ = false;
-    botQQ = '';
-    wsHost = '127.0.0.1';
-    wsPort = '8080';
-    deployAdapter = 'None';
-    deployDriver = 'None';
-    deployTemplate = 'bootstrap(初学者或用户)';
-    deployPluginDir = '在[bot名称]/[bot名称]下';
+    FastDeploy.needQQ = false;
+    FastDeploy.botQQ = '';
+    FastDeploy.wsHost = '127.0.0.1';
+    FastDeploy.wsPort = '8080';
+    FastDeploy.adapter = 'None';
+    FastDeploy.driver = 'None';
+    FastDeploy.template = 'bootstrap(初学者或用户)';
+    FastDeploy.pluginDir = '在[bot名称]/[bot名称]下';
     fetchData();
   }
 
@@ -87,30 +90,30 @@ class _HomeScreenState extends State<Deployment> {
 
   Future<void> fetchData() async {
     final response =
-        await http.get(Uri.parse('https://api.zobyic.top/api/nbgui/deploy/detail?id=$deployId'));
+        await http.get(Uri.parse('https://api.zobyic.top/api/nbgui/deploy/detail?id=${FastDeploy.id}'));
     if (response.statusCode == 200) {
       couldNext = true;
       setState(() {
-        String decodedBody = userHttpEncoding().decode(response.bodyBytes);
+        String decodedBody = UserConfig.httpEncoding().decode(response.bodyBytes);
         Map<String, dynamic> jsonMap = json.decode(decodedBody);
         raw = json.encode(jsonMap);
         tip = jsonMap['tip'];
         name = jsonMap['name'];
-        deployAdapter = jsonMap['adapter'];
+        FastDeploy.adapter = jsonMap['adapter'];
         drivers = jsonMap['drivers'];
-        deployDriver = drivers.toString().replaceAll('[', '').replaceAll(']', '').replaceAll(' ', '');
+        FastDeploy.driver = drivers.toString().replaceAll('[', '').replaceAll(']', '').replaceAll(' ', '');
         configRaw = jsonMap['config'];
         var botConfigRaw = json.encode(configRaw);
         var decodedJson = jsonDecode(botConfigRaw);
-        botConfig = const JsonEncoder.withIndent('   ').convert(decodedJson);
+        FastDeploy.botConfig = const JsonEncoder.withIndent('   ').convert(decodedJson);
         dlLinkRaw = jsonMap['dl'].toString().replaceAll('[', '').replaceAll(']', '');
-        dlLink = dlLinkRaw.toString().split('/').last
+        FastDeploy.dlLink = dlLinkRaw.toString().split('/').last
                                       .split(',').map((item) => item.trim())
                                       .toList();
-        extDir = jsonMap['dir'];
-        needQQ = jsonMap['needQQNum'];
-        configName = jsonMap['configName'];
-        configPath = jsonMap['configPath'];
+        FastDeploy.extDir = jsonMap['dir'];
+        FastDeploy.needQQ = jsonMap['needQQNum'];
+        FastDeploy.configName = jsonMap['configName'];
+        FastDeploy.configPath = jsonMap['configPath'];
         apiContent = jsonMap;
       });
     } else {
@@ -241,7 +244,7 @@ class _HomeScreenState extends State<Deployment> {
                         elevation: 16,
                         onChanged: (String? value) {
                           setState(() => dropDownValueMirror = value!);
-                          dlLink = dlLinkRaw.toString().replaceAll('https://github.com', dropDownValueMirror)
+                          FastDeploy.dlLink = dlLinkRaw.toString().replaceAll('https://github.com', dropDownValueMirror)
                                     .split(',').map((item) => item.trim())
                                     .toList();
 
@@ -328,7 +331,7 @@ class _HomeScreenState extends State<Deployment> {
                           hintText: '127.0.0.1',
                         ),
                         onChanged: (value) {
-                          setState(() => wsHost = value);
+                          setState(() => FastDeploy.wsHost = value);
                         },
                       ),
                       )
@@ -361,7 +364,7 @@ class _HomeScreenState extends State<Deployment> {
                           hintText: '8080',
                         ),
                         onChanged: (value) {
-                          setState(() => wsPort = value);
+                          setState(() => FastDeploy.wsPort = value);
                         },
                       ),
                       )
@@ -370,7 +373,7 @@ class _HomeScreenState extends State<Deployment> {
                 ],
               ),
               Visibility(
-                visible: needQQ,
+                visible: FastDeploy.needQQ,
                 child: Row(
                   children: <Widget>[
                     const Expanded(
@@ -394,7 +397,7 @@ class _HomeScreenState extends State<Deployment> {
                             hintText: '',
                           ),
                           onChanged: (value) {
-                            setState(() => botQQ = value);
+                            setState(() => FastDeploy.botQQ = value);
                           },
                         ),
                         )
@@ -416,7 +419,7 @@ class _HomeScreenState extends State<Deployment> {
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        deployAdapter
+                        FastDeploy.adapter
                       )
                       )
                     ),
@@ -448,10 +451,10 @@ class _HomeScreenState extends State<Deployment> {
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),
             onPressed: () {
-              deployTemplate = dropDownValue;
-              deployPluginDir = dropDownValuePluginDir;
-              deployVenv = isVENV;
-              setCmd(apiContent);
+              FastDeploy.template = dropDownValue;
+              FastDeploy.pluginDir = dropDownValuePluginDir;
+              FastDeploy.venv = isVENV;
+              DeployProtocol.setCmd(apiContent);
               //神金写法
               if (couldNext){
                   if (_selectedFolderPath.toString() != 'null') {
@@ -484,11 +487,11 @@ class _HomeScreenState extends State<Deployment> {
                       }
                     }
                   }
-                  deployName = name;
-                  setDeployPath(_selectedFolderPath, deployName);
-                  selectPath = _selectedFolderPath.toString();
+                  FastDeploy.name = name;
+                  setDeployPath(_selectedFolderPath, FastDeploy.name);
+                  FastDeploy.selectPath = _selectedFolderPath.toString();
                   setState(() {
-                    deployPage++;
+                    FastDeploy.page++;
                   });
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(

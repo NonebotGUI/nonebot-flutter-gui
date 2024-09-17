@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:NoneBotGUI/darts/global.dart';
-import 'package:NoneBotGUI/darts/utils.dart';
+import 'package:NoneBotGUI/utils/deployBot.dart';
+import 'package:NoneBotGUI/utils/global.dart';
+
+import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
@@ -21,26 +23,19 @@ class _MyCustomFormState extends State<CreateBot> {
 
 
   void _executeCommands() async {
-    //读取配置文件
-    String cfg = createBotReadConfig(userDir);
-    List<String> arg = cfg.split(',');
-    String name = arg[0];
-    String path = arg[1];
-    String venv = arg[2];
-    String dep = arg[3];
 
     _output.clear();
 
     List<String> commands = [
       'echo 开始创建Bot：$name',
       'echo 读取配置...',
-      createVENVEcho(path, name),
-      createVENV(userDir, path, name, venv),
+      DeployBot.createVENVEcho(Create.path, Create.name),
+      DeployBot.createVENV(Create.path, Create.name, Create.venv),
       'echo 开始安装依赖...',
-      installBot(userDir, path, name, venv, dep),
-      writePyProject(path, name),
-      writeENV(path, name, 8080, dropDownValue),
-      writebot(userDir, name, path, "default", "none", "none"),
+      DeployBot.install(Create.path, Create.name, Create.venv, Create.installDep),
+      DeployBot.writePyProject(),
+      DeployBot.writeENV(Create.path, Create.name, 8080, dropDownValue, Create.driver),
+      DeployBot.writebot(Create.name, Create.path, "default", "none", "none"),
       'echo 安装完成，可退出'
     ];
 
@@ -96,9 +91,9 @@ class _MyCustomFormState extends State<CreateBot> {
   bool loadAdapter = true;
   Future<void> _fetchAdapters() async {
     final response =
-        await http.get(Uri.parse('${userMirror()}/adapters.json'));
+        await http.get(Uri.parse('${UserConfig.mirror()}/adapters.json'));
     if (response.statusCode == 200) {
-      final decodedBody = userHttpEncoding().decode(response.bodyBytes);
+      final decodedBody = UserConfig.httpEncoding().decode(response.bodyBytes);
       List<dynamic> adapters = json.decode(decodedBody);
       setState(() {
         adapterList = adapters;
@@ -433,26 +428,19 @@ class _MyCustomFormState extends State<CreateBot> {
       floatingActionButton: FloatingActionButton(
             onPressed: () {
               if (_selectedFolderPath.toString() != 'null' && buildSelectedAdapterOptions().isNotEmpty && buildDriversCheckboxes().isNotEmpty) {
-                createBotWriteConfig(
-                  userDir,
-                  name,
+                Create.name = name;
+                Create.path = _selectedFolderPath;
+                Create.venv = isVENV;
+                Create.installDep = isDep;
+                Create.adapter = buildSelectedAdapterOptions();
+                Create.driver = buildSelectedDriverOptions();
+                Create.template = dropDownValue;
+                Create.pluginDir = dropDownValuePluginDir;
+                DeployBot.writeReq();
+                DeployBot.createFolder(
                   _selectedFolderPath,
-                  isVENV,
-                  isDep,
-                  buildSelectedDriverOptions(),
-                  buildSelectedAdapterOptions(),
+                  name,
                   dropDownValue,
-                  dropDownValuePluginDir,
-                );
-                createBotWriteConfigRequirement(
-                  userDir,
-                  buildSelectedDriverOptions(),
-                  buildSelectedAdapterOptions(),
-                );
-                createFolder(
-                  userDir,
-                  _selectedFolderPath,
-                  name,
                   dropDownValuePluginDir,
                 );
                   _executeCommands();

@@ -1,8 +1,11 @@
 import 'dart:async';
-import 'package:NoneBotGUI/darts/utils.dart';
+
+import 'package:NoneBotGUI/utils/core.dart';
+import 'package:NoneBotGUI/utils/deployBot.dart';
+import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:NoneBotGUI/darts/global.dart';
+import 'package:NoneBotGUI/utils/global.dart';
 import 'package:archive/archive_io.dart';
 import 'dart:io';
 
@@ -18,7 +21,7 @@ class Deploy extends StatefulWidget {
 class _DeployState extends State<Deploy> {
   final _output = TextEditingController();
   final _outputController = StreamController<String>.broadcast();
-  late String dropDownValueDL = dlLink.first;
+  late String dropDownValueDL = FastDeploy.dlLink.first;
   String extensionName = '';
   bool _isDownloading = false;
   bool _couldDeploy = false;
@@ -38,7 +41,7 @@ Future<void> download() async {
     });
     Response response = await dio.download(
       dropDownValueDL,
-      '$deployPath/${dropDownValueDL.split('/').last}',
+      '${FastDeploy.path}/${dropDownValueDL.split('/').last}',
       onReceiveProgress: (int received, int total) {
         setState(() {
           _dlProgress = (received / total).toDouble();
@@ -50,11 +53,11 @@ Future<void> download() async {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('协议端下载完成')),
       );
-      await extractFileToDisk('$deployPath/${dropDownValueDL.split('/').last}', '$deployPath/Protocol');
+      await extractFileToDisk('${FastDeploy.path}/${dropDownValueDL.split('/').last}', '${FastDeploy.path}/Protocol');
       getProtocolFileName();
-      String? dirPath = await getExtDir(protocolFileName, '$deployPath/Protocol');
+      String? dirPath = await getExtDir(FastDeploy.protocolFileName, '${FastDeploy.path}/Protocol');
       if (dirPath != null) {
-        extDir = dirPath.toString().replaceAll('\\', '\\\\');
+        FastDeploy.extDir = dirPath.toString().replaceAll('\\', '\\\\');
         _couldDeploy = true;
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -62,7 +65,7 @@ Future<void> download() async {
         );
       }
     }
-    await writeProtocolConfig();
+    await DeployProtocol.writeConfig();
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('下载失败: $e')),
@@ -86,13 +89,13 @@ Future<void> download() async {
       'echo 开始创建Bot：$name',
       'echo 读取配置...',
       'echo 写入配置...',
-      createVENVEcho(selectPath, name),
-      createVENV(userDir, selectPath, name, venv.toString()),
+      DeployBot.createVENVEcho(FastDeploy.selectPath, name),
+      DeployBot.createVENV(FastDeploy.selectPath, name, venv),
       'echo 开始安装依赖',
-      writeReq(name, deployAdapter, deployDriver),
-      installBot(userDir, selectPath, name, venv.toString(), 'true'),
-      writeENV(selectPath, name, selectPath, deployTemplate),
-      writebot(userDir, name, selectPath, "deployed", extDir, cmd),
+      DeployProtocol.writeReq(name, FastDeploy.adapter, FastDeploy.driver),
+      DeployBot.install(FastDeploy.selectPath, name, venv, true),
+      DeployBot.writeENV(FastDeploy.selectPath, name, FastDeploy.wsPort, FastDeploy.template, FastDeploy.driver),
+      DeployBot.writebot(name, FastDeploy.selectPath, "deployed", FastDeploy.extDir, cmd),
       'echo 部署完成，可退出'
     ];
 
@@ -101,10 +104,10 @@ Future<void> download() async {
       String executable = args.removeAt(0);
       Process process = await Process.start(executable, args, runInShell: true);
       process.stdout
-          .transform(userDeployEncoding().decoder)
+          .transform(UserConfig.deployEncoding().decoder)
           .listen((data) => _outputController.add(data));
       process.stderr
-          .transform(userDeployEncoding().decoder)
+          .transform(UserConfig.deployEncoding().decoder)
           .listen((data) => _outputController.add(data));
       await process.exitCode;
     }
@@ -138,7 +141,7 @@ Future<void> download() async {
                   onChanged: (String? value) {
                     setState(() => dropDownValueDL = value!);
                   },
-                  items: dlLink
+                  items: FastDeploy.dlLink
                       .map<DropdownMenuItem<String>>(
                         (String value) => DropdownMenuItem<String>(
                           value: value,
@@ -158,7 +161,7 @@ Future<void> download() async {
                       child: OutlinedButton(
                         style: ButtonStyle(
                           backgroundColor: MaterialStatePropertyAll(
-                            userColorMode(userDir) == 'light'
+                            UserConfig.colorMode() == 'light'
                                 ? const Color.fromRGBO(238, 109, 109, 1)
                                 : const Color.fromRGBO(127, 86, 151, 1),
                           ),
@@ -197,7 +200,7 @@ Future<void> download() async {
               value: _dlProgress,
               backgroundColor: Colors.grey,
               valueColor: AlwaysStoppedAnimation(
-                userColorMode(userDir) == 'light'
+                UserConfig.colorMode() == 'light'
                     ? const Color.fromRGBO(238, 109, 109, 1)
                     : const Color.fromRGBO(127, 86, 151, 1),
               ),
@@ -227,7 +230,7 @@ Future<void> download() async {
                                   setState(() {
                                     isDeploying = true;
                                   });
-                                  _executeCommands(deployName, deployPath, deployVenv, cmd, wsPort);
+                                  _executeCommands(FastDeploy.name, FastDeploy.path, FastDeploy.venv, FastDeploy.cmd, FastDeploy.wsPort);
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(content: Text('请先下载协议端！')),
@@ -236,7 +239,7 @@ Future<void> download() async {
                               },
                               style: ButtonStyle(
                                 backgroundColor: MaterialStatePropertyAll(
-                                  userColorMode(userDir) == 'light'
+                                  UserConfig.colorMode() == 'light'
                                       ? const Color.fromRGBO(238, 109, 109, 1)
                                       : const Color.fromRGBO(127, 86, 151, 1),
                                 ),
@@ -276,7 +279,7 @@ Future<void> download() async {
                           ),
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(deployName),
+                            child: Text(FastDeploy.name),
                           ),
                           SizedBox(height: size.height * 0.03),
                           const Align(
@@ -288,7 +291,7 @@ Future<void> download() async {
                           ),
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(deployPath),
+                            child: Text(FastDeploy.path),
                           ),
                           SizedBox(height: size.height * 0.03),
                           const Align(
@@ -300,7 +303,7 @@ Future<void> download() async {
                           ),
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(deployDriver),
+                            child: Text(FastDeploy.driver),
                           ),
                           SizedBox(height: size.height * 0.03),
                           const Align(
@@ -312,7 +315,7 @@ Future<void> download() async {
                           ),
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(deployAdapter),
+                            child: Text(FastDeploy.adapter),
                           ),
                           SizedBox(height: size.height * 0.03),
                         ],

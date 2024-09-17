@@ -1,7 +1,7 @@
-import 'package:NoneBotGUI/darts/utils.dart';
+
+import 'package:NoneBotGUI/utils/manage.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:NoneBotGUI/darts/global.dart';
 
 
 class ImportBot extends StatefulWidget {
@@ -202,7 +202,7 @@ class _HomeScreenState extends State<ImportBot> {
       floatingActionButton: FloatingActionButton(
             onPressed: () {
               if (_selectedFolderPath.toString() != 'null') {
-                importbot(userDir, name, _selectedFolderPath.toString(), withProtocol, _selectedProtocolPath, _cmd);
+                Bot.import(name, _selectedFolderPath.toString(), withProtocol, _selectedProtocolPath, _cmd);
                 Navigator.of(context).popUntil((route) => route.isFirst);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(

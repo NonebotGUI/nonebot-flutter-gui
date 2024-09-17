@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:NoneBotGUI/utils/core.dart';
+import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:http/http.dart' as http;
-import 'package:NoneBotGUI/darts/utils.dart';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:NoneBotGUI/darts/global.dart';
+import 'package:NoneBotGUI/utils/global.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -21,7 +23,7 @@ class _HomeScreenState extends State<Settings> {
     final result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
-      setPyPath(userDir, result.files.single.path.toString());
+      UserConfig.setPythonPath(result.files.single.path.toString());
     }
   }
 
@@ -29,7 +31,7 @@ class _HomeScreenState extends State<Settings> {
     final result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
-      setNbcliPath(userDir, result.files.single.path.toString());
+      UserConfig.setNbcliPath(result.files.single.path.toString());
     }
   }
 
@@ -39,37 +41,37 @@ class _HomeScreenState extends State<Settings> {
   final List<String> deployEncoding = ['utf8', 'systemEncoding'];
   final List<String> botEcoding = ['systemEncoding', 'utf8'];
   final List<String> protocolEncoding = ['utf8', 'systemEncoding'];
-  final List<String> mirror = ['https://registry.nonebot.dev', 'https://api.zobyic.top/api/nbgui/proxy'];
+  final List<String> mirror = ['https://registry.nonebot.dev', 'https://api.nbgui.top/api/nbgui/proxy', 'https://api.zobyic.top/api/nbgui/proxy'];
   final List<String> refreshMode = ['auto', 'always'];
 
 
 
-  late String dropDownValueRefresh = userRefreshMode();
-  late String dropDownValueMirror = userMirror();
-  late String dropDownValue = userColorMode(userDir);
+  late String dropDownValueRefresh = UserConfig.refreshMode();
+  late String dropDownValueMirror = UserConfig.mirror();
+  late String dropDownValue = UserConfig.colorMode();
   late String dropDownValueEncoding =
-      (userEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
+      (UserConfig.encoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
   late String dropDownValueHttpEncoding =
-      (userHttpEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
+      (UserConfig.httpEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
   late String dropDownValueBotEncoding =
-      (userBotEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
+      (UserConfig.botEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
   late String dropDownValueProtocolEncoding =
-      (userProtocolEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
+      (UserConfig.protocolEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
   late String dropDownValueDeployEncoding =
-      (userDeployEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
-  bool checkUpdate = userCheckUpdate();
+      (UserConfig.deployEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
+  bool checkUpdate = UserConfig.checkUpdate();
 
   void _toggleCheckUpdate(bool newValue) {
     setState(() {
       checkUpdate = newValue;
-      setCheckUpdate(checkUpdate);
+      UserConfig.setCheckUpdate(checkUpdate);
     });
   }
 
   ///检查更新
   Future<void> check() async {
     //如果“检查更新”为开启则检查
-    if (userCheckUpdate()) {
+    if (UserConfig.checkUpdate()) {
       try {
         final response = await http.get(Uri.parse(
             'https://api.github.com/repos/NoneBotGUI/nonebot-flutter-gui/releases/latest'));
@@ -78,7 +80,7 @@ class _HomeScreenState extends State<Settings> {
           final tagName = jsonData['tag_name'];
           final changeLog = jsonData['body'];
           final url = jsonData['html_url'];
-          if (tagName != version) {
+          if (tagName != MainApp.version) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text('发现新版本！'),
               duration: Duration(seconds: 3),
@@ -153,7 +155,7 @@ class _HomeScreenState extends State<Settings> {
               onChanged: (String? newValue) {
                 setState(() {
                   dropDownValue = newValue!;
-                  setColorMode(userDir, newValue);
+                  UserConfig.setColorMode(newValue);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text('已更改，重启后生效'),
                   duration: Duration(seconds: 3),
@@ -186,7 +188,7 @@ class _HomeScreenState extends State<Settings> {
               onChanged: (String? newValue) {
                 setState(() {
                   dropDownValueRefresh = newValue!;
-                  setRefreshMode(newValue);
+                  UserConfig.setRefreshMode(newValue);
                   Clipboard.setData(ClipboardData(text: userDir));
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('已更改，重启后生效'),
@@ -236,7 +238,7 @@ class _HomeScreenState extends State<Settings> {
               onChanged: (String? newValue) {
                 setState(() {
                   dropDownValueEncoding = newValue!;
-                  setEncoding(newValue);
+                  UserConfig.setEncoding(newValue);
                 });
               },
               items: encoding.map<DropdownMenuItem<String>>((String value) {
@@ -255,7 +257,7 @@ class _HomeScreenState extends State<Settings> {
               onChanged: (String? newValue) {
                 setState(() {
                   dropDownValueHttpEncoding = newValue!;
-                  setHttpEncoding(newValue);
+                  UserConfig.setHttpEncoding(newValue);
                 });
               },
               items: httpEncoding.map<DropdownMenuItem<String>>((String value) {
@@ -274,7 +276,7 @@ class _HomeScreenState extends State<Settings> {
               onChanged: (String? newValue) {
                 setState(() {
                   dropDownValueDeployEncoding = newValue!;
-                  setDeployEncoding(newValue);
+                  UserConfig.setDeployEncoding(newValue);
                 });
               },
               items:
@@ -294,7 +296,7 @@ class _HomeScreenState extends State<Settings> {
               onChanged: (String? newValue) {
                 setState(() {
                   dropDownValueBotEncoding = newValue!;
-                  setBotEncoding(newValue);
+                  UserConfig.setBotEncoding(newValue);
                 });
               },
               items: botEcoding.map<DropdownMenuItem<String>>((String value) {
@@ -313,7 +315,7 @@ class _HomeScreenState extends State<Settings> {
               onChanged: (String? newValue) {
                 setState(() {
                   dropDownValueProtocolEncoding = newValue!;
-                  setProtocolEncoding(newValue);
+                  UserConfig.setProtocolEncoding(newValue);
                 });
               },
               items: protocolEncoding
@@ -340,27 +342,27 @@ class _HomeScreenState extends State<Settings> {
           ),
           ListTile(
             title: const Text('Python路径'),
-            subtitle: Text(userReadConfigPython(userDir)),
+            subtitle: Text(UserConfig.pythonPath()),
             onTap: _selectPy,
           ),
           const SizedBox(height: 4),
           ListTile(
             title: const Text('NoneBotCLI路径'),
-            subtitle: Text(userReadConfigNbcli(userDir)),
+            subtitle: Text(UserConfig.nbcliPath()),
             onTap: _selectNbCli,
           ),
           const SizedBox(height: 4),
           ListTile(
             title: const Text('重置Python路径'),
             onTap: () {
-              setPyPath(userDir, 'default');
+              UserConfig.setPythonPath('default');
             },
           ),
           const SizedBox(height: 4),
           ListTile(
             title: const Text('重置NoneBotCLI路径'),
             onTap: () {
-              setNbcliPath(userDir, 'default');
+              UserConfig.setNbcliPath('default');
             },
           ),
           const SizedBox(height: 8),
@@ -383,7 +385,7 @@ class _HomeScreenState extends State<Settings> {
               onChanged: (String? newValue) {
                 setState(() {
                   dropDownValueMirror = newValue!;
-                  setMirror(newValue);
+                  UserConfig.setMirror(newValue);
                 });
               },
               items: mirror.map<DropdownMenuItem<String>>((String value) {
@@ -468,7 +470,7 @@ class _HomeScreenState extends State<Settings> {
           ListTile(
             title: const Text('复制数据目录路径'),
             trailing: IconButton(
-              icon: Icon(Icons.folder_rounded),
+              icon: const Icon(Icons.folder_rounded),
               onPressed: () => openFolder(userDir),
               tooltip: "直接打开",
             ),
@@ -498,7 +500,7 @@ class _HomeScreenState extends State<Settings> {
                                 child: SvgPicture.asset(
                                   'lib/assets/alipay.svg',
                                   width: 70,
-                                  color: userColorMode(userDir) == 'dark' ? Colors.white : Colors.black,
+                                  color: UserConfig.colorMode() == 'dark' ? Colors.white : Colors.black,
                                 ),
                                 onTap: () => donate_alipay(context),
                               )
@@ -511,7 +513,7 @@ class _HomeScreenState extends State<Settings> {
                                 child: SvgPicture.asset(
                                   'lib/assets/wechat.svg',
                                   width: 70,
-                                  color: userColorMode(userDir) == 'dark' ? Colors.white : Colors.black,
+                                  color: UserConfig.colorMode() == 'dark' ? Colors.white : Colors.black,
                                 ),
                                 onTap: () => donate_wechat(context),
                               )
@@ -524,7 +526,7 @@ class _HomeScreenState extends State<Settings> {
                                 child: SvgPicture.asset(
                                   'lib/assets/aifadian.svg',
                                   width: 70,
-                                  color: userColorMode(userDir) == 'dark' ? Colors.white : Colors.black,
+                                  color: UserConfig.colorMode() == 'dark' ? Colors.white : Colors.black,
                                 ),
                                 onTap: () {
                                   Clipboard.setData(

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:NoneBotGUI/darts/utils.dart';
+import 'package:NoneBotGUI/utils/core.dart';
 import 'package:NoneBotGUI/assets/my_flutter_app_icons.dart';
 import 'dart:io' show Platform;
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:NoneBotGUI/darts/global.dart';
+import 'package:NoneBotGUI/utils/global.dart';
 
 class About extends StatefulWidget {
   const About({super.key});
@@ -86,7 +86,7 @@ class _MoreState extends State<About> {
                 alignment: Alignment.centerRight,
                 child: InkWell(
                   child: Text(
-                    version.replaceAll('v', '').replaceAll('+fix', '.')
+                    MainApp.version.replaceAll('v', '').replaceAll('+fix', '.')
                   ),
                   onTap: () {
                     if (showImage) {
@@ -165,7 +165,7 @@ class _MoreState extends State<About> {
                   child: Align(
                 alignment: Alignment.centerRight,
                 child: FutureBuilder<String>(
-                  future: getPyVer(userDir),
+                  future: getPyVer(),
                   builder:
                       (BuildContext context, AsyncSnapshot<String> snapshot) {
                     if (snapshot.hasData) {
@@ -195,7 +195,7 @@ class _MoreState extends State<About> {
                   child: Align(
                 alignment: Alignment.centerRight,
                 child: FutureBuilder<String>(
-                  future: getnbcliver(userDir),
+                  future: getnbcliver(),
                   builder:
                       (BuildContext context, AsyncSnapshot<String> snapshot) {
                     if (snapshot.hasData) {

@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:NoneBotGUI/darts/global.dart';
-import 'package:NoneBotGUI/darts/utils.dart';
+import 'package:NoneBotGUI/utils/global.dart';
+
+import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -27,10 +28,10 @@ class _HomeScreenState extends State<FastDeployList> {
 
   Future<void> fetchData() async {
 final response =
-    await http.get(Uri.parse('https://api.zobyic.top/api/nbgui/deploy/list'));
+    await http.get(Uri.parse('https://api.nbgui.top/api/nbgui/deploy/list'));
     if (response.statusCode == 200) {
     setState(() {
-      String decodedBody = userHttpEncoding().decode(response.bodyBytes);
+      String decodedBody = UserConfig.httpEncoding().decode(response.bodyBytes);
       final List jsonData = json.decode(decodedBody);
       jsonData.sort((a, b) => b['id'] - a['id']); // 按id从大到小排序
       data = jsonData;
@@ -43,9 +44,9 @@ final response =
 
 InkWell list(deploy) => InkWell(
   onTap: () {
-    deployId = deploy['id'];
+    FastDeploy.id = deploy['id'];
     setState(() {
-      deployPage++;
+      FastDeploy.page++;
     });
   },
   child: Card(

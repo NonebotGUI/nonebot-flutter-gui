@@ -1,13 +1,16 @@
 
 import 'dart:convert';
 
-import 'package:NoneBotGUI/darts/utils.dart';
+
 import 'package:NoneBotGUI/ui/manage/managecli.dart';
+import 'package:NoneBotGUI/utils/core.dart';
+import 'package:NoneBotGUI/utils/manage.dart';
+import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:async';
 import 'package:NoneBotGUI/ui/manage/stderr.dart';
-import 'package:NoneBotGUI/darts/global.dart';
+import 'package:NoneBotGUI/utils/global.dart';
 
 
 class ManageProtocol extends StatefulWidget {
@@ -45,16 +48,16 @@ class _MyCustomFormState extends State<ManageProtocol> {
   }
 
   void loadFileContent() async {
-    if (gOnOpen.isNotEmpty){
-      String filePath = '${getProtocolPath()}/nbgui_stdout.log';
+    if (MainApp.gOnOpen.isNotEmpty){
+      String filePath = '${Protocol.path()}/nbgui_stdout.log';
       File stdoutFile = File(filePath);
       if (stdoutFile.existsSync()) {
         try {
           File file = File(filePath);
-          final lines = await file.readAsLines(encoding: userProtocolEncoding());
+          final lines = await file.readAsLines(encoding: UserConfig.protocolEncoding());
           final last50Lines =
               lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
-           protocolLog = last50Lines.join('\n');
+           MainApp.protocolLog = last50Lines.join('\n');
             setState(() {
               
             });
@@ -75,8 +78,6 @@ class _MyCustomFormState extends State<ManageProtocol> {
 
   void _reloadConfig() {
     setState(() {
-      getPyPid(userDir);
-      _filePath = '${manageBotReadCfgPath()}/nbgui_stdout.log';
       _scrollController.addListener(() {
      });
     _scrollController.animateTo(
@@ -87,8 +88,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
     });
   }
 
-  String protocolCMD = getProtocolCmd();
-  String _filePath = '${getProtocolPath()}/nbgui_stdout.log';
+  String protocolCMD = Protocol.cmd();
   @override
   Widget build(BuildContext context) {
     Future.delayed(Duration.zero, () {
@@ -135,7 +135,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            getProtocolPath()
+                            Protocol.path()
                           ),
                         ),
                       ),
@@ -157,7 +157,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            getProtocolCmd()
+                            Protocol.cmd(),
                           ),
                         ),
                       ),
@@ -179,7 +179,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            manageBotReadCfgTime(),
+                            Bot.time(),
                           ),
                         ),
                       ),
@@ -201,7 +201,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            getProtocolPid()
+                            Protocol.pid()
                           ),
                         ),
                       ),
@@ -218,7 +218,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
                           ),
                         ),
                       ),
-                      if (getProtocolStatus())
+                      if (Protocol.status())
                           const Padding(
                             padding: EdgeInsets.all(4),
                             child: Align(
@@ -229,7 +229,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
                               ),
                             ),
                           ),
-                      if (!getProtocolStatus())
+                      if (!Protocol.status())
                           const Padding(
                             padding: EdgeInsets.all(4),
                             child: Align(
@@ -249,7 +249,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
                           child: const Icon(Icons.edit_rounded),
                           onPressed: () {
                             setState(() {
-                              protocolCMD = getProtocolCmd();
+                              protocolCMD = Protocol.cmd();
                             });
                             showDialog(
                               context: context,
@@ -285,8 +285,8 @@ class _MyCustomFormState extends State<ManageProtocol> {
                                       ),
                                       onPressed: () {
                                         Navigator.of(context).pop();
-                                        if (protocolCMD != manageBotReadCfgName()){
-                                          reEditCmd(protocolCMD);
+                                        if (protocolCMD != Protocol.cmd()) {
+                                          Protocol.changeCmd(protocolCMD);
                                           setState(() {
                                           });
                                         }
@@ -337,7 +337,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Text(
-                                  protocolLog,
+                                  MainApp.protocolLog,
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontFamily: 'JetBrainsMono',
@@ -375,8 +375,8 @@ class _MyCustomFormState extends State<ManageProtocol> {
                             children: <Widget>[
                               IconButton(
                                 onPressed: () {
-                                  if (getProtocolStatus() == false) {
-                                    runProtocol();
+                                  if (Protocol.status() == false) {
+                                    Protocol.run();
                                     _reloadConfig();
                                     _startRefreshing();
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -402,8 +402,8 @@ class _MyCustomFormState extends State<ManageProtocol> {
                               ),
                               IconButton(
                                 onPressed: () {
-                                  if (getProtocolStatus()) {
-                                    stopProtocol();
+                                  if (Protocol.status()) {
+                                    Protocol.stop();
                                     _reloadConfig();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -426,10 +426,10 @@ class _MyCustomFormState extends State<ManageProtocol> {
                               ),
                               IconButton(
                                 onPressed: () {
-                                  if (getProtocolStatus()) {
-                                    stopProtocol();
-                                    runProtocol();
-                                    clearLog();
+                                  if (Protocol.status()) {
+                                    Protocol.stop();
+                                    Protocol.run();
+                                    clearLog(Protocol.path());
                                     _reloadConfig();
                                     _startRefreshing();
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -453,7 +453,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
                               ),
                               IconButton(
                                 onPressed: () =>
-                                    openFolder(getProtocolPath().toString()),
+                                    openFolder(Protocol.path().toString()),
                                 tooltip: "打开文件夹",
                                 icon: const Icon(Icons.folder),
                                 iconSize: size.height * 0.03,
@@ -467,7 +467,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
                                 ),
                               IconButton(
                                 onPressed: () {
-                                  File stdout = File('${getProtocolPath()}/nbgui_stdout.log');
+                                  File stdout = File('${Protocol.path()}/nbgui_stdout.log');
                                   stdout.delete();
                                   String info = "[INFO]Welcome to Nonebot GUI!";
                                   stdout.writeAsString(info);
@@ -475,21 +475,6 @@ class _MyCustomFormState extends State<ManageProtocol> {
                                 tooltip: "清空日志",
                                 icon: const Icon(Icons.delete_rounded),
                                 iconSize: size.height * 0.03,
-                              ),
-                              Visibility(
-                                visible: File('${manageBotReadCfgPath()}/nbgui_stderr.log').readAsStringSync(encoding: systemEncoding).isNotEmpty,
-                                child: IconButton(
-                                  onPressed: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const StdErr(),
-                                    ),
-                                  ),
-                                  tooltip: '查看报错日志',
-                                  icon: const Icon(Icons.error_rounded),
-                                  color: Colors.red,
-                                  iconSize: size.height * 0.04,
-                                ),
                               ),
                             ],
                           ),
@@ -510,7 +495,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
 
 
   void showDialogWithQRCode(BuildContext context) {
-    List<FileSystemEntity> entities = Directory(getProtocolPath()).listSync();
+    List<FileSystemEntity> entities = Directory(Protocol.path()).listSync();
     List<FileSystemEntity> qrCodePath = entities.whereType<File>().where((file) => file.path.endsWith('.png')).toList();
 
     // 检查是否找到二维码图片

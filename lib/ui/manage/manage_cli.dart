@@ -1,8 +1,9 @@
-import 'package:NoneBotGUI/darts/utils.dart';
+
+import 'package:NoneBotGUI/utils/manage.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:NoneBotGUI/darts/global.dart';
+import 'package:NoneBotGUI/utils/global.dart';
 import 'package:window_manager/window_manager.dart';
 // void main() {
 //   runApp(const MyApp());
@@ -33,7 +34,7 @@ class _MyCustomFormState extends State<ManageCli> {
   final packageOutput = TextEditingController();
   void managePackage(manage, name) async {
     packageOutput.clear();
-    List<String> commands = [manageCliSelf(userDir, manage, name)];
+    List<String> commands = [Cli.self(manage, name)];
     for (String command in commands) {
       List<String> args = command.split(' ');
       String executable = args.removeAt(0);
@@ -41,7 +42,7 @@ class _MyCustomFormState extends State<ManageCli> {
         executable,
         args,
         runInShell: true,
-        workingDirectory: manageBotReadCfgPath(),
+        workingDirectory: Bot.path(),
       );
       process.stdout.transform(systemEncoding.decoder).listen((data) {
         packageOutput.text += data;

@@ -1,4 +1,5 @@
-import 'package:NoneBotGUI/darts/utils.dart';
+
+import 'package:NoneBotGUI/utils/manage.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
@@ -22,7 +23,7 @@ class _HomeScreenState extends State<StdErr> {
               child: MoveWindow(
                 child: AppBar(
                   title: Text(
-                    "${manageBotReadCfgName()} - stderr.log",
+                    "${Bot.name()} - stderr.log",
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -79,7 +80,7 @@ class _HomeScreenState extends State<StdErr> {
               Expanded(
                   child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(manageBotViewStderr(manageBotReadCfgPath())))),
+                      child: Text(Bot.stderr()))),
             ],
           ),
         ),
@@ -109,7 +110,7 @@ void _showConfirmationDialog(BuildContext context) {
             ),
             onPressed: () {
               Navigator.of(context).pop();
-              deleteStderr(manageBotReadCfgPath());
+              Bot.deleteStderr();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('已删除'),

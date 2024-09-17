@@ -1,8 +1,10 @@
 import 'dart:io';
-import 'package:NoneBotGUI/darts/utils.dart';
+
+import 'package:NoneBotGUI/utils/core.dart';
+import 'package:NoneBotGUI/utils/manage.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
-import 'package:NoneBotGUI/darts/global.dart';
+import 'package:NoneBotGUI/utils/global.dart';
 import 'package:window_manager/window_manager.dart';
 
 // void main() {
@@ -83,7 +85,7 @@ class _HomeScreenState extends State<ManagePlugin> {
           ],
         ),
       ),
-      body: getPluginList(userDir).isEmpty
+      body: getPluginList().isEmpty
           ? const Center(
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -94,7 +96,7 @@ class _HomeScreenState extends State<ManagePlugin> {
                   ]),
             )
           : ListView.builder(
-              itemCount: getPluginList(userDir).length,
+              itemCount: getPluginList().length,
               itemBuilder: (context, index) =>
                   pluginManageDialog(context, index),
             ),
@@ -109,7 +111,7 @@ Card pluginManageDialog(BuildContext context, int index) => Card(
           children: <Widget>[
             Expanded(
               child: Text(
-                ' ${getPluginList(userDir)[index]}',
+                ' ${getPluginList()[index]}',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -143,7 +145,7 @@ Card pluginManageDialog(BuildContext context, int index) => Card(
     );
 
 AlertDialog uninstallDialog(BuildContext context, int index) {
-  String name = getPluginList(userDir)[index];
+  String name = getPluginList()[index];
   return AlertDialog(
     title: const Text('确认卸载'),
     content: const Text('你确定要卸载这个插件吗？'),
@@ -175,7 +177,7 @@ AlertDialog uninstallDialog(BuildContext context, int index) {
 }
 
 void _uninstall(name) async {
-  List<String> commands = [manageCliPlugin(userDir, 'uninstall', name)];
+  List<String> commands = [Cli.plugin('uninstall', name)];
   for (String command in commands) {
     List<String> args = command.split(' ');
     String executable = args.removeAt(0);
@@ -183,7 +185,7 @@ void _uninstall(name) async {
       executable,
       args,
       runInShell: true,
-      workingDirectory: manageBotReadCfgPath(),
+      workingDirectory: Bot.path(),
     );
     await process.exitCode;
   }

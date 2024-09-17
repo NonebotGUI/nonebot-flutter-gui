@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:NoneBotGUI/darts/global.dart';
+import 'package:NoneBotGUI/utils/global.dart';
 import 'package:NoneBotGUI/ui/broadcast/detail.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -27,7 +27,7 @@ class _HomeScreenState extends State<BoradcastList> {
 
   Future<void> fetchData() async {
 final response =
-    await http.get(Uri.parse('https://api.zobyic.top/api/nbgui/broadcast/list/'));
+    await http.get(Uri.parse('https://api.nbgui.top/api/nbgui/broadcast/list/'));
     if (response.statusCode == 200) {
     setState(() {
       String decodedBody = utf8.decode(response.bodyBytes);
@@ -43,7 +43,7 @@ final response =
 
 InkWell list(broadcast) => InkWell(
   onTap: () {
-    broadcastId = broadcast['id'];
+    MainApp.broadcastId = broadcast['id'];
     Navigator.push(
           context,
           MaterialPageRoute(

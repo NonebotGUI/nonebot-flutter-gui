@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
-import 'package:NoneBotGUI/darts/global.dart';
+import 'package:NoneBotGUI/utils/global.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:http/http.dart' as http;
 import 'package:window_manager/window_manager.dart';
@@ -28,7 +28,7 @@ class _HomeScreenState extends State<BroadcastDetail> {
   String md = '';
   Future<void> fetchData() async {
     final response =
-        await http.get(Uri.parse('https://api.zobyic.top/api/nbgui/broadcast/detail?id=$broadcastId'));
+        await http.get(Uri.parse('https://api.zobyic.top/api/nbgui/broadcast/detail?id=${MainApp.broadcastId}'));
     if (response.statusCode == 200) {
       setState(() {
         String decodedBody = utf8.decode(response.bodyBytes);

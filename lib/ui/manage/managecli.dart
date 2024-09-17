@@ -1,10 +1,12 @@
 import 'dart:io';
-import 'package:NoneBotGUI/darts/utils.dart';
+
 import 'package:NoneBotGUI/ui/manage/adapter.dart';
 import 'package:NoneBotGUI/ui/manage/driver.dart';
 import 'package:NoneBotGUI/ui/manage/manage_cli.dart';
 import 'package:NoneBotGUI/ui/manage/manage_plugin.dart';
 import 'package:NoneBotGUI/ui/manage/plugin.dart';
+import 'package:NoneBotGUI/utils/manage.dart';
+import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
@@ -215,10 +217,10 @@ class _HomeScreenState extends State<manageCli> {
                 ),
                 onTap: () {
                   Process.start(
-                    'nb',
+                    UserConfig.nbcliPath(),
                     ['generate'],
                     runInShell: true,
-                    workingDirectory: manageBotReadCfgPath(),
+                    workingDirectory: Bot.path(),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
