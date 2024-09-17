@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:NoneBotGUI/darts/global.dart';
-import 'package:NoneBotGUI/darts/utils.dart';
+import 'package:NoneBotGUI/utils/global.dart';
+
 import 'package:NoneBotGUI/ui/broadcast/list.dart';
 import 'package:NoneBotGUI/ui/deploy/deploy.dart';
 import 'package:NoneBotGUI/ui/deploy/deployment.dart';
@@ -12,6 +12,8 @@ import 'package:NoneBotGUI/ui/manage/manage_protocol.dart';
 import 'package:NoneBotGUI/ui/settings/about.dart';
 import 'package:NoneBotGUI/ui/mainPage/manage_bot.dart';
 import 'package:NoneBotGUI/ui/settings/setting.dart';
+import 'package:NoneBotGUI/utils/core.dart';
+import 'package:NoneBotGUI/utils/manage.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +22,7 @@ import 'package:http/http.dart' as http;
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:watcher/watcher.dart';
+import 'package:NoneBotGUI/utils/userConfig.dart';
 
 
 
@@ -28,18 +31,12 @@ void main() async {
   //令人难以理解（
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
-  userDir = await createMainFolder();
-  deployPage = 0;
-  nbLog = '[INFO]Welcome to NoneBot GUI!';
-  protocolLog = '[INFO]Welcome to NoneBot GUI!';
-  barExtended = false;
-  version = 'v0.2.2+1';
-  //初始化编码
-  userEncoding();
-  userHttpEncoding();
-  userBotEncoding();
-  userProtocolEncoding();
-  userDeployEncoding();
+  userDir = await nbguiInit();
+  FastDeploy.page = 0;
+  MainApp.nbLog = '[INFO]Welcome to NoneBot GUI!';
+  MainApp.protocolLog = '[INFO]Welcome to NoneBot GUI!';
+  MainApp.barExtended = false;
+  MainApp.version = 'v1.0.0';
   FlutterError.onError = (FlutterErrorDetails details) async {
     DateTime now = DateTime.now();
     String timestamp = now.toIso8601String();
@@ -61,7 +58,7 @@ void main() async {
   runApp(
     MaterialApp(
       home: const HomeScreen(),
-      theme: _getTheme(userColorMode(userDir)),
+      theme: _getTheme(UserConfig.colorMode()),
     ),
   );
   doWhenWindowReady(() {
@@ -162,8 +159,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListener{
   Timer? _timer;
-  final String configFolder = createMainFolderBots();
-  final colorMode = userColorMode(userDir);
+  final String configFolder = '$userDir/bots';
+  final colorMode = UserConfig.colorMode();
   StreamSubscription<WatchEvent>? _subscription;
   List<String> _events = [];
   final String directoryPath = "$userDir/bots";
@@ -221,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
     );
     await _trayManager.setContextMenu(menu);
   }
-  
+
   @override
   //右键打开托盘菜单
   void onTrayIconRightMouseDown() {
@@ -241,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
 
   //使用Watcher监听目录
   void _startWatching() async{
-    if ( userRefreshMode() == 'auto'){
+    if ( UserConfig.refreshMode() == 'auto'){
     final watcher = DirectoryWatcher(directoryPath);
     _subscription = watcher.events.listen((event) {
         _readConfigFiles();
@@ -252,7 +249,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
   }
 
   void alwaysRefresh() {
-    if (userRefreshMode() == 'always'){
+    if ( UserConfig.refreshMode() == 'always'){
       if (_timer != null) {
         _timer?.cancel();
       }
@@ -267,10 +264,10 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
 
   //监听bot Log
   void logListener() async{
-    if (gOnOpen.isNotEmpty){
-    final logWatcher = DirectoryWatcher(manageBotReadCfgPath());
+    if (MainApp.gOnOpen.isNotEmpty){
+    final logWatcher = DirectoryWatcher(Bot.path());
     _subscription = logWatcher.events.listen((event) async{
-      if (event.path == '${manageBotReadCfgPath()}/nbgui_stdout.log' && event.type == ChangeType.MODIFY){
+      if (event.path == '${Bot.path()}/nbgui_stdout.log' && event.type == ChangeType.MODIFY){
         loadFileContent();
       }
     });
@@ -313,17 +310,17 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
 
 
   void loadFileContent() async {
-    if (gOnOpen.isNotEmpty){
-      String filePath = '${manageBotReadCfgPath()}/nbgui_stdout.log';
+    if (MainApp.gOnOpen.isNotEmpty){
+      String filePath = '${Bot.path()}/nbgui_stdout.log';
       File stdoutFile = File(filePath);
       if (stdoutFile.existsSync()) {
         try {
           File file = File(filePath);
-          final lines = await file.readAsLines(encoding: userBotEncoding());
+          final lines = await file.readAsLines(encoding: UserConfig.botEncoding());
           final last50Lines =
               lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
-            nbLog = last50Lines.join('\n');
-            getPyPid(userDir);
+            MainApp.nbLog = last50Lines.join('\n');
+            Bot.pypid();
             setState(() {
             });
         } catch (e) {
@@ -335,16 +332,16 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
 
 
   void loadProtocolFileContent() async {
-    if (gOnOpen.isNotEmpty){
-      String filePath = '${getProtocolPath()}/nbgui_stdout.log';
+    if (MainApp.gOnOpen.isNotEmpty){
+      String filePath = '${Protocol.path()}/nbgui_stdout.log';
       File stdoutFile = File(filePath);
       if (stdoutFile.existsSync()) {
         try {
           File file = File(filePath);
-          final lines = await file.readAsLines(encoding: userProtocolEncoding());
+          final lines = await file.readAsLines(encoding: UserConfig.protocolEncoding());
           final last50Lines =
               lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
-            protocolLog = last50Lines.join('\n');
+            MainApp.protocolLog = last50Lines.join('\n');
             setState(() {
               
             });
@@ -359,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
   ///检查更新
   Future<void> check() async{
     //如果“检查更新”为开启则检查
-    if (userCheckUpdate()){
+    if ( UserConfig.checkUpdate()){
         try {
           final response = await http.get(Uri.parse('https://api.github.com/repos/NoneBotGUI/nonebot-flutter-gui/releases/latest'));
           if (response.statusCode == 200) {
@@ -367,7 +364,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
               final tagName = jsonData['tag_name'];
               final changeLog = jsonData['body'];
               final url = jsonData['html_url'];
-              if (tagName != version){
+              if (tagName != MainApp.version){
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text('发现新版本！'),
                 duration: Duration(seconds: 3),
@@ -521,13 +518,13 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
                       tooltip: "关闭",
                     )
                   ],
-                  leading: _selectedIndex == 3 && deployPage != 0 ?
+                  leading: _selectedIndex == 3 && FastDeploy.page != 0 ?
                   IconButton(
                     icon: const Icon(Icons.arrow_back),
                     color: Colors.white,
                     onPressed: () {
                       setState(() {
-                        deployPage--;
+                        FastDeploy.page--;
                       });
                     },
                   ) :
@@ -561,7 +558,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
                 _selectedIndex = index;
                 _appBarTitle =
                   index == 0 ? 'NoneBot GUI' :
-                  index == 1 ? gOnOpen.isNotEmpty ? manageBotReadCfgName() : 'NoneBot GUI' :
+                  index == 1 ? MainApp.gOnOpen.isNotEmpty ? Bot.name() : 'NoneBot GUI' :
                   index == 2 ? '协议端控制台':
                   index == 3 ? '快速部署':
                   index == 4 ? '添加Bot' :
@@ -580,14 +577,14 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
                   padding: const EdgeInsets.only(bottom: 20.0),
                   child: IconButton(
                     icon: Icon(
-                      barExtended ?
+                      MainApp.barExtended ?
                         Icons.keyboard_arrow_left_rounded :
                         Icons.keyboard_arrow_right_rounded
                     ),
                     iconSize: 25,
-                    tooltip: barExtended ? "收起" : "展开",
+                    tooltip: MainApp.barExtended ? "收起" : "展开",
                     onPressed: () {
-                      barExtended = !barExtended;
+                      MainApp.barExtended = !MainApp.barExtended;
                       setState(() {
                       });
                     }
@@ -595,85 +592,115 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
                 ),
               ),
             ),
-            extended: barExtended,
+            extended: MainApp.barExtended,
             destinations: <NavigationRailDestination>[
               NavigationRailDestination(
-                icon: Icon(
-                  _selectedIndex == 0 ?
-                    Icons.home_rounded :
-                    Icons.home_outlined
+                icon: Tooltip(
+                  message: '主页',
+                  child: Icon(
+                    _selectedIndex == 0 ?
+                      Icons.home_rounded :
+                      Icons.home_outlined
+                  ),
                 ),
                 label: const Text('主页'),
               ),
               NavigationRailDestination(
-                icon: Icon(
-                  _selectedIndex == 1 ?
-                    Icons.dashboard_rounded :
-                    Icons.dashboard_outlined
+                icon: Tooltip(
+                  message: 'Bot控制台',
+                  child: Icon(
+                    _selectedIndex == 1 ?
+                      Icons.dashboard_rounded :
+                      Icons.dashboard_outlined
+                  ),
                 ),
                 label: const Text('Bot控制台'),
               ),
               NavigationRailDestination(
-                icon: Icon(
-                  _selectedIndex == 2 ?
-                    Icons.connected_tv_rounded :
-                    Icons.connected_tv_outlined
+                icon: Tooltip(
+                  message: '协议端控制台',
+                  child: Icon(
+                    _selectedIndex == 2 ?
+                      Icons.connected_tv_rounded :
+                      Icons.connected_tv_outlined
+                  ),
                 ),
                 label: const Text('协议端控制台'),
               ),
               NavigationRailDestination(
-                icon: Icon(
-                  _selectedIndex == 3 ?
-                    Icons.archive_rounded :
-                    Icons.archive_outlined
+                icon: Tooltip(
+                  message: '快速部署',
+                  child: Icon(
+                    _selectedIndex == 3 ?
+                      Icons.archive_rounded :
+                      Icons.archive_outlined
+                  ),
                 ),
                 label: const Text('快速部署'),
               ),
               NavigationRailDestination(
-                icon: Icon(
-                  _selectedIndex == 4 ?
-                    Icons.add_rounded :
-                    Icons.add_outlined
+                icon: Tooltip(
+                  message: '添加Bot',
+                  child: Icon(
+                    _selectedIndex == 4 ?
+                      Icons.add_rounded :
+                      Icons.add_outlined
+                  ),
                 ),
                 label: const Text('添加Bot'),
               ),
               NavigationRailDestination(
-                icon: Icon(
-                  _selectedIndex == 5 ?
-                    Icons.file_download_rounded :
-                    Icons.file_download_outlined
+                icon: Tooltip(
+                  message: '导入Bot',
+                  child: Icon(
+                    _selectedIndex == 5 ?
+                      Icons.file_download_rounded :
+                      Icons.file_download_outlined
+                  ),
                 ),
                 label: const Text('导入Bot'),
               ),
               NavigationRailDestination(
-                icon: Icon(
-                  _selectedIndex == 6 ?
-                    Icons.messenger_rounded :
-                    Icons.messenger_outline_rounded
+                icon: Tooltip(
+                  message: '公告',
+                  child: Icon(
+                    _selectedIndex == 6 ?
+                      Icons.messenger_rounded :
+                      Icons.messenger_outline_rounded
+                  ),
                 ),
                 label: const Text('公告'),
               ),
               NavigationRailDestination(
-                icon: Icon(
-                  _selectedIndex == 7 ?
-                    Icons.settings_rounded :
-                    Icons.settings_outlined
+                icon: Tooltip(
+                  message: '设置',
+                  child: Icon(
+                    _selectedIndex == 7 ?
+                      Icons.settings_rounded :
+                      Icons.settings_outlined
+                  ),
                 ),
                 label: const Text('设置'),
               ),
               NavigationRailDestination(
-                icon: Icon(
-                  _selectedIndex == 8 ?
-                    Icons.info_rounded :
-                    Icons.info_outline_rounded
+                icon: Tooltip(
+                  message: '关于',
+                  child: Icon(
+                    _selectedIndex == 8 ?
+                      Icons.info_rounded :
+                      Icons.info_outlined
+                  ),
                 ),
                 label: const Text('关于'),
               ),
               NavigationRailDestination(
-                icon: Icon(
-                  _selectedIndex == 9 ?
-                    Icons.balance_rounded :
-                    Icons.balance_outlined
+                icon: Tooltip(
+                  message: '开源许可证',
+                  child: Icon(
+                    _selectedIndex == 9 ?
+                      Icons.balance_rounded :
+                      Icons.balance_outlined
+                  ),
                 ),
                 label: const Text('开源许可证'),
               ),
@@ -716,12 +743,12 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
                                   return Card(
                                     child: InkWell(
                                       onTap: () {
-                                        manageBotOnOpenCfg(name, time);
+                                        Bot.setOpen(name, time);
                                         createLog(path);
                                         setState(() {
                                           loadFileContent();
                                           _selectedIndex = 1;
-                                          _appBarTitle = manageBotReadCfgName();
+                                          _appBarTitle = Bot.name();
                                         });
                                       },
                                       child: Column(
@@ -743,13 +770,13 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
                                                   ? IconButton(
                                                       icon: const Icon(Icons.stop_rounded),
                                                       onPressed: () {
-                                                        manageBotOnOpenCfg(name, time);
+                                                        Bot.setOpen(name, time);
                                                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                                                           content: Text('Bot已停止'),
                                                           duration: Duration(seconds: 3),
                                                         ));
                                                         setState(() {
-                                                          stopBot(userDir);
+                                                          Bot.stop();
                                                         });
                                                       },
                                                       tooltip: '停止Bot',
@@ -757,13 +784,13 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
                                                   : IconButton(
                                                       icon: const Icon(Icons.play_arrow_rounded),
                                                       onPressed: () {
-                                                        manageBotOnOpenCfg(name, time);
+                                                        Bot.setOpen(name, time);
                                                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                                          content: Text('Nonebot,启动！如果发现控制台无刷新请检查bot目录下的nbgui_stderr.log查看报错'),
+                                                          content: Text('NoneBot,启动！如果发现控制台无刷新请检查bot目录下的nbgui_stderr.log查看报错'),
                                                           duration: Duration(seconds: 3),
                                                         ));
                                                         setState(() {
-                                                          runBot(userDir, manageBotReadCfgPath());
+                                                          Bot.run();
                                                         });
                                                       },
                                                       tooltip: '运行Bot',
@@ -787,7 +814,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
                                 },
                               )
                           ),
-                gOnOpen.isNotEmpty
+                MainApp.gOnOpen.isNotEmpty
                   ? const ManageBot()
                   : Center(
                       child: Column(
@@ -800,7 +827,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
                         ],
                       ),
                     ),
-                gOnOpen.isNotEmpty
+                MainApp.gOnOpen.isNotEmpty
                   ? checkBotType() ?
                     const ManageProtocol()
                     : Center(
@@ -825,9 +852,9 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
                         ],
                       ),
                     ),
-                deployPage == 0 ? const FastDeployList() :
-                deployPage == 1 ? const Deployment() :
-                deployPage == 2 ? const Deploy() :
+                FastDeploy.page == 0 ? const FastDeployList() :
+                FastDeploy.page == 1 ? const Deployment() :
+                FastDeploy.page == 2 ? const Deploy() :
                 const Text('Null'),
                 const CreateBot(),
                 const ImportBot(),
@@ -837,7 +864,7 @@ class _HomeScreenState extends State<HomeScreen> with TrayListener, WindowListen
                 LicensePage(
                         applicationIcon: Image.asset('lib/assets/logo.png'),
                         applicationName: 'NoneBotGUI',
-                        applicationVersion: version.replaceAll('v', ''),
+                        applicationVersion: MainApp.version.replaceAll('v', ''),
                         ),
               ],
             ),
