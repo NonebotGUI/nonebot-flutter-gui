@@ -2,7 +2,7 @@
   <img src="https://socialify.git.ci/NoneBotGUI/nonebot-flutter-gui/image?description=1&descriptionEditable=%E2%9C%A8%E6%96%B0%E4%B8%80%E4%BB%A3Nonebot%E5%9B%BE%E5%BD%A2%E5%8C%96%E7%95%8C%E9%9D%A2%E2%9C%A8&font=Jost&language=1&logo=https%3A%2F%2Fnbgui.zobyic.top%2Fimage%2Ficon.png&name=1&owner=1&pattern=Plus&stargazers=1&theme=Auto" alt="nonebot-flutter-gui" width="640" height="320" /><br>
 <div align="center">
 
-# nonebot-flutter-gui
+# Re:NoneBot GUI
 </div>
 
 _✨ 新一代 NoneBot 图形化界面 ✨_
@@ -21,8 +21,8 @@ _✨ 新一代 NoneBot 图形化界面 ✨_
   <strong>🌎 使用截图</strong>
 </a>
 &nbsp;&nbsp;|&nbsp;&nbsp;
-<a href="https://hub.xb6868.com/NonebotGUI/nonebot-flutter-gui/releases" target="__blank">
-  <strong>📦️ 下载安装包</strong>
+<a href="https://doc.nbgui.top" target="__blank">
+  <strong>📖 文档地址</strong>
 </a>
 
 </div>
@@ -75,8 +75,7 @@ sudo apt-get install appindicator3-0.1 libappindicator3-dev
 
 ## 📑 TODO List
 
-- [ ] 清理史山
-- [ ] 使用 GetX 管理状态
+- [X] 清理史山【完成度:50%】
 - [X] 重构新的 UI
 - [X] 在主页面直接启动 Bot
 - [X] 检查更新
