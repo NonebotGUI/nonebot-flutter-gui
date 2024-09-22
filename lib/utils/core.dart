@@ -77,12 +77,11 @@ createLog(path) {
 
 ///清除日志
 clearLog(path) async {
-    File stdout = File('$path/nbgui_stdout.log');
-    stdout.delete();
-    String info = "[INFO]Welcome to Nonebot GUI!";
-    stdout.writeAsString(info);
+  File stdout = File('$path/nbgui_stdout.log');
+  stdout.delete();
+  String info = "[INFO]Welcome to Nonebot GUI!";
+  stdout.writeAsString(info);
 }
-
 
 ///从pyproject.toml中读取插件列表
 getPluginList() {
@@ -94,15 +93,13 @@ getPluginList() {
   return pluginsList;
 }
 
-
-
 ///获取协议端文件名
-getProtocolFileName(){
+getProtocolFileName() {
   String ucmd = FastDeploy.cmd.replaceAll('./', '').replaceAll('.\\', '');
   List<String> cmdList = ucmd.split(' ').toList();
   String pcmd = '';
   List<String> args = [];
-  if (cmdList.length > 1){
+  if (cmdList.length > 1) {
     pcmd = cmdList[0];
     args = cmdList.sublist(1);
   } else {
@@ -120,7 +117,8 @@ Future<String?> getExtDir(String fileName, String searchDirectory) async {
     List<FileSystemEntity> entities = dir.listSync(recursive: true);
     for (FileSystemEntity entity in entities) {
       if (entity is File && path.basename(entity.path) == fileName) {
-        String normalizedPath = path.normalize(path.dirname(entity.absolute.path));
+        String normalizedPath =
+            path.normalize(path.dirname(entity.absolute.path));
         String escapedPath = normalizedPath.replaceAll(r'\', r'\\');
         return escapedPath;
       }
@@ -149,26 +147,23 @@ deleteStderr(dir) {
   stderrfile.writeAsString(clear);
 }
 
-
 ///检查bot的type键
 //适配老东西（
-checkBotType(){
-  File botcfg = File('$userDir/bots/${MainApp.gOnOpen}.json');
+checkBotType() {
+  File botcfg = File('$userDir/bots/${gOnOpen}.json');
   Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
-  if (jsonMap.containsKey('type')){
+  if (jsonMap.containsKey('type')) {
     return (jsonMap['type'] == 'deployed') ? true : false;
-  }
-  else {
+  } else {
     return false;
   }
 }
 
 ///设置快速部署的路径
-setDeployPath(path, name){
-  if (Platform.isWindows){
+setDeployPath(path, name) {
+  if (Platform.isWindows) {
     FastDeploy.path = '${path.toString().replaceAll('\\', '\\\\')}\\\\$name';
-  }
-  else if (Platform.isLinux || Platform.isMacOS){
+  } else if (Platform.isLinux || Platform.isMacOS) {
     FastDeploy.path = '$path/$name';
   }
 }

@@ -76,7 +76,8 @@ class _MyHomePageState extends State<DriverStore> {
         await http.get(Uri.parse('${UserConfig.mirror()}/drivers.json'));
     if (response.statusCode == 200) {
       setState(() {
-        String decodedBody = UserConfig.httpEncoding().decode(response.bodyBytes);
+        String decodedBody =
+            UserConfig.httpEncoding().decode(response.bodyBytes);
         final List<dynamic> jsonData = json.decode(decodedBody);
         data = jsonData.map((item) => item as Map<String, dynamic>).toList();
         search = data;
@@ -141,21 +142,21 @@ class _MyHomePageState extends State<DriverStore> {
                       iconSize: 20,
                       tooltip: "最小化",
                     ),
-                    appWindow.isMaximized ?
-                      IconButton(
-                        icon: const Icon(Icons.rectangle_outlined),
-                        color: Colors.white,
-                        onPressed: () => appWindow.restore(),
-                        iconSize: 20,
-                        tooltip: "恢复大小",
-                      ) :
-                    IconButton(
-                        icon: const Icon(Icons.rectangle_outlined),
-                        color: Colors.white,
-                        onPressed: () => appWindow.maximize(),
-                        iconSize: 20,
-                        tooltip: "最大化",
-                      ),
+                    appWindow.isMaximized
+                        ? IconButton(
+                            icon: const Icon(Icons.rectangle_outlined),
+                            color: Colors.white,
+                            onPressed: () => appWindow.restore(),
+                            iconSize: 20,
+                            tooltip: "恢复大小",
+                          )
+                        : IconButton(
+                            icon: const Icon(Icons.rectangle_outlined),
+                            color: Colors.white,
+                            onPressed: () => appWindow.maximize(),
+                            iconSize: 20,
+                            tooltip: "最大化",
+                          ),
                     IconButton(
                       icon: const Icon(Icons.close_rounded),
                       color: Colors.white,

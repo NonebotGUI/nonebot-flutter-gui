@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:NoneBotGUI/utils/deployBot.dart';
-import 'package:NoneBotGUI/utils/global.dart';
-
 import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -21,21 +19,20 @@ class _MyCustomFormState extends State<CreateBot> {
   final _outputController = StreamController<String>.broadcast();
   final ScrollController _scrollController = ScrollController();
 
-
-  void _executeCommands() async {
-
+  void _executeCommands(
+      path, name, driver, template, pluginDir, venv, installDep) async {
     _output.clear();
 
     List<String> commands = [
       'echo 开始创建Bot：$name',
       'echo 读取配置...',
-      DeployBot.createVENVEcho(Create.path, Create.name),
-      DeployBot.createVENV(Create.path, Create.name, Create.venv),
+      DeployBot.createVENVEcho(path, name),
+      DeployBot.createVENV(path, name, venv),
       'echo 开始安装依赖...',
-      DeployBot.install(Create.path, Create.name, Create.venv, Create.installDep),
-      DeployBot.writePyProject(),
-      DeployBot.writeENV(Create.path, Create.name, 8080, dropDownValue, Create.driver),
-      DeployBot.writebot(Create.name, Create.path, "default", "none", "none"),
+      DeployBot.install(path, name, venv, installDep),
+      DeployBot.writePyProject(path, name, template, pluginDir),
+      DeployBot.writeENV(path, name, 8080, dropDownValue, driver),
+      DeployBot.writebot(name, path, "default", "none", "none"),
       'echo 安装完成，可退出'
     ];
 
@@ -52,7 +49,6 @@ class _MyCustomFormState extends State<CreateBot> {
       await process.exitCode;
     }
   }
-
 
   final myController = TextEditingController();
   bool isVENV = true;
@@ -226,12 +222,11 @@ class _MyCustomFormState extends State<CreateBot> {
                         items: template
                             .map<DropdownMenuItem<String>>(
                               (String value) => DropdownMenuItem<String>(
-                                value: value,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: Text(value),
-                                )
-                              ),
+                                  value: value,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(value),
+                                  )),
                             )
                             .toList(),
                       ),
@@ -270,12 +265,11 @@ class _MyCustomFormState extends State<CreateBot> {
                           items: pluginDir
                               .map<DropdownMenuItem<String>>(
                                 (String value) => DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(value),
-                                  )
-                                ),
+                                    value: value,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Text(value),
+                                    )),
                               )
                               .toList(),
                         ),
@@ -395,8 +389,7 @@ class _MyCustomFormState extends State<CreateBot> {
                 children: [
                   if (loadAdapter)
                     const Center(
-                      child: CircularProgressIndicator(
-                      ),
+                      child: CircularProgressIndicator(),
                     )
                   else
                     ListView(
@@ -415,7 +408,8 @@ class _MyCustomFormState extends State<CreateBot> {
                         return CheckboxListTile(
                           title: Text(showText),
                           value: adapterMap[name],
-                          onChanged: (bool? value) => onAdaptersChanged(name, value!),
+                          onChanged: (bool? value) =>
+                              onAdaptersChanged(name, value!),
                         );
                       }).toList(),
                     ),
@@ -426,105 +420,112 @@ class _MyCustomFormState extends State<CreateBot> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              if (_selectedFolderPath.toString() != 'null' && buildSelectedAdapterOptions().isNotEmpty && buildDriversCheckboxes().isNotEmpty) {
-                Create.name = name;
-                Create.path = _selectedFolderPath;
-                Create.venv = isVENV;
-                Create.installDep = isDep;
-                Create.adapter = buildSelectedAdapterOptions();
-                Create.driver = buildSelectedDriverOptions();
-                Create.template = dropDownValue;
-                Create.pluginDir = dropDownValuePluginDir;
-                DeployBot.writeReq();
-                DeployBot.createFolder(
-                  _selectedFolderPath,
-                  name,
-                  dropDownValue,
-                  dropDownValuePluginDir,
-                );
-                  _executeCommands();
-                  showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (BuildContext context) {
-                          return Material(
-                                color: Colors.transparent,
-                                child: Center(
-                                  child: AlertDialog(
-                                    title: const Text('正在安装Bot'),
-                                    content: SizedBox(
-                                      height: 600,
-                                      width: 800,
-                                      child: StreamBuilder<String>(
-                                        stream: _outputController.stream,
-                                        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                                          return Card(
-                                            color: const Color.fromARGB(255, 31, 28, 28),
-                                            child: SingleChildScrollView(
-                                              controller: _scrollController,
-                                              child: StreamBuilder<String>(
-                                                stream: _outputController.stream,
-                                                builder: (BuildContext context,
-                                                    AsyncSnapshot<String> snapshot) {
-                                                  if (snapshot.hasData) {
-                                                    final newText =
-                                                    _output.text + (snapshot.data ?? '');
-                                                    _output.text = newText;
-                                                  }
-                                                  return Card(
-                                                    color: const Color.fromARGB(255, 31, 28, 28),
-                                                    child: SingleChildScrollView(
-                                                      controller: _scrollController,
-                                                      child: Padding(
-                                                        padding: const EdgeInsets.all(8.0),
-                                                        child: Text(
-                                                          _output.text,
-                                                          style: const TextStyle(
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
+        onPressed: () {
+          if (_selectedFolderPath.toString() != 'null' &&
+              buildSelectedAdapterOptions().isNotEmpty &&
+              buildDriversCheckboxes().isNotEmpty) {
+            name = name;
+            String? path = _selectedFolderPath;
+            bool venv = isVENV;
+            bool installDep = isDep;
+            String adapter = buildSelectedAdapterOptions();
+            String driver = buildSelectedDriverOptions();
+            String template = dropDownValue;
+            String pluginDir = dropDownValuePluginDir;
+            DeployBot.writeReq(path, name, driver, adapter);
+            DeployBot.createFolder(
+              _selectedFolderPath,
+              name,
+              dropDownValue,
+              dropDownValuePluginDir,
+            );
+            _executeCommands(
+                path, name, driver, template, pluginDir, venv, installDep);
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+                return Material(
+                  color: Colors.transparent,
+                  child: Center(
+                    child: AlertDialog(
+                      title: const Text('正在安装Bot'),
+                      content: SizedBox(
+                        height: 600,
+                        width: 800,
+                        child: StreamBuilder<String>(
+                          stream: _outputController.stream,
+                          builder: (BuildContext context,
+                              AsyncSnapshot<String> snapshot) {
+                            return Card(
+                              color: const Color.fromARGB(255, 31, 28, 28),
+                              child: SingleChildScrollView(
+                                controller: _scrollController,
+                                child: StreamBuilder<String>(
+                                  stream: _outputController.stream,
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<String> snapshot) {
+                                    if (snapshot.hasData) {
+                                      final newText =
+                                          _output.text + (snapshot.data ?? '');
+                                      _output.text = newText;
+                                    }
+                                    return Card(
+                                      color:
+                                          const Color.fromARGB(255, 31, 28, 28),
+                                      child: SingleChildScrollView(
+                                        controller: _scrollController,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            _output.text,
+                                            style: const TextStyle(
+                                              color: Colors.white,
                                             ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () {
-                                        Navigator.of(context).popUntil((route) => route.isFirst);
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(
-                                            content: Text('安装进程已在后台运行，请耐心等待安装完成'),
-                                            duration: Duration(seconds: 3),
                                           ),
-                                        );
-                                        },
-                                        child: Text(
-                                          '关闭窗口',
-                                          style: TextStyle(color: Colors.red[400]),
                                         ),
-                                      )
-                                    ],
-                                  ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                        },
-                      );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('你是不是漏选了什么？'),
-                    duration: Duration(seconds: 3),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context)
+                                .popUntil((route) => route.isFirst);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('安装进程已在后台运行，请耐心等待安装完成'),
+                                duration: Duration(seconds: 3),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            '关闭窗口',
+                            style: TextStyle(color: Colors.red[400]),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 );
-              }
-            },
+              },
+            );
+          } else {
+            print(buildSelectedAdapterOptions());
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('你是不是漏选了什么？'),
+                duration: Duration(seconds: 3),
+              ),
+            );
+          }
+        },
         tooltip: '完成',
         shape: const CircleBorder(),
         child: const Icon(
@@ -532,7 +533,7 @@ class _MyCustomFormState extends State<CreateBot> {
           color: Colors.white,
         ),
       ),
-    floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

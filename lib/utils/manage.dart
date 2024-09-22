@@ -4,17 +4,12 @@ import 'package:NoneBotGUI/utils/global.dart';
 import 'package:NoneBotGUI/utils/userConfig.dart';
 
 class Bot {
-  static final File _configFile = File('$userDir/bots/${MainApp.gOnOpen}.json');
+  static final File _configFile = File('$userDir/bots/$gOnOpen.json');
 
   static Map<String, dynamic> _config() {
-    File file = File('$userDir/bots/${MainApp.gOnOpen}.json');
+    File file = File('$userDir/bots/$gOnOpen.json');
     String content = file.readAsStringSync();
     return jsonDecode(content);
-  }
-
-  /// 设置打开的bot
-  static void setOpen(name, time) {
-    MainApp.gOnOpen = '$name.$time';
   }
 
   /// 获取Bot名称
@@ -48,17 +43,17 @@ class Bot {
   }
 
   /// 获取Bot的Python Pid
-  static String pypid() {
-    File file = File('${Bot.path()}/nbgui_stdout.log');
+  static String pypid(path) {
+    File file = File('$path/nbgui_stdout.log');
     RegExp regex = RegExp(r'Started server process \[(\d+)\]');
     Match? match =
         regex.firstMatch(file.readAsStringSync(encoding: systemEncoding));
     if (match != null && match.groupCount >= 1) {
       String pid = match.group(1)!;
-      setPyPid(pid);
+      Bot.setPyPid(pid);
       return pid;
     } else {
-      setPyPid("Null");
+      Bot.setPyPid("Null");
       return "Null";
     }
   }
@@ -72,10 +67,9 @@ class Bot {
 
   /// 唤起Bot进程
   static Future run() async {
-    Directory.current = Directory(Bot.path());
-    File cfgFile = File('$userDir/bots/${MainApp.gOnOpen}.json');
-    final stdout = File('$path/nbgui_stdout.log');
-    final stderr = File('$path/nbgui_stderr.log');
+    File cfgFile = File('$userDir/bots/$gOnOpen.json');
+    final stdout = File('${Bot.path()}/nbgui_stdout.log');
+    final stderr = File('${Bot.path()}/nbgui_stderr.log');
     Process process = await Process.start('${UserConfig.nbcliPath()}', ['run'],
         workingDirectory: Bot.path());
     int pid = process.pid;
@@ -102,7 +96,7 @@ class Bot {
   ///结束bot进程
   static stop() async {
     //读取配置文件
-    File cfgFile = File('$userDir/bots/${MainApp.gOnOpen}.json');
+    File cfgFile = File('$userDir/bots/$gOnOpen.json');
     Map botInfo = json.decode(cfgFile.readAsStringSync());
     String pidString = botInfo['pid'].toString();
     int pid = int.parse(pidString);
@@ -113,33 +107,32 @@ class Bot {
     botInfo['pid'] = 'Null';
     cfgFile.writeAsStringSync(json.encode(botInfo));
     //如果平台为Windows则释放端口
-    if (Platform.isWindows) {
-      await Process.start(
-          "taskkill.exe", ['/f', '/pid', Bot.pypid().toString()],
-          runInShell: true);
-    }
-    setPyPid('Null');
+    //有bug,先注释掉（
+    //   if (Platform.isWindows) {
+    //     await Process.start(
+    //         "taskkill.exe", ['/f', '/pid', Bot.pypid(Bot.path()).toString()],
+    //         runInShell: true);
+    //   }
+    //   setPyPid('Null');
   }
 
   ///重命名Bot
-  static void renameBot(name) {
-    //暂存数据
+  static void rename(name) {
+    // 暂存数据
     String time = Bot.time();
     String oldName = Bot.name();
 
-    //重写配置文件
+    // 重写配置文件
     File botcfg = File('$userDir/bots/$oldName.$time.json');
     Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
     jsonMap['name'] = name;
     botcfg.writeAsStringSync(jsonEncode(jsonMap));
-
-    //重命名文件
     File('$userDir/bots/$oldName.$time.json')
         .rename('$userDir/bots/$name.$time.json');
 
-    //更新on_open.txt
-    String newData = "$name.$time";
-    MainApp.gOnOpen = newData;
+    // 重命名文件
+    gOnOpen = "";
+    //File('$userDir/bots/$oldName.$time.json').deleteSync();
   }
 
   ///获取stderr.log
@@ -156,7 +149,7 @@ class Bot {
 
   ///删除Bot
   static void delete() {
-    MainApp.gOnOpen = '';
+    gOnOpen = '';
     _configFile.delete();
   }
 
@@ -165,7 +158,7 @@ class Bot {
     String path = Bot.path();
     Directory(path).delete(recursive: true);
     _configFile.delete();
-    MainApp.gOnOpen = '';
+    gOnOpen = '';
   }
 
   ///导入Bot
@@ -219,9 +212,9 @@ class Bot {
 
 // 协议端相关操作
 class Protocol {
-  static final File _configFile = File('$userDir/bots/${MainApp.gOnOpen}.json');
+  static final File _configFile = File('$userDir/bots/${gOnOpen}.json');
   static Map<String, dynamic> _config() {
-    File file = File('$userDir/bots/${MainApp.gOnOpen}.json');
+    File file = File('$userDir/bots/${gOnOpen}.json');
     String content = file.readAsStringSync();
     return jsonDecode(content);
   }

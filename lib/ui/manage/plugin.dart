@@ -12,7 +12,6 @@ import 'package:flutter/services.dart';
 
 import 'package:window_manager/window_manager.dart';
 
-
 class PluginStore extends StatefulWidget {
   const PluginStore({super.key});
 
@@ -62,7 +61,8 @@ class _MyHomePageState extends State<PluginStore> {
         await http.get(Uri.parse('${UserConfig.mirror()}/plugins.json'));
     if (response.statusCode == 200) {
       setState(() {
-        String decodedBody = UserConfig.httpEncoding().decode(response.bodyBytes);
+        String decodedBody =
+            UserConfig.httpEncoding().decode(response.bodyBytes);
         final List<dynamic> jsonData = json.decode(decodedBody);
         data = jsonData.map((item) => item as Map<String, dynamic>).toList();
         search = data;
@@ -82,7 +82,9 @@ class _MyHomePageState extends State<PluginStore> {
         search = data.where((plugin) {
           return plugin['name'].toLowerCase().contains(value.toLowerCase()) ||
               plugin['desc'].toLowerCase().contains(value.toLowerCase()) ||
-              plugin['module_name'].toLowerCase().contains(value.toLowerCase()) ||
+              plugin['module_name']
+                  .toLowerCase()
+                  .contains(value.toLowerCase()) ||
               plugin['author'].toLowerCase().contains(value.toLowerCase());
         }).toList();
       });
@@ -120,21 +122,21 @@ class _MyHomePageState extends State<PluginStore> {
                       iconSize: 20,
                       tooltip: "最小化",
                     ),
-                    appWindow.isMaximized ?
-                      IconButton(
-                        icon: const Icon(Icons.rectangle_outlined),
-                        color: Colors.white,
-                        onPressed: () => appWindow.restore(),
-                        iconSize: 20,
-                        tooltip: "恢复大小",
-                      ) :
-                    IconButton(
-                        icon: const Icon(Icons.rectangle_outlined),
-                        color: Colors.white,
-                        onPressed: () => appWindow.maximize(),
-                        iconSize: 20,
-                        tooltip: "最大化",
-                      ),
+                    appWindow.isMaximized
+                        ? IconButton(
+                            icon: const Icon(Icons.rectangle_outlined),
+                            color: Colors.white,
+                            onPressed: () => appWindow.restore(),
+                            iconSize: 20,
+                            tooltip: "恢复大小",
+                          )
+                        : IconButton(
+                            icon: const Icon(Icons.rectangle_outlined),
+                            color: Colors.white,
+                            onPressed: () => appWindow.maximize(),
+                            iconSize: 20,
+                            tooltip: "最大化",
+                          ),
                     IconButton(
                       icon: const Icon(Icons.close_rounded),
                       color: Colors.white,

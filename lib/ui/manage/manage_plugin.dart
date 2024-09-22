@@ -44,9 +44,7 @@ class _HomeScreenState extends State<ManagePlugin> {
                 child: AppBar(
                   title: const Text(
                     '插件管理',
-                    style: TextStyle(
-                      color: Colors.white
-                    ),
+                    style: TextStyle(color: Colors.white),
                   ),
                   actions: <Widget>[
                     IconButton(
@@ -56,21 +54,21 @@ class _HomeScreenState extends State<ManagePlugin> {
                       iconSize: 20,
                       tooltip: "最小化",
                     ),
-                    appWindow.isMaximized ?
-                      IconButton(
-                        icon: const Icon(Icons.rectangle_outlined),
-                        color: Colors.white,
-                        onPressed: () => appWindow.restore(),
-                        iconSize: 20,
-                        tooltip: "恢复大小",
-                      ) :
-                    IconButton(
-                        icon: const Icon(Icons.rectangle_outlined),
-                        color: Colors.white,
-                        onPressed: () => appWindow.maximize(),
-                        iconSize: 20,
-                        tooltip: "最大化",
-                      ),
+                    appWindow.isMaximized
+                        ? IconButton(
+                            icon: const Icon(Icons.rectangle_outlined),
+                            color: Colors.white,
+                            onPressed: () => appWindow.restore(),
+                            iconSize: 20,
+                            tooltip: "恢复大小",
+                          )
+                        : IconButton(
+                            icon: const Icon(Icons.rectangle_outlined),
+                            color: Colors.white,
+                            onPressed: () => appWindow.maximize(),
+                            iconSize: 20,
+                            tooltip: "最大化",
+                          ),
                     IconButton(
                       icon: const Icon(Icons.close_rounded),
                       color: Colors.white,

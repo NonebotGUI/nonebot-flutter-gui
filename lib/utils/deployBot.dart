@@ -6,14 +6,14 @@ import 'package:NoneBotGUI/utils/userConfig.dart';
 ///部署Bot时的相关操作
 class DeployBot {
   ///写入requirements.txt
-  static writeReq() {
-    String drivers = Create.driver.toLowerCase();
+  static writeReq(path, name, driver, adapter) {
+    String drivers = driver.toLowerCase();
     String driverlist =
         drivers.split(',').map((driver) => 'nonebot2[$driver]').join(',');
     driverlist = driverlist.replaceAll(',', '\n');
 
     RegExp regex = RegExp(r'\(([^)]+)\)');
-    Iterable<Match> matches = regex.allMatches(Create.adapter);
+    Iterable<Match> matches = regex.allMatches(adapter);
     String adapterlist = '';
     for (Match match in matches) {
       adapterlist += '${match.group(1)}\n';
@@ -66,11 +66,11 @@ class DeployBot {
     if (venv) {
       if (Platform.isLinux || Platform.isMacOS) {
         String createvenv =
-            '${UserConfig.pythonPath()} -m venv $path/$name/.venv --prompt ${Create.name}';
+            '${UserConfig.pythonPath()} -m venv $path/$name/.venv --prompt $name';
         return createvenv;
       } else if (Platform.isWindows) {
         String createvenv =
-            '${UserConfig.pythonPath()} -m venv $path\\$name\\.venv --prompt ${Create.name}';
+            '${UserConfig.pythonPath()} -m venv $path\\$name\\.venv --prompt $name';
         return createvenv;
       }
     } else {
@@ -103,10 +103,8 @@ class DeployBot {
     }
     if (template == 'simple(插件开发者)') {
       if (pluginDir == '在[bot名称]/[bot名称]下') {
-        Directory dirSrc =
-            Directory('$path/$name/$name');
-        Directory dirSrcPlugins =
-            Directory('$path/$name/$name/plugins');
+        Directory dirSrc = Directory('$path/$name/$name');
+        Directory dirSrcPlugins = Directory('$path/$name/$name/plugins');
         if (!dirSrc.existsSync()) {
           dirSrc.createSync();
         }
@@ -115,8 +113,7 @@ class DeployBot {
         }
       } else if (pluginDir == '在src文件夹下') {
         Directory dirSrc = Directory('$path/$name/src');
-        Directory dirSrcPlugins =
-            Directory('$path/$name/src/plugins');
+        Directory dirSrcPlugins = Directory('$path/$name/src/plugins');
         if (!dirSrc.existsSync()) {
           dirSrc.createSync();
         }
@@ -157,7 +154,7 @@ class DeployBot {
   }
 
   ///写入pyproject.toml
-  static writePyProject() {
+  static writePyProject(path, name, template, pluginDir) {
     File file = File('$userDir/cache_adapters.txt');
     String adapters = file.readAsStringSync();
 
@@ -173,12 +170,12 @@ class DeployBot {
             '{ name = "${adapter.replaceAll('nonebot-adapter-', '').replaceAll('.', ' ')}", module_name = "${adapter.replaceAll('-', '.').replaceAll('adapter', 'adapters')}" }')
         .join(',');
 
-    if (Create.template == 'bootstrap(初学者或用户)') {
+    if (template == 'bootstrap(初学者或用户)') {
       String pyproject = '''
     [project]
-    name = "${Create.name}"
+    name = "$name"
     version = "0.1.0"
-    description = "${Create.name}"
+    description = "$name"
     readme = "README.md"
     requires-python = ">=3.9, <4.0"
 
@@ -190,21 +187,21 @@ class DeployBot {
     plugin_dirs = []
     builtin_plugins = ["echo"]
   ''';
-      File filePyproject = File('${Create.path}/${Create.name}/pyproject.toml');
+      File filePyproject = File('$path/$name/pyproject.toml');
       filePyproject.writeAsStringSync(pyproject.replaceAll(
           ',{ name = "", module_name = "" }',
           ''.replaceAll('adapter', 'adapters')));
       String echo = "echo 写入pyproject.toml";
       return echo;
-    } else if (Create.template == 'simple(插件开发者)') {
-      String dir = Create.pluginDir == '在[bot名称]/[bot名称]下'
-          ? '"${Create.name}/plugins"'
+    } else if (template == 'simple(插件开发者)') {
+      String dir = pluginDir == '在[bot名称]/[bot名称]下'
+          ? '"$name/plugins"'
           : '"/src/plugins"';
       String pyproject = '''
     [project]
-    name = "${Create.name}"
+    name = "$name"
     version = "0.1.0"
-    description = "${Create.name}"
+    description = "$name"
     readme = "README.md"
     requires-python = ">=3.8, <4.0"
 
@@ -216,7 +213,7 @@ class DeployBot {
     plugin_dirs = [$dir]
     builtin_plugins = ["echo"]
   ''';
-      File filePyproject = File('${Create.path}/${Create.name}/pyproject.toml');
+      File filePyproject = File('$path/$name/pyproject.toml');
       filePyproject.writeAsStringSync(pyproject.replaceAll(
           ',{ name = "", module_name = "" }',
           ''.replaceAll('adapter', 'adapters')));

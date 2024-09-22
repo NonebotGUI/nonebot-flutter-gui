@@ -18,7 +18,6 @@ class _MoreState extends State<About> {
   final int tapsToReveal = 9;
   bool showImage = false;
 
-
   void _handleTap() {
     setState(() {
       tapCount++;
@@ -39,186 +38,183 @@ class _MoreState extends State<About> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(children: <Widget>[
-            Center(
-              child: Image.asset(
-                'lib/assets/logo.png',
-                width: MediaQuery.of(context).size.width * 0.2,
-                height: null,
-                fit: BoxFit.contain,
-              ),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(children: <Widget>[
+        Center(
+          child: Image.asset(
+            'lib/assets/logo.png',
+            width: MediaQuery.of(context).size.width * 0.2,
+            height: null,
+            fit: BoxFit.contain,
+          ),
+        ),
+        Center(
+            child: Text(
+          "Re:NoneBot GUI",
+          //TODO: Deprecated API use, please use the latest API for secure
+          style: TextStyle(
+              fontSize: MediaQuery.of(context).textScaleFactor * 35.0,
+              fontWeight: FontWeight.bold),
+        )),
+        const Center(
+          child: Text(
+            "_✨新一代NoneBot图形化界面✨_",
+          ),
+        ),
+        const Divider(
+          height: 20,
+          thickness: 2,
+          indent: 20,
+          endIndent: 20,
+          color: Colors.grey,
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        Row(children: <Widget>[
+          const Expanded(
+              child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '软件版本',
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            Center(
-                child: Text(
-              "NoneBot GUI",
-              //TODO: Deprecated API use, please use the latest API for secure
-              style: TextStyle(
-                  fontSize: MediaQuery.of(context).textScaleFactor * 35.0,
-                  fontWeight: FontWeight.bold),
-            )),
-            const Center(
+          )),
+          Expanded(
+              child: Align(
+            alignment: Alignment.centerRight,
+            child: InkWell(
               child: Text(
-                "_✨新一代NoneBot图形化界面✨_",
-              ),
-            ),
-            const Divider(
-              height: 20,
-              thickness: 2,
-              indent: 20,
-              endIndent: 20,
-              color: Colors.grey,
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(children: <Widget>[
-              const Expanded(
-                  child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  '软件版本',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              )),
-              Expanded(
-                  child: Align(
-                alignment: Alignment.centerRight,
-                child: InkWell(
-                  child: Text(
-                    MainApp.version.replaceAll('v', '').replaceAll('+fix', '.')
-                  ),
-                  onTap: () {
-                    if (showImage) {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (BuildContext context) {
-                          return Material(
-                            color: Colors.transparent,
-                            child: Center(
-                              child: AlertDialog(
-                                title: Row(
-                                  children: <Widget>[
-                                    Image.asset(
-                                      'lib/assets/loading.gif',
-                                      width: 180 * 0.15,
-                                      height: 180 * 0.15,
-                                    ),
-                                    const Text('UWU')
-                                  ],
+                  MainApp.version.replaceAll('v', '').replaceAll('+fix', '.')),
+              onTap: () {
+                if (showImage) {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return Material(
+                        color: Colors.transparent,
+                        child: Center(
+                          child: AlertDialog(
+                            title: Row(
+                              children: <Widget>[
+                                Image.asset(
+                                  'lib/assets/loading.gif',
+                                  width: 180 * 0.15,
+                                  height: 180 * 0.15,
                                 ),
-                                content: InkWell(
-                                  child: Image.asset('lib/assets/colorEgg.png'),
-                                  onTap: () {
-                                    _resetCounter();
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ),
+                                const Text('UWU')
+                              ],
                             ),
-                          );
-                        },
+                            content: InkWell(
+                              child: Image.asset('lib/assets/colorEgg.png'),
+                              onTap: () {
+                                _resetCounter();
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ),
+                        ),
                       );
-                    } else {
-                      _handleTap();
-                    }
-                  },
-                ),
-              ))
-            ]),
-            const SizedBox(
-              height: 16,
+                    },
+                  );
+                } else {
+                  _handleTap();
+                }
+              },
             ),
-            Row(
-              children: <Widget>[
-                const Expanded(
-                    child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '平台',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                )),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: Text(Platform.operatingSystem[0].toUpperCase() +
-                        Platform.operatingSystem.substring(1)),
-                  ),
-                )
-              ],
+          ))
+        ]),
+        const SizedBox(
+          height: 16,
+        ),
+        Row(
+          children: <Widget>[
+            const Expanded(
+                child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '平台',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            )),
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Text(Platform.operatingSystem[0].toUpperCase() +
+                    Platform.operatingSystem.substring(1)),
+              ),
+            )
+          ],
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Row(children: <Widget>[
+          const Expanded(
+              child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '当前Python环境',
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(
-              height: 20,
+          )),
+          Expanded(
+              child: Align(
+            alignment: Alignment.centerRight,
+            child: FutureBuilder<String>(
+              future: getPyVer(),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.hasData) {
+                  return Text(snapshot.data.toString());
+                } else if (snapshot.hasError) {
+                  return const Text('你似乎还没安装Python？');
+                } else {
+                  return const Text('获取中...');
+                }
+              },
             ),
-            Row(children: <Widget>[
-              const Expanded(
-                  child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  '当前Python环境',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              )),
-              Expanded(
-                  child: Align(
-                alignment: Alignment.centerRight,
-                child: FutureBuilder<String>(
-                  future: getPyVer(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.hasData) {
-                      return Text(snapshot.data.toString());
-                    } else if (snapshot.hasError) {
-                      return const Text('你似乎还没安装Python？');
-                    } else {
-                      return const Text('获取中...');
-                    }
-                  },
-                ),
-              ))
-            ]),
-            const SizedBox(
-              height: 16,
+          ))
+        ]),
+        const SizedBox(
+          height: 16,
+        ),
+        Row(children: <Widget>[
+          const Expanded(
+              child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '当前nb-cli版本',
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            Row(children: <Widget>[
-              const Expanded(
-                  child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  '当前nb-cli版本',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              )),
-              Expanded(
-                  child: Align(
-                alignment: Alignment.centerRight,
-                child: FutureBuilder<String>(
-                  future: getnbcliver(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<String> snapshot) {
-                    if (snapshot.hasData) {
-                      return Text(
-                          snapshot.data.toString().replaceAll('nb: ', ''));
-                    } else if (snapshot.hasError) {
-                      return const Text('你似乎还没安装nb-cli？');
-                    } else {
-                      return const Text('获取中...');
-                    }
-                  },
-                ),
-              ))
-            ]),
-            const SizedBox(
-              height: 16,
+          )),
+          Expanded(
+              child: Align(
+            alignment: Alignment.centerRight,
+            child: FutureBuilder<String>(
+              future: getnbcliver(),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.hasData) {
+                  return Text(snapshot.data.toString().replaceAll('nb: ', ''));
+                } else if (snapshot.hasError) {
+                  return const Text('你似乎还没安装nb-cli？');
+                } else {
+                  return const Text('获取中...');
+                }
+              },
             ),
-            Center(
-              child:             IconButton(
+          ))
+        ]),
+        const SizedBox(
+          height: 16,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            IconButton(
               onPressed: () {
                 Clipboard.setData(const ClipboardData(
-                    text:
-                        'https://github.com/NoneBotGUI/nonebot-flutter-gui'));
+                    text: 'https://github.com/NoneBotGUI/nonebot-flutter-gui'));
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text('项目仓库链接已复制到剪贴板'),
                   duration: Duration(seconds: 3),
@@ -228,8 +224,22 @@ class _MoreState extends State<About> {
               tooltip: '项目仓库地址',
               iconSize: 30,
             ),
-            )
-          ]),
-        ));
+            IconButton(
+              onPressed: () {
+                Clipboard.setData(
+                    const ClipboardData(text: 'https://doc.nbgui.top'));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('已复制到剪贴板'),
+                  duration: Duration(seconds: 3),
+                ));
+              },
+              icon: const Icon(Icons.book_rounded),
+              tooltip: '文档地址',
+              iconSize: 30,
+            ),
+          ],
+        )
+      ]),
+    ));
   }
 }

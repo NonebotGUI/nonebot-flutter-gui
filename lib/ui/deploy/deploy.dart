@@ -9,8 +9,6 @@ import 'package:NoneBotGUI/utils/global.dart';
 import 'package:archive/archive_io.dart';
 import 'dart:io';
 
-
-
 class Deploy extends StatefulWidget {
   const Deploy({super.key});
 
@@ -28,56 +26,53 @@ class _DeployState extends State<Deploy> {
   double _dlProgress = 0;
   bool isDeploying = false;
 
-
-
-
-
-Future<void> download() async {
-  Dio dio = Dio();
-  try {
-    setState(() {
-      _couldDeploy = true;
-      _isDownloading = true;
-    });
-    Response response = await dio.download(
-      dropDownValueDL,
-      '${FastDeploy.path}/${dropDownValueDL.split('/').last}',
-      onReceiveProgress: (int received, int total) {
-        setState(() {
-          _dlProgress = (received / total).toDouble();
-        });
-      },
-    );
-
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('协议端下载完成')),
-      );
-      await extractFileToDisk('${FastDeploy.path}/${dropDownValueDL.split('/').last}', '${FastDeploy.path}/Protocol');
-      getProtocolFileName();
-      String? dirPath = await getExtDir(FastDeploy.protocolFileName, '${FastDeploy.path}/Protocol');
-      if (dirPath != null) {
-        FastDeploy.extDir = dirPath.toString().replaceAll('\\', '\\\\');
+  Future<void> download() async {
+    Dio dio = Dio();
+    try {
+      setState(() {
         _couldDeploy = true;
-      } else {
+        _isDownloading = true;
+      });
+      Response response = await dio.download(
+        dropDownValueDL,
+        '${FastDeploy.path}/${dropDownValueDL.split('/').last}',
+        onReceiveProgress: (int received, int total) {
+          setState(() {
+            _dlProgress = (received / total).toDouble();
+          });
+        },
+      );
+
+      if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('未能找到协议端目录')),
+          const SnackBar(content: Text('协议端下载完成')),
         );
+        await extractFileToDisk(
+            '${FastDeploy.path}/${dropDownValueDL.split('/').last}',
+            '${FastDeploy.path}/Protocol');
+        getProtocolFileName();
+        String? dirPath = await getExtDir(
+            FastDeploy.protocolFileName, '${FastDeploy.path}/Protocol');
+        if (dirPath != null) {
+          FastDeploy.extDir = dirPath.toString().replaceAll('\\', '\\\\');
+          _couldDeploy = true;
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('未能找到协议端目录')),
+          );
+        }
       }
+      await DeployProtocol.writeConfig();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('下载失败: $e')),
+      );
+    } finally {
+      setState(() {
+        _isDownloading = false;
+      });
     }
-    await DeployProtocol.writeConfig();
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('下载失败: $e')),
-    );
-  } finally {
-    setState(() {
-      _isDownloading = false;
-    });
   }
-}
-
-
 
   void _executeCommands(name, path, venv, cmd, port) async {
     setState(() {
@@ -94,8 +89,10 @@ Future<void> download() async {
       'echo 开始安装依赖',
       DeployProtocol.writeReq(name, FastDeploy.adapter, FastDeploy.driver),
       DeployBot.install(FastDeploy.selectPath, name, venv, true),
-      DeployBot.writeENV(FastDeploy.selectPath, name, FastDeploy.wsPort, FastDeploy.template, FastDeploy.driver),
-      DeployBot.writebot(name, FastDeploy.selectPath, "deployed", FastDeploy.extDir, cmd),
+      DeployBot.writeENV(FastDeploy.selectPath, name, FastDeploy.wsPort,
+          FastDeploy.template, FastDeploy.driver),
+      DeployBot.writebot(
+          name, FastDeploy.selectPath, "deployed", FastDeploy.extDir, cmd),
       'echo 部署完成，可退出'
     ];
 
@@ -111,12 +108,30 @@ Future<void> download() async {
           .listen((data) => _outputController.add(data));
       await process.exitCode;
     }
+    FastDeploy.adapter = '';
+    FastDeploy.driver = '';
+    FastDeploy.extDir = '';
+    FastDeploy.name = '';
+    FastDeploy.needQQ = false;
+    FastDeploy.path = '';
+    FastDeploy.pluginDir = '';
+    FastDeploy.protocolFileName = '';
+    FastDeploy.selectPath = '';
+    FastDeploy.template = '';
+    FastDeploy.venv = true;
+    FastDeploy.wsPort = '';
+    FastDeploy.wsHost = '';
+    FastDeploy.cmd = '';
+    FastDeploy.dlLink = [];
+    FastDeploy.botQQ = '';
+    FastDeploy.botConfig = '';
+    FastDeploy.configName = '';
+    FastDeploy.configPath = '';
 
     setState(() {
       isDeploying = false;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +143,8 @@ Future<void> download() async {
           children: <Widget>[
             const Row(
               children: [
-                Text("选择适合你系统的压缩包", style: TextStyle(fontWeight: FontWeight.bold)),
+                Text("选择适合你系统的压缩包",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
             const SizedBox(height: 8),
@@ -173,15 +189,17 @@ Future<void> download() async {
                                 )
                               : ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('开始下载，请注意：部署过程中有可能出现应用程序卡住的现象，请不要关闭程序，耐心等待部署完成'),
+                                    content: Text(
+                                        '开始下载，请注意：部署过程中有可能出现应用程序卡住的现象，请不要关闭程序，耐心等待部署完成'),
                                     duration: Duration(seconds: 5),
                                   ),
                                 );
-                                download();
+                          download();
                         },
                         child: const Text(
                           '下载',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -192,7 +210,8 @@ Future<void> download() async {
             const SizedBox(height: 8),
             Row(
               children: [
-                Text("下载进度[${(_dlProgress * 100).toInt()}%]", style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text("下载进度[${(_dlProgress * 100).toInt()}%]",
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
             const SizedBox(height: 4),
@@ -230,7 +249,12 @@ Future<void> download() async {
                                   setState(() {
                                     isDeploying = true;
                                   });
-                                  _executeCommands(FastDeploy.name, FastDeploy.path, FastDeploy.venv, FastDeploy.cmd, FastDeploy.wsPort);
+                                  _executeCommands(
+                                      FastDeploy.name,
+                                      FastDeploy.path,
+                                      FastDeploy.venv,
+                                      FastDeploy.cmd,
+                                      FastDeploy.wsPort);
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(content: Text('请先下载协议端！')),
@@ -246,7 +270,9 @@ Future<void> download() async {
                               ),
                               child: const Text(
                                 "部署",
-                                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
                               ),
                             ),
                           ),
@@ -337,7 +363,8 @@ Future<void> download() async {
                                   alignment: Alignment.topCenter,
                                   child: Text(
                                     '控制台输出',
-                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],
@@ -346,35 +373,37 @@ Future<void> download() async {
                               height: size.height * 0.555,
                               width: size.width * 0.64,
                               child: StreamBuilder<String>(
+                                stream: _outputController.stream,
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<String> snapshot) {
+                                  return Card(
+                                    color:
+                                        const Color.fromARGB(255, 31, 28, 28),
+                                    child: SingleChildScrollView(
+                                      child: StreamBuilder<String>(
                                         stream: _outputController.stream,
-                                        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-                                          return Card(
-                                            color: const Color.fromARGB(255, 31, 28, 28),
-                                            child: SingleChildScrollView(
-                                              child: StreamBuilder<String>(
-                                                stream: _outputController.stream,
-                                                builder: (BuildContext context,
-                                                    AsyncSnapshot<String> snapshot) {
-                                                  if (snapshot.hasData) {
-                                                    final newText =
-                                                    _output.text + (snapshot.data ?? '');
-                                                    _output.text = newText;
-                                                  }
-                                                  return  Padding(
-                                                        padding: const EdgeInsets.all(8.0),
-                                                        child: Text(
-                                                          _output.text,
-                                                          style: const TextStyle(
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                      );
-                                                },
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<String> snapshot) {
+                                          if (snapshot.hasData) {
+                                            final newText = _output.text +
+                                                (snapshot.data ?? '');
+                                            _output.text = newText;
+                                          }
+                                          return Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              _output.text,
+                                              style: const TextStyle(
+                                                color: Colors.white,
                                               ),
                                             ),
                                           );
                                         },
                                       ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ],
                         ),

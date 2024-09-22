@@ -1,8 +1,6 @@
-
 import 'package:NoneBotGUI/utils/manage.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-
 
 class ImportBot extends StatefulWidget {
   const ImportBot({super.key});
@@ -26,13 +24,9 @@ class _HomeScreenState extends State<ImportBot> {
     }
   }
 
-
   bool withProtocol = false;
   String? _selectedProtocolPath;
   String _cmd = '';
-
-
-
 
   void _toggleProtocol(bool newValue) {
     setState(() {
@@ -54,7 +48,6 @@ class _HomeScreenState extends State<ImportBot> {
     myController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -179,17 +172,16 @@ class _HomeScreenState extends State<ImportBot> {
                         ),
                         Expanded(
                           child: Align(
-                            alignment: Alignment.centerRight,
-                            child: SizedBox(
-                        width: 150,
-                        child: TextField(
-                        controller: myCmdController,
-                        onChanged: (value) {
-                          setState(() => _cmd = value);
-                        },
-                      ),
-                      )
-                          ),
+                              alignment: Alignment.centerRight,
+                              child: SizedBox(
+                                width: 150,
+                                child: TextField(
+                                  controller: myCmdController,
+                                  onChanged: (value) {
+                                    setState(() => _cmd = value);
+                                  },
+                                ),
+                              )),
                         ),
                       ],
                     )
@@ -200,32 +192,33 @@ class _HomeScreenState extends State<ImportBot> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              if (_selectedFolderPath.toString() != 'null') {
-                Bot.import(name, _selectedFolderPath.toString(), withProtocol, _selectedProtocolPath, _cmd);
-                Navigator.of(context).popUntil((route) => route.isFirst);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('导入完成'),
-                    duration: Duration(seconds: 3),
-                  ),
-                );
-                setState(() {
-                  name = 'ImportedBot';
-                  _selectedProtocolPath = null;
-                  _selectedFolderPath = null;
-                  withProtocol = false;
-                });
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('你还没有选择Bot的根目录！'),
-                    duration: Duration(seconds: 3),
-                  ),
-                );
-              }
-            },
-            tooltip: "导入",
+        onPressed: () {
+          if (_selectedFolderPath.toString() != 'null') {
+            Bot.import(name, _selectedFolderPath.toString(), withProtocol,
+                _selectedProtocolPath, _cmd);
+            Navigator.of(context).popUntil((route) => route.isFirst);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('导入完成'),
+                duration: Duration(seconds: 3),
+              ),
+            );
+            setState(() {
+              name = 'ImportedBot';
+              _selectedProtocolPath = null;
+              _selectedFolderPath = null;
+              withProtocol = false;
+            });
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('你还没有选择Bot的根目录！'),
+                duration: Duration(seconds: 3),
+              ),
+            );
+          }
+        },
+        tooltip: "导入",
         shape: const CircleBorder(),
         child: const Icon(
           Icons.done_rounded,

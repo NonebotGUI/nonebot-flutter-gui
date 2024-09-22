@@ -11,8 +11,6 @@ import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-
-
 class Deployment extends StatefulWidget {
   const Deployment({super.key});
 
@@ -21,15 +19,17 @@ class Deployment extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<Deployment> {
-
-
   final myController = TextEditingController();
   final hostController = TextEditingController();
   final portController = TextEditingController();
   final qqController = TextEditingController();
   final List<String> template = ['bootstrap(初学者或用户)', 'simple(插件开发者)'];
   final List<String> pluginDir = ['在[bot名称]/[bot名称]下', '在src文件夹下'];
-  final List<String> mirror = ['https://github.com', 'https://hub.xb6868.com','https://mirror.ghproxy.com/https://github.com'];
+  final List<String> mirror = [
+    'https://github.com',
+    'https://hub.xb6868.com',
+    'https://mirror.ghproxy.com/https://github.com'
+  ];
   late String dropDownValue = template.first;
   late String dropDownValuePluginDir = pluginDir.first;
   late String dropDownValueMirror = 'https://github.com';
@@ -47,8 +47,6 @@ class _HomeScreenState extends State<Deployment> {
   bool couldNext = false;
   Map<String, dynamic> apiContent = {};
 
-
-
   Future<void> _pickFolder() async {
     String? folderPath = await FilePicker.platform.getDirectoryPath();
     if (folderPath != null) {
@@ -57,7 +55,6 @@ class _HomeScreenState extends State<Deployment> {
       });
     }
   }
-
 
   @override
   void dispose() {
@@ -72,6 +69,7 @@ class _HomeScreenState extends State<Deployment> {
       isVENV = newValue;
     });
   }
+
   @override
   void initState() {
     super.initState();
@@ -86,30 +84,39 @@ class _HomeScreenState extends State<Deployment> {
     fetchData();
   }
 
-
-
   Future<void> fetchData() async {
-    final response =
-        await http.get(Uri.parse('https://api.zobyic.top/api/nbgui/deploy/detail?id=${FastDeploy.id}'));
+    final response = await http.get(Uri.parse(
+        'https://api.zobyic.top/api/nbgui/deploy/detail?id=${FastDeploy.id}'));
     if (response.statusCode == 200) {
       couldNext = true;
       setState(() {
-        String decodedBody = UserConfig.httpEncoding().decode(response.bodyBytes);
+        String decodedBody =
+            UserConfig.httpEncoding().decode(response.bodyBytes);
         Map<String, dynamic> jsonMap = json.decode(decodedBody);
         raw = json.encode(jsonMap);
         tip = jsonMap['tip'];
         name = jsonMap['name'];
         FastDeploy.adapter = jsonMap['adapter'];
         drivers = jsonMap['drivers'];
-        FastDeploy.driver = drivers.toString().replaceAll('[', '').replaceAll(']', '').replaceAll(' ', '');
+        FastDeploy.driver = drivers
+            .toString()
+            .replaceAll('[', '')
+            .replaceAll(']', '')
+            .replaceAll(' ', '');
         configRaw = jsonMap['config'];
         var botConfigRaw = json.encode(configRaw);
         var decodedJson = jsonDecode(botConfigRaw);
-        FastDeploy.botConfig = const JsonEncoder.withIndent('   ').convert(decodedJson);
-        dlLinkRaw = jsonMap['dl'].toString().replaceAll('[', '').replaceAll(']', '');
-        FastDeploy.dlLink = dlLinkRaw.toString().split('/').last
-                                      .split(',').map((item) => item.trim())
-                                      .toList();
+        FastDeploy.botConfig =
+            const JsonEncoder.withIndent('   ').convert(decodedJson);
+        dlLinkRaw =
+            jsonMap['dl'].toString().replaceAll('[', '').replaceAll(']', '');
+        FastDeploy.dlLink = dlLinkRaw
+            .toString()
+            .split('/')
+            .last
+            .split(',')
+            .map((item) => item.trim())
+            .toList();
         FastDeploy.extDir = jsonMap['dir'];
         FastDeploy.needQQ = jsonMap['needQQNum'];
         FastDeploy.configName = jsonMap['configName'];
@@ -120,6 +127,7 @@ class _HomeScreenState extends State<Deployment> {
       throw Exception('Failed to load data');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,10 +152,10 @@ class _HomeScreenState extends State<Deployment> {
                 },
               ),
               const SizedBox(height: 12),
-              Text(
-                "本模板Tip:${tip.isEmpty ? '无' : tip}"
+              Text("本模板Tip:${tip.isEmpty ? '无' : tip}"),
+              const SizedBox(
+                height: 12,
               ),
-              const SizedBox(height: 12,),
               Row(
                 children: <Widget>[
                   const Expanded(
@@ -196,28 +204,31 @@ class _HomeScreenState extends State<Deployment> {
                       ),
                     )),
                     Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: DropdownButton<String>(
-                          value: dropDownValuePluginDir,
-                          icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                          elevation: 16,
-                          onChanged: (String? value) {
-                            setState(() {
-                              dropDownValuePluginDir = value!;
-                            });
-                          },
-                          items: pluginDir
-                              .map<DropdownMenuItem<String>>(
-                                (String value) => DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value, maxLines: 1 ,overflow: TextOverflow.fade,),
+                        child: Align(
+                      alignment: Alignment.centerRight,
+                      child: DropdownButton<String>(
+                        value: dropDownValuePluginDir,
+                        icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                        elevation: 16,
+                        onChanged: (String? value) {
+                          setState(() {
+                            dropDownValuePluginDir = value!;
+                          });
+                        },
+                        items: pluginDir
+                            .map<DropdownMenuItem<String>>(
+                              (String value) => DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.fade,
                                 ),
-                              )
-                              .toList(),
-                        ),
-                        )
-                    ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    )),
                   ],
                 ),
               ),
@@ -244,10 +255,13 @@ class _HomeScreenState extends State<Deployment> {
                         elevation: 16,
                         onChanged: (String? value) {
                           setState(() => dropDownValueMirror = value!);
-                          FastDeploy.dlLink = dlLinkRaw.toString().replaceAll('https://github.com', dropDownValueMirror)
-                                    .split(',').map((item) => item.trim())
-                                    .toList();
-
+                          FastDeploy.dlLink = dlLinkRaw
+                              .toString()
+                              .replaceAll(
+                                  'https://github.com', dropDownValueMirror)
+                              .split(',')
+                              .map((item) => item.trim())
+                              .toList();
                         },
                         items: mirror
                             .map<DropdownMenuItem<String>>(
@@ -311,7 +325,9 @@ class _HomeScreenState extends State<Deployment> {
                   ),
                 ],
               ),
-              const SizedBox(height: 8,),
+              const SizedBox(
+                height: 8,
+              ),
               Row(
                 children: <Widget>[
                   const Expanded(
@@ -322,24 +338,25 @@ class _HomeScreenState extends State<Deployment> {
                   ),
                   Expanded(
                     child: Align(
-                      alignment: Alignment.centerRight,
-                      child: SizedBox(
-                        width: 150,
-                        child: TextField(
-                        controller: hostController,
-                        decoration: const InputDecoration(
-                          hintText: '127.0.0.1',
-                        ),
-                        onChanged: (value) {
-                          setState(() => FastDeploy.wsHost = value);
-                        },
-                      ),
-                      )
-                    ),
+                        alignment: Alignment.centerRight,
+                        child: SizedBox(
+                          width: 150,
+                          child: TextField(
+                            controller: hostController,
+                            decoration: const InputDecoration(
+                              hintText: '127.0.0.1',
+                            ),
+                            onChanged: (value) {
+                              setState(() => FastDeploy.wsHost = value);
+                            },
+                          ),
+                        )),
                   ),
                 ],
               ),
-              const SizedBox(height: 8,),
+              const SizedBox(
+                height: 8,
+              ),
               Row(
                 children: <Widget>[
                   const Expanded(
@@ -350,25 +367,25 @@ class _HomeScreenState extends State<Deployment> {
                   ),
                   Expanded(
                     child: Align(
-                      alignment: Alignment.centerRight,
-                      child: SizedBox(
-                        width: 150,
-                        child: TextField(
-                        controller: portController,
-                        keyboardType: TextInputType.number,
-                        //只能输入数字
-                        inputFormatters: [
-                            FilteringTextInputFormatter(RegExp("[0-9.]"), allow: true),
-                        ],
-                        decoration: const InputDecoration(
-                          hintText: '8080',
-                        ),
-                        onChanged: (value) {
-                          setState(() => FastDeploy.wsPort = value);
-                        },
-                      ),
-                      )
-                    ),
+                        alignment: Alignment.centerRight,
+                        child: SizedBox(
+                          width: 150,
+                          child: TextField(
+                            controller: portController,
+                            keyboardType: TextInputType.number,
+                            //只能输入数字
+                            inputFormatters: [
+                              FilteringTextInputFormatter(RegExp("[0-9.]"),
+                                  allow: true),
+                            ],
+                            decoration: const InputDecoration(
+                              hintText: '8080',
+                            ),
+                            onChanged: (value) {
+                              setState(() => FastDeploy.wsPort = value);
+                            },
+                          ),
+                        )),
                   ),
                 ],
               ),
@@ -384,24 +401,24 @@ class _HomeScreenState extends State<Deployment> {
                     ),
                     Expanded(
                       child: Align(
-                        alignment: Alignment.centerRight,
-                        child: SizedBox(
-                          width: 150,
-                          child: TextField(
-                          controller: qqController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                              FilteringTextInputFormatter(RegExp("[0-9.]"), allow: true),
-                          ],
-                          decoration: const InputDecoration(
-                            hintText: '',
-                          ),
-                          onChanged: (value) {
-                            setState(() => FastDeploy.botQQ = value);
-                          },
-                        ),
-                        )
-                      ),
+                          alignment: Alignment.centerRight,
+                          child: SizedBox(
+                            width: 150,
+                            child: TextField(
+                              controller: qqController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter(RegExp("[0-9.]"),
+                                    allow: true),
+                              ],
+                              decoration: const InputDecoration(
+                                hintText: '',
+                              ),
+                              onChanged: (value) {
+                                setState(() => FastDeploy.botQQ = value);
+                              },
+                            ),
+                          )),
                     ),
                   ],
                 ),
@@ -416,13 +433,9 @@ class _HomeScreenState extends State<Deployment> {
                     ),
                   ),
                   Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        FastDeploy.adapter
-                      )
-                      )
-                    ),
+                      child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(FastDeploy.adapter))),
                 ],
               ),
               const SizedBox(height: 32),
@@ -435,13 +448,12 @@ class _HomeScreenState extends State<Deployment> {
                     ),
                   ),
                   Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(
-                        drivers.toString().replaceAll('[', '').replaceAll(']', '')
-                      )
-                      )
-                    ),
+                      child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(drivers
+                              .toString()
+                              .replaceAll('[', '')
+                              .replaceAll(']', '')))),
                 ],
               ),
             ],
@@ -450,71 +462,77 @@ class _HomeScreenState extends State<Deployment> {
       ),
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),
-            onPressed: () {
-              FastDeploy.template = dropDownValue;
-              FastDeploy.pluginDir = dropDownValuePluginDir;
-              FastDeploy.venv = isVENV;
-              DeployProtocol.setCmd(apiContent);
-              //神金写法
-              if (couldNext){
-                  if (_selectedFolderPath.toString() != 'null') {
-                  Directory dir = Directory('$_selectedFolderPath/$name');
-                  Directory dirBots = Directory('$userDir/bots');
-                  if (!dir.existsSync()) {
-                    dir.createSync();
+        onPressed: () {
+          FastDeploy.template = dropDownValue;
+          FastDeploy.pluginDir = dropDownValuePluginDir;
+          FastDeploy.venv = isVENV;
+          DeployProtocol.setCmd(apiContent);
+          //神金写法
+          if (couldNext) {
+            if (_selectedFolderPath.toString() != 'null') {
+              Directory dir = Directory('$_selectedFolderPath/$name');
+              Directory dirBots = Directory('$userDir/bots');
+              if (!dir.existsSync()) {
+                dir.createSync();
+              }
+              if (!dirBots.existsSync()) {
+                dirBots.createSync();
+              }
+              if (dropDownValue == 'simple(插件开发者)') {
+                if (dropDownValuePluginDir == '在[bot名称]/[bot名称]下') {
+                  Directory dirSrc =
+                      Directory('$_selectedFolderPath/$name/$name');
+                  Directory dirSrcPlugins =
+                      Directory('$_selectedFolderPath/$name/$name/plugins');
+                  if (!dirSrc.existsSync()) {
+                    dirSrc.createSync();
                   }
-                  if (!dirBots.existsSync()) {
-                    dirBots.createSync();
+                  if (!dirSrcPlugins.existsSync()) {
+                    dirSrcPlugins.createSync();
                   }
-                  if (dropDownValue == 'simple(插件开发者)') {
-                    if (dropDownValuePluginDir == '在[bot名称]/[bot名称]下') {
-                      Directory dirSrc = Directory('$_selectedFolderPath/$name/$name');
-                      Directory dirSrcPlugins = Directory('$_selectedFolderPath/$name/$name/plugins');
-                      if (!dirSrc.existsSync()) {
-                        dirSrc.createSync();
-                      }
-                      if (!dirSrcPlugins.existsSync()) {
-                        dirSrcPlugins.createSync();
-                      }
-                    } else if (dropDownValuePluginDir == '在src文件夹下') {
-                      Directory dirSrc = Directory('$_selectedFolderPath/$name/src');
-                      Directory dirSrcPlugins = Directory('$_selectedFolderPath/$name/src/plugins');
-                      if (!dirSrc.existsSync()) {
-                        dirSrc.createSync();
-                      }
-                      if (!dirSrcPlugins.existsSync()) {
-                        dirSrcPlugins.createSync();
-                      }
-                    }
+                } else if (dropDownValuePluginDir == '在src文件夹下') {
+                  Directory dirSrc =
+                      Directory('$_selectedFolderPath/$name/src');
+                  Directory dirSrcPlugins =
+                      Directory('$_selectedFolderPath/$name/src/plugins');
+                  if (!dirSrc.existsSync()) {
+                    dirSrc.createSync();
                   }
-                  FastDeploy.name = name;
-                  setDeployPath(_selectedFolderPath, FastDeploy.name);
-                  FastDeploy.selectPath = _selectedFolderPath.toString();
-                  setState(() {
-                    FastDeploy.page++;
-                  });
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('你是不是漏了什么？'),
-                      duration: Duration(seconds: 3),
-                    ),
-                  );
+                  if (!dirSrcPlugins.existsSync()) {
+                    dirSrcPlugins.createSync();
+                  }
                 }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('变量未初始化完成'),
-                      duration: Duration(seconds: 3),
-                    ),
-                  );
-                }
-            },
+              }
+              FastDeploy.name = name;
+              setDeployPath(_selectedFolderPath, FastDeploy.name);
+              FastDeploy.selectPath = _selectedFolderPath.toString();
+              setState(() {
+                FastDeploy.page++;
+              });
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('你是不是漏了什么？'),
+                  duration: Duration(seconds: 3),
+                ),
+              );
+            }
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('变量未初始化完成'),
+                duration: Duration(seconds: 3),
+              ),
+            );
+          }
+        },
         tooltip: '完成',
-        child: const Icon(Icons.navigate_next_rounded, color: Colors.white,),
+        child: const Icon(
+          Icons.navigate_next_rounded,
+          color: Colors.white,
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
-

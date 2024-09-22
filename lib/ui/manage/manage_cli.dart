@@ -1,4 +1,3 @@
-
 import 'package:NoneBotGUI/utils/manage.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
@@ -77,9 +76,7 @@ class _MyCustomFormState extends State<ManageCli> {
                 child: AppBar(
                   title: const Text(
                     '管理CLI',
-                    style: TextStyle(
-                      color: Colors.white
-                    ),
+                    style: TextStyle(color: Colors.white),
                   ),
                   actions: <Widget>[
                     IconButton(
@@ -89,21 +86,21 @@ class _MyCustomFormState extends State<ManageCli> {
                       iconSize: 20,
                       tooltip: "最小化",
                     ),
-                    appWindow.isMaximized ?
-                      IconButton(
-                        icon: const Icon(Icons.rectangle_outlined),
-                        color: Colors.white,
-                        onPressed: () => appWindow.restore(),
-                        iconSize: 20,
-                        tooltip: "恢复大小",
-                      ) :
-                    IconButton(
-                        icon: const Icon(Icons.rectangle_outlined),
-                        color: Colors.white,
-                        onPressed: () => appWindow.maximize(),
-                        iconSize: 20,
-                        tooltip: "最大化",
-                      ),
+                    appWindow.isMaximized
+                        ? IconButton(
+                            icon: const Icon(Icons.rectangle_outlined),
+                            color: Colors.white,
+                            onPressed: () => appWindow.restore(),
+                            iconSize: 20,
+                            tooltip: "恢复大小",
+                          )
+                        : IconButton(
+                            icon: const Icon(Icons.rectangle_outlined),
+                            color: Colors.white,
+                            onPressed: () => appWindow.maximize(),
+                            iconSize: 20,
+                            tooltip: "最大化",
+                          ),
                     IconButton(
                       icon: const Icon(Icons.close_rounded),
                       color: Colors.white,

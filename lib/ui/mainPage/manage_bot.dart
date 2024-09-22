@@ -1,5 +1,3 @@
-
-
 import 'package:NoneBotGUI/ui/manage/managecli.dart';
 import 'package:NoneBotGUI/utils/core.dart';
 import 'package:NoneBotGUI/utils/manage.dart';
@@ -10,18 +8,15 @@ import 'dart:async';
 import 'package:NoneBotGUI/ui/manage/stderr.dart';
 import 'package:NoneBotGUI/utils/global.dart';
 
-
 class ManageBot extends StatefulWidget {
   const ManageBot({super.key});
   @override
   State<ManageBot> createState() => _MyCustomFormState();
 }
 
-
 class _MyCustomFormState extends State<ManageBot> {
   Timer? _timer;
   final ScrollController _scrollController = ScrollController();
-
 
   @override
   void initState() {
@@ -46,19 +41,19 @@ class _MyCustomFormState extends State<ManageBot> {
   }
 
   void loadFileContent() async {
-    if (MainApp.gOnOpen.isNotEmpty){
+    if (gOnOpen.isNotEmpty) {
       String filePath = '${Bot.path()}/nbgui_stdout.log';
       File stdoutFile = File(filePath);
       if (stdoutFile.existsSync()) {
         try {
           File file = File(filePath);
-          final lines = await file.readAsLines(encoding: UserConfig.botEncoding());
+          final lines =
+              await file.readAsLines(encoding: UserConfig.botEncoding());
           final last50Lines =
               lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
-            MainApp.nbLog = last50Lines.join('\n');
-            Bot.pypid();
-            setState(() {
-            });
+          MainApp.nbLog = last50Lines.join('\n');
+          //Bot.pypid(Bot.path());
+          setState(() {});
         } catch (e) {
           print('Error: $e');
         }
@@ -76,15 +71,14 @@ class _MyCustomFormState extends State<ManageBot> {
 
   void _reloadConfig() {
     setState(() {
-      Bot.setPyPid(pid);
+      //Bot.setPyPid(pid);
       _filePath = '${Bot.path()}/nbgui_stdout.log';
-      _scrollController.addListener(() {
-     });
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: const Duration(seconds: 1),
-      curve: Curves.easeOut,
-    );
+      _scrollController.addListener(() {});
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(seconds: 1),
+        curve: Curves.easeOut,
+      );
     });
   }
 
@@ -94,315 +88,315 @@ class _MyCustomFormState extends State<ManageBot> {
   Widget build(BuildContext context) {
     Future.delayed(Duration.zero, () {
       _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeOut,
-    );
-  });
-  final size = MediaQuery.of(context).size;
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+      );
+    });
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.all(8),
         child: Row(
           children: <Widget>[
-              SizedBox(
-                width: size.width * 0.3,
-                child: Card(
+            SizedBox(
+              width: size.width * 0.3,
+              child: Card(
                   child: Column(
-                    children: <Widget>[
-                      const Center(
+                children: <Widget>[
+                  const Center(
+                    child: Text(
+                      'Bot信息',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(height: size.height * 0.04),
+                  //有bug，暂时不用
+                  // DropdownButton<String>(
+                  //   value: gOnOpen,
+                  //   icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                  //   elevation: 16,
+                  //   onChanged: (String? value) {
+                  //     setState(() => gOnOpen = value!);
+                  //   },
+                  //   items: botList
+                  //       .map<DropdownMenuItem<String>>(
+                  //         (String value) => DropdownMenuItem<String>(
+                  //           value: value,
+                  //           child: Padding(
+                  //             padding: const EdgeInsets.all(4.0),
+                  //             child: Text(value.replaceAll('.${value.split('.').last}', '')),
+                  //           ),
+                  //         ),
+                  //       )
+                  //       .toList(),
+                  // ),
+                  SizedBox(height: size.height * 0.05),
+                  const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '名称',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        Bot.name(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '路径',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        Bot.path(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '创建时间',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        Bot.time(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '进程ID(Nonebot)',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        Bot.pid(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  // const Padding(
+                  //   padding: EdgeInsets.all(4),
+                  //   child: Align(
+                  //     alignment: Alignment.centerLeft,
+                  //     child: Text(
+                  //       '进程ID(Python)',
+                  //       style: TextStyle(fontWeight: FontWeight.bold),
+                  //     ),
+                  //   ),
+                  // ),
+                  // Padding(
+                  //   padding: const EdgeInsets.all(4),
+                  //   child: Align(
+                  //     alignment: Alignment.centerLeft,
+                  //     child: Text(
+                  //       Bot.pypid(Bot.path()),
+                  //     ),
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 10),
+                  const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '状态',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  if (Bot.status() == 'true')
+                    const Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
                         child: Text(
-                          'Bot信息',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold
-                          ),
+                          '运行中',
+                          style: TextStyle(color: Colors.green),
                         ),
                       ),
-                      SizedBox(height: size.height * 0.1),
-                      const Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '名称',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
+                    ),
+                  if (Bot.status() == 'false')
+                    const Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '未运行',
+                          style: TextStyle(color: Colors.red),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            Bot.name(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '路径',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            Bot.path(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '创建时间',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            Bot.time(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '进程ID(Nonebot)',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            Bot.pid(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '进程ID(Python)',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            Bot.pypid(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '状态',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ),
-                      if (Bot.status() == 'true')
-                          const Padding(
-                            padding: EdgeInsets.all(4),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                '运行中',
-                                style: TextStyle(color: Colors.green),
-                              ),
-                            ),
-                          ),
-                      if (Bot.status() == 'false')
-                          const Padding(
-                            padding: EdgeInsets.all(4),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                '未运行',
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            ),
-                          ),
-                      SizedBox(
-                        height: size.height * 0.05,
-                      ),
-                      SizedBox(
-                        width: size.width * 0.2,
-                        child: OutlinedButton(
-                          child: const Icon(Icons.edit_rounded),
-                          onPressed: () {
-                            setState(() {
-                              name = Bot.name();
-                            });
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('编辑Bot属性'),
-                                  actions: <Widget>[
-                                    SingleChildScrollView(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(4),
-                                        child: Column(
-                                          children: <Widget>[
-                                            const Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text('重命名Bot'),
-                                            ),
-                                            TextField(
-                                              controller: TextEditingController(),
+                    ),
+                  SizedBox(
+                    height: size.height * 0.05,
+                  ),
+                  SizedBox(
+                    width: size.width * 0.2,
+                    child: OutlinedButton(
+                        child: const Icon(Icons.edit_rounded),
+                        onPressed: () {
+                          setState(() {
+                            name = Bot.name();
+                          });
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('编辑Bot属性'),
+                                actions: <Widget>[
+                                  SingleChildScrollView(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4),
+                                      child: Column(
+                                        children: <Widget>[
+                                          const Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text('重命名Bot'),
+                                          ),
+                                          TextField(
+                                              controller:
+                                                  TextEditingController(),
                                               decoration: InputDecoration(
                                                 hintText: name,
                                               ),
-                                              onChanged: (value){
+                                              onChanged: (value) {
                                                 setState(() => name = value);
-                                              }
-                                            ),
-                                          ],
-                                        ),
+                                              }),
+                                        ],
                                       ),
                                     ),
-                                    TextButton(
-                                      child: const Text(
-                                        '保存',
-                                      ),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        if (name != Bot.name()){
-                                          Bot.renameBot(name);
-                                          setState(() {
-                                          });
-                                        }
-                                      },
+                                  ),
+                                  TextButton(
+                                    child: const Text(
+                                      '保存',
                                     ),
-                                  ],
-                                );
-                              },
-                            );
-                          }
-                        ),
-                      ),
-                      SizedBox(
-                        height: size.height * 0.01,
-                      ),
-                      SizedBox(
-                        width: size.width * 0.2,
-                        child: OutlinedButton(
-                          child: const Icon(Icons.delete_rounded),
-                          onPressed: () => _showConfirmationDialog(context),
-                        ),
-                      )
-                    ],
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      if (name != Bot.name()) {
+                                        Bot.rename(name);
+                                        setState(() {});
+                                      }
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }),
+                  ),
+                  SizedBox(
+                    height: size.height * 0.01,
+                  ),
+                  SizedBox(
+                    width: size.width * 0.2,
+                    child: OutlinedButton(
+                      child: const Icon(Icons.delete_rounded),
+                      onPressed: () => _showConfirmationDialog(context),
+                    ),
                   )
-                ),
-              ),
+                ],
+              )),
+            ),
             Expanded(
                 child: Column(
-                children: <Widget>[
-                  Card(
-                    child: Column(
-                      children: <Widget>[
-                        const Padding(
-                          padding: EdgeInsets.all(4),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '控制台输出',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold
-                              ),
-                            ),
+              children: <Widget>[
+                Card(
+                  child: Column(
+                    children: <Widget>[
+                      const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '控制台输出',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                        const SizedBox(
-                          height: 3,
-                        ),
-                        SizedBox(
-                          width: size.width * 0.65,
-                          height: size.height * 0.75,
-                          child: Card(
-                            color: const Color.fromARGB(255, 31, 28, 28),
-                            child: SingleChildScrollView(
-                              controller: _scrollController,
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: RichText(
-                                  text: TextSpan(
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'JetBrainsMono',
-                                    ),
-                                    children: _logSpans(MainApp.nbLog),
+                      ),
+                      const SizedBox(
+                        height: 3,
+                      ),
+                      SizedBox(
+                        width: size.width * 0.65,
+                        height: size.height * 0.75,
+                        child: Card(
+                          color: const Color.fromARGB(255, 31, 28, 28),
+                          child: SingleChildScrollView(
+                            controller: _scrollController,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: RichText(
+                                text: TextSpan(
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'JetBrainsMono',
                                   ),
+                                  children: _logSpans(MainApp.nbLog),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    height: 2,
-                  ),
-                  Expanded(
-                    child: Card(
-                      child: Column(
-                    children: <Widget>[
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Expanded(
+                  child: Card(
+                    child: Column(
+                      children: <Widget>[
                         const Padding(
                           padding: EdgeInsets.only(left: 8),
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               '操作',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
-                      Center(
-                        child: Row(
+                        Center(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
                               IconButton(
@@ -503,7 +497,7 @@ class _MyCustomFormState extends State<ManageBot> {
                               ),
                               IconButton(
                                 onPressed: () {
-                                  if (Bot.status() == 'true'){
+                                  if (Bot.status() == 'true') {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text('请先停止后再清空！'),
@@ -519,7 +513,9 @@ class _MyCustomFormState extends State<ManageBot> {
                                 iconSize: size.height * 0.03,
                               ),
                               Visibility(
-                                visible: File('${Bot.path()}/nbgui_stderr.log').readAsStringSync(encoding: systemEncoding).isNotEmpty,
+                                visible: File('${Bot.path()}/nbgui_stderr.log')
+                                    .readAsStringSync(encoding: systemEncoding)
+                                    .isNotEmpty,
                                 child: IconButton(
                                   onPressed: () => Navigator.push(
                                     context,
@@ -535,14 +531,13 @@ class _MyCustomFormState extends State<ManageBot> {
                               ),
                             ],
                           ),
-                      )
-                        ],
-                      ),
+                        )
+                      ],
                     ),
-                  )
-                ],
-              )
-            ),
+                  ),
+                )
+              ],
+            )),
           ],
         ),
       ),
@@ -636,8 +631,6 @@ List<TextSpan> _logSpans(text) {
   return spans;
 }
 
-
-
 void _showConfirmationDialog(BuildContext context) {
   showDialog(
     context: context,
@@ -659,7 +652,7 @@ void _showConfirmationDialog(BuildContext context) {
             ),
             onPressed: () {
               Navigator.of(context).pop();
-              if (Bot.status()=='true'){
+              if (Bot.status() == 'true') {
                 Bot.stop();
               }
               Bot.delete();
@@ -676,7 +669,7 @@ void _showConfirmationDialog(BuildContext context) {
             ),
             onPressed: () {
               Navigator.of(context).pop();
-              if (Bot.status()=='true'){
+              if (Bot.status() == 'true') {
                 Bot.stop();
               }
               Bot.deleteForever();

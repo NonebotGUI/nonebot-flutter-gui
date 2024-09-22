@@ -1,6 +1,4 @@
-
 import 'dart:convert';
-
 
 import 'package:NoneBotGUI/ui/manage/managecli.dart';
 import 'package:NoneBotGUI/utils/core.dart';
@@ -12,18 +10,15 @@ import 'dart:async';
 import 'package:NoneBotGUI/ui/manage/stderr.dart';
 import 'package:NoneBotGUI/utils/global.dart';
 
-
 class ManageProtocol extends StatefulWidget {
   const ManageProtocol({super.key});
   @override
   State<ManageProtocol> createState() => _MyCustomFormState();
 }
 
-
 class _MyCustomFormState extends State<ManageProtocol> {
   Timer? _timer;
   final ScrollController _scrollController = ScrollController();
-
 
   @override
   void initState() {
@@ -48,19 +43,18 @@ class _MyCustomFormState extends State<ManageProtocol> {
   }
 
   void loadFileContent() async {
-    if (MainApp.gOnOpen.isNotEmpty){
+    if (gOnOpen.isNotEmpty) {
       String filePath = '${Protocol.path()}/nbgui_stdout.log';
       File stdoutFile = File(filePath);
       if (stdoutFile.existsSync()) {
         try {
           File file = File(filePath);
-          final lines = await file.readAsLines(encoding: UserConfig.protocolEncoding());
+          final lines =
+              await file.readAsLines(encoding: UserConfig.protocolEncoding());
           final last50Lines =
               lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
-           MainApp.protocolLog = last50Lines.join('\n');
-            setState(() {
-              
-            });
+          MainApp.protocolLog = last50Lines.join('\n');
+          setState(() {});
         } catch (e) {
           print('Error: $e');
         }
@@ -78,13 +72,12 @@ class _MyCustomFormState extends State<ManageProtocol> {
 
   void _reloadConfig() {
     setState(() {
-      _scrollController.addListener(() {
-     });
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: const Duration(seconds: 1),
-      curve: Curves.easeOut,
-    );
+      _scrollController.addListener(() {});
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(seconds: 1),
+        curve: Curves.easeOut,
+      );
     });
   }
 
@@ -93,248 +86,228 @@ class _MyCustomFormState extends State<ManageProtocol> {
   Widget build(BuildContext context) {
     Future.delayed(Duration.zero, () {
       _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeOut,
-    );
-  });
-  final size = MediaQuery.of(context).size;
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+      );
+    });
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.all(8),
         child: Row(
           children: <Widget>[
-              SizedBox(
-                width: size.width * 0.3,
-                child: Card(
+            SizedBox(
+              width: size.width * 0.3,
+              child: Card(
                   child: Column(
-                    children: <Widget>[
-                      const Center(
+                children: <Widget>[
+                  const Center(
+                    child: Text(
+                      '协议端信息',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(height: size.height * 0.1),
+                  const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '路径',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(Protocol.path()),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '启动命令',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        Protocol.cmd(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '创建时间',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        Bot.time(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '进程ID',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(Protocol.pid()),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '状态',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  if (Protocol.status())
+                    const Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
                         child: Text(
-                          '协议端信息',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold
-                          ),
+                          '运行中',
+                          style: TextStyle(color: Colors.green),
                         ),
                       ),
-                      SizedBox(height: size.height * 0.1),
-                      const Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '路径',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
+                    ),
+                  if (!Protocol.status())
+                    const Padding(
+                      padding: EdgeInsets.all(4),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '未运行',
+                          style: TextStyle(color: Colors.red),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            Protocol.path()
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '启动命令',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            Protocol.cmd(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '创建时间',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            Bot.time(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '进程ID',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            Protocol.pid()
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Padding(
-                        padding: EdgeInsets.all(4),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '状态',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold
-                            ),
-                          ),
-                        ),
-                      ),
-                      if (Protocol.status())
-                          const Padding(
-                            padding: EdgeInsets.all(4),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                '运行中',
-                                style: TextStyle(color: Colors.green),
-                              ),
-                            ),
-                          ),
-                      if (!Protocol.status())
-                          const Padding(
-                            padding: EdgeInsets.all(4),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                '未运行',
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            ),
-                          ),
-                      SizedBox(
-                        height: size.height * 0.05,
-                      ),
-                      SizedBox(
-                        width: size.width * 0.2,
-                        child: OutlinedButton(
-                          child: const Icon(Icons.edit_rounded),
-                          onPressed: () {
-                            setState(() {
-                              protocolCMD = Protocol.cmd();
-                            });
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('编辑属性'),
-                                  actions: <Widget>[
-                                    SingleChildScrollView(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(4),
-                                        child: Column(
-                                          children: <Widget>[
-                                            const Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text('设置启动命令'),
-                                            ),
-                                            TextField(
-                                              controller: TextEditingController(),
+                    ),
+                  SizedBox(
+                    height: size.height * 0.05,
+                  ),
+                  SizedBox(
+                    width: size.width * 0.2,
+                    child: OutlinedButton(
+                        child: const Icon(Icons.edit_rounded),
+                        onPressed: () {
+                          setState(() {
+                            protocolCMD = Protocol.cmd();
+                          });
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('编辑属性'),
+                                actions: <Widget>[
+                                  SingleChildScrollView(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4),
+                                      child: Column(
+                                        children: <Widget>[
+                                          const Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text('设置启动命令'),
+                                          ),
+                                          TextField(
+                                              controller:
+                                                  TextEditingController(),
                                               decoration: InputDecoration(
                                                 hintText: protocolCMD,
                                               ),
-                                              onChanged: (value){
-                                                setState(() => protocolCMD = value);
-                                              }
-                                            ),
-                                          ],
-                                        ),
+                                              onChanged: (value) {
+                                                setState(
+                                                    () => protocolCMD = value);
+                                              }),
+                                        ],
                                       ),
                                     ),
-                                    TextButton(
-                                      child: const Text(
-                                        '保存',
-                                      ),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        if (protocolCMD != Protocol.cmd()) {
-                                          Protocol.changeCmd(protocolCMD);
-                                          setState(() {
-                                          });
-                                        }
-                                      },
+                                  ),
+                                  TextButton(
+                                    child: const Text(
+                                      '保存',
                                     ),
-                                  ],
-                                );
-                              },
-                            );
-                          }
-                        ),
-                      ),
-                      SizedBox(
-                        height: size.height * 0.01,
-                      ),
-                    ],
-                  )
-                ),
-              ),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      if (protocolCMD != Protocol.cmd()) {
+                                        Protocol.changeCmd(protocolCMD);
+                                        setState(() {});
+                                      }
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }),
+                  ),
+                  SizedBox(
+                    height: size.height * 0.01,
+                  ),
+                ],
+              )),
+            ),
             Expanded(
                 child: Column(
-                children: <Widget>[
-                  Card(
-                    child: Column(
-                      children: <Widget>[
-                        const Padding(
-                          padding: EdgeInsets.all(4),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '控制台输出',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold
-                              ),
-                            ),
+              children: <Widget>[
+                Card(
+                  child: Column(
+                    children: <Widget>[
+                      const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '控制台输出',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
-                        const SizedBox(
-                          height: 3,
-                        ),
-                        SizedBox(
-                          width: size.width * 0.65,
-                          height: size.height * 0.75,
-                          child: Card(
-                            color: const Color.fromARGB(255, 31, 28, 28),
-                            child: SingleChildScrollView(
-                              controller: _scrollController,
-                              child: Padding(
+                      ),
+                      const SizedBox(
+                        height: 3,
+                      ),
+                      SizedBox(
+                        width: size.width * 0.65,
+                        height: size.height * 0.75,
+                        child: Card(
+                          color: const Color.fromARGB(255, 31, 28, 28),
+                          child: SingleChildScrollView(
+                            controller: _scrollController,
+                            child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Text(
                                   MainApp.protocolLog,
@@ -342,35 +315,32 @@ class _MyCustomFormState extends State<ManageProtocol> {
                                     color: Colors.white,
                                     fontFamily: 'JetBrainsMono',
                                   ),
-                                )
-                              ),
-                            ),
+                                )),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(
-                    height: 2,
-                  ),
-                  Expanded(
-                    child: Card(
-                      child: Column(
-                    children: <Widget>[
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Expanded(
+                  child: Card(
+                    child: Column(
+                      children: <Widget>[
                         const Padding(
                           padding: EdgeInsets.only(left: 8),
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               '操作',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
-                      Center(
-                        child: Row(
+                        Center(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
                               IconButton(
@@ -464,10 +434,11 @@ class _MyCustomFormState extends State<ManageProtocol> {
                                 tooltip: "显示登录二维码",
                                 icon: const Icon(Icons.qr_code_rounded),
                                 iconSize: size.height * 0.03,
-                                ),
+                              ),
                               IconButton(
                                 onPressed: () {
-                                  File stdout = File('${Protocol.path()}/nbgui_stdout.log');
+                                  File stdout = File(
+                                      '${Protocol.path()}/nbgui_stdout.log');
                                   stdout.delete();
                                   String info = "[INFO]Welcome to Nonebot GUI!";
                                   stdout.writeAsString(info);
@@ -478,14 +449,13 @@ class _MyCustomFormState extends State<ManageProtocol> {
                               ),
                             ],
                           ),
-                      )
-                        ],
-                      ),
+                        )
+                      ],
                     ),
-                  )
-                ],
-              )
-            ),
+                  ),
+                )
+              ],
+            )),
           ],
         ),
       ),
@@ -493,52 +463,54 @@ class _MyCustomFormState extends State<ManageProtocol> {
   }
 }
 
+void showDialogWithQRCode(BuildContext context) {
+  List<FileSystemEntity> entities = Directory(Protocol.path()).listSync();
+  List<FileSystemEntity> qrCodePath = entities
+      .whereType<File>()
+      .where((file) => file.path.endsWith('.png'))
+      .toList();
 
-  void showDialogWithQRCode(BuildContext context) {
-    List<FileSystemEntity> entities = Directory(Protocol.path()).listSync();
-    List<FileSystemEntity> qrCodePath = entities.whereType<File>().where((file) => file.path.endsWith('.png')).toList();
-
-    // 检查是否找到二维码图片
-    if (qrCodePath.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('找不到二维码'),
-            content: Image.asset(
-                  'lib/assets/loading.gif',
-                ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('关闭'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('QRCode'),
-            content: Image.file(
-              File(qrCodePath[0].path),
-              fit: BoxFit.cover,
+  // 检查是否找到二维码图片
+  if (qrCodePath.isEmpty) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('找不到二维码'),
+          content: Image.asset(
+            'lib/assets/loading.gif',
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('关闭'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('关闭'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
+          ],
+        );
+      },
+    );
+  } else {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('QRCode'),
+          content: Image.file(
+            File(qrCodePath[0].path),
+            fit: BoxFit.cover,
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('关闭'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
+}

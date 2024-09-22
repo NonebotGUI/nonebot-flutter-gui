@@ -10,7 +10,6 @@ import 'package:NoneBotGUI/utils/global.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-
 class Settings extends StatefulWidget {
   const Settings({super.key});
 
@@ -41,10 +40,12 @@ class _HomeScreenState extends State<Settings> {
   final List<String> deployEncoding = ['utf8', 'systemEncoding'];
   final List<String> botEcoding = ['systemEncoding', 'utf8'];
   final List<String> protocolEncoding = ['utf8', 'systemEncoding'];
-  final List<String> mirror = ['https://registry.nonebot.dev', 'https://api.nbgui.top/api/nbgui/proxy', 'https://api.zobyic.top/api/nbgui/proxy'];
+  final List<String> mirror = [
+    'https://registry.nonebot.dev',
+    'https://api.nbgui.top/api/nbgui/proxy',
+    'https://api.zobyic.top/api/nbgui/proxy'
+  ];
   final List<String> refreshMode = ['auto', 'always'];
-
-
 
   late String dropDownValueRefresh = UserConfig.refreshMode();
   late String dropDownValueMirror = UserConfig.mirror();
@@ -56,9 +57,13 @@ class _HomeScreenState extends State<Settings> {
   late String dropDownValueBotEncoding =
       (UserConfig.botEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
   late String dropDownValueProtocolEncoding =
-      (UserConfig.protocolEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
+      (UserConfig.protocolEncoding() == systemEncoding)
+          ? 'systemEncoding'
+          : 'utf8';
   late String dropDownValueDeployEncoding =
-      (UserConfig.deployEncoding() == systemEncoding) ? 'systemEncoding' : 'utf8';
+      (UserConfig.deployEncoding() == systemEncoding)
+          ? 'systemEncoding'
+          : 'utf8';
   bool checkUpdate = UserConfig.checkUpdate();
 
   void _toggleCheckUpdate(bool newValue) {
@@ -157,8 +162,8 @@ class _HomeScreenState extends State<Settings> {
                   dropDownValue = newValue!;
                   UserConfig.setColorMode(newValue);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('已更改，重启后生效'),
-                  duration: Duration(seconds: 3),
+                    content: Text('已更改，重启后生效'),
+                    duration: Duration(seconds: 3),
                   ));
                 });
               },
@@ -494,53 +499,56 @@ class _HomeScreenState extends State<Settings> {
                   return AlertDialog(
                     title: const Text('选择支付方式'),
                     content: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: InkWell(
-                                child: SvgPicture.asset(
-                                  'lib/assets/alipay.svg',
-                                  width: 70,
-                                  color: UserConfig.colorMode() == 'dark' ? Colors.white : Colors.black,
-                                ),
-                                onTap: () => donate_alipay(context),
-                              )
-                            ),
-                            const SizedBox(
-                              width: 50,
-                            ),
-                            Expanded(
-                              child: InkWell(
-                                child: SvgPicture.asset(
-                                  'lib/assets/wechat.svg',
-                                  width: 70,
-                                  color: UserConfig.colorMode() == 'dark' ? Colors.white : Colors.black,
-                                ),
-                                onTap: () => donate_wechat(context),
-                              )
-                            ),
-                            const SizedBox(
-                              width: 50,
-                            ),
-                            Expanded(
-                              child: InkWell(
-                                child: SvgPicture.asset(
-                                  'lib/assets/aifadian.svg',
-                                  width: 70,
-                                  color: UserConfig.colorMode() == 'dark' ? Colors.white : Colors.black,
-                                ),
-                                onTap: () {
-                                  Clipboard.setData(
-                                      const ClipboardData(text: 'https://afdian.com/a/NoneBotGUI'));
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(const SnackBar(
-                                    content: Text('爱发电url已复制到剪贴板'),
-                                    duration: Duration(seconds: 3),
-                                  ));
-                                },
-                              )
-                            )
-                          ],
+                      children: <Widget>[
+                        Expanded(
+                            child: InkWell(
+                          child: SvgPicture.asset(
+                            'lib/assets/alipay.svg',
+                            width: 70,
+                            color: UserConfig.colorMode() == 'dark'
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                          onTap: () => donate_alipay(context),
+                        )),
+                        const SizedBox(
+                          width: 50,
                         ),
+                        Expanded(
+                            child: InkWell(
+                          child: SvgPicture.asset(
+                            'lib/assets/wechat.svg',
+                            width: 70,
+                            color: UserConfig.colorMode() == 'dark'
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                          onTap: () => donate_wechat(context),
+                        )),
+                        const SizedBox(
+                          width: 50,
+                        ),
+                        Expanded(
+                            child: InkWell(
+                          child: SvgPicture.asset(
+                            'lib/assets/aifadian.svg',
+                            width: 70,
+                            color: UserConfig.colorMode() == 'dark'
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                          onTap: () {
+                            Clipboard.setData(const ClipboardData(
+                                text: 'https://afdian.com/a/NoneBotGUI'));
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text('爱发电url已复制到剪贴板'),
+                              duration: Duration(seconds: 3),
+                            ));
+                          },
+                        ))
+                      ],
+                    ),
                     actions: <Widget>[
                       TextButton(
                         onPressed: () {
@@ -567,9 +575,9 @@ void donate_wechat(BuildContext context) {
       return AlertDialog(
         title: const Text('微信'),
         content: Image.asset(
-            'lib/assets/donate_wechat.png',
-            fit: BoxFit.cover,
-          ),
+          'lib/assets/donate_wechat.png',
+          fit: BoxFit.cover,
+        ),
         actions: <Widget>[
           TextButton(
             onPressed: () {
@@ -590,9 +598,9 @@ void donate_alipay(BuildContext context) {
       return AlertDialog(
         title: const Text('支付宝'),
         content: Image.asset(
-            'lib/assets/donate_alipay.png',
-            fit: BoxFit.cover,
-          ),
+          'lib/assets/donate_alipay.png',
+          fit: BoxFit.cover,
+        ),
         actions: <Widget>[
           TextButton(
             onPressed: () {
@@ -612,12 +620,10 @@ void refreshToolTip(BuildContext context) {
     builder: (BuildContext context) {
       return AlertDialog(
         title: const Text('关于刷新策略'),
-        content: const Text(
-          '''
+        content: const Text('''
           auto(推荐): 当数据目录下的文件发生变化时自动刷新，有时候可能会出现无法刷新的情况;磁盘io占用较低
           always: 无脑刷新，每1.5s刷新一次页面，同时进行一次文件读写，磁盘io频率较高
-          '''
-        ),
+          '''),
         actions: <Widget>[
           TextButton(
             onPressed: () {

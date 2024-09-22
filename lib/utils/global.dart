@@ -2,7 +2,10 @@
 //用户目录
 late final userDir;
 
-class MainApp{
+///当前打开的Bot
+String gOnOpen = '';
+
+class MainApp {
   ///log
   static late String nbLog;
 
@@ -11,9 +14,6 @@ class MainApp{
 
   ///版本号
   static late String version;
-
-  ///当前打开的Bot
-  static String gOnOpen = '';
 
   static late int broadcastId;
 
@@ -25,12 +25,12 @@ class MainApp{
 }
 
 ///快速部署相关
-class FastDeploy{
+class FastDeploy {
   ///快速部署页面
   static late int page;
 
   ///编号
-  static late String id;
+  static late int id;
 
   ///下载连接
   static late List<String> dlLink;
@@ -91,7 +91,7 @@ class FastDeploy{
 }
 
 ///创建Bot相关
-class Create{
+class Create {
   ///Bot名称
   static late String name;
 
@@ -117,6 +117,5 @@ class Create{
   static late String pluginDir;
 }
 
-
-
-
+///Bot.time列表
+List<String> botList = [];
