@@ -294,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen>
           final lines =
               await file.readAsLines(encoding: UserConfig.botEncoding());
           final last50Lines =
-              lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
+              lines.length > 250 ? lines.sublist(lines.length - 250) : lines;
           MainApp.nbLog = last50Lines.join('\n');
           setState(() {});
         } catch (e) {
@@ -314,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen>
           final lines =
               await file.readAsLines(encoding: UserConfig.protocolEncoding());
           final last50Lines =
-              lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
+              lines.length > 250 ? lines.sublist(lines.length - 250) : lines;
           MainApp.protocolLog = last50Lines.join('\n');
           setState(() {});
         } catch (e) {
@@ -713,7 +713,7 @@ class _HomeScreenState extends State<HomeScreen>
                               child: InkWell(
                                 onTap: () {
                                   gOnOpen = "$name.$time";
-                                  //createLog(path);
+                                  createLog(path);
                                   setState(() {
                                     loadFileContent();
                                     _selectedIndex = 1;
@@ -794,7 +794,7 @@ class _HomeScreenState extends State<HomeScreen>
                           },
                         )),
                 gOnOpen.isNotEmpty
-                    ? const ManageBot()
+                    ? ManageBot()
                     : Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
