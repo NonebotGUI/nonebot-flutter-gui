@@ -18,19 +18,35 @@ class ManageProtocol extends StatefulWidget {
 
 class _MyCustomFormState extends State<ManageProtocol> {
   Timer? _timer;
+  Timer? _scrollTimer;
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
-    getDir();
     super.initState();
     loadFileContent();
     _startRefreshing();
+    _scrollToBottom();
   }
 
-  String getDir() {
-    return userDir;
+
+  // 鼠标滚轮无动作10秒自动滚动到底部
+  void _startScrollToBottomTimer() {
+    _scrollTimer?.cancel();
+    _scrollTimer =
+        Timer(const Duration(seconds: 10), _scrollToBottom); // 20秒后执行
   }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
 
   void _startRefreshing() {
     if (_timer != null) {
@@ -52,7 +68,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
           final lines =
               await file.readAsLines(encoding: UserConfig.protocolEncoding());
           final last50Lines =
-              lines.length > 50 ? lines.sublist(lines.length - 50) : lines;
+              lines.length > 250 ? lines.sublist(lines.length - 250) : lines;
           MainApp.protocolLog = last50Lines.join('\n');
           setState(() {});
         } catch (e) {
@@ -72,28 +88,23 @@ class _MyCustomFormState extends State<ManageProtocol> {
 
   void _reloadConfig() {
     setState(() {
-      _scrollController.addListener(() {});
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(seconds: 1),
-        curve: Curves.easeOut,
-      );
     });
   }
 
   String protocolCMD = Protocol.cmd();
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration.zero, () {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeOut,
-      );
-    });
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Container(
+      body: NotificationListener(
+        onNotification: (ScrollNotification notification) {
+          if (notification is UserScrollNotification ||
+              notification is ScrollUpdateNotification) {
+            _startScrollToBottomTimer();
+          }
+          return false;
+        },
+        child: Container(
         padding: const EdgeInsets.all(8),
         child: Row(
           children: <Widget>[
@@ -303,22 +314,50 @@ class _MyCustomFormState extends State<ManageProtocol> {
                       SizedBox(
                         width: size.width * 0.65,
                         height: size.height * 0.75,
-                        child: Card(
-                          color: const Color.fromARGB(255, 31, 28, 28),
-                          child: SingleChildScrollView(
-                            controller: _scrollController,
-                            child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Text(
-                                  MainApp.protocolLog,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'JetBrainsMono',
+                        child: Stack(
+                          children: [
+                            SizedBox(
+                              width: size.width * 0.65,
+                              height: size.height * 0.75,
+                              child: Card(
+                              color: const Color.fromARGB(255, 31, 28, 28),
+                              child: SingleChildScrollView(
+                                controller: _scrollController,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Text(
+                                    MainApp.protocolLog,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'JetBrainsMono',
+                                    ),
                                   ),
-                                )),
-                          ),
+
+                                ),
+                              ),
+                            ),
+                            ),
+                            Positioned(
+                              bottom: 10,
+                              right: 10,
+                              child: FloatingActionButton(
+                                tooltip: '滚动到底部',
+                                onPressed: () {
+                                  _scrollController.animateTo(
+                                    _scrollController.position.maxScrollExtent,
+                                    duration: const Duration(milliseconds: 500),
+                                    curve: Curves.easeOut,
+                                  );
+                                },
+                                mini: true,
+                                backgroundColor: Colors.grey[800],
+                                child: const Icon(Icons.arrow_downward),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
+                      )
+
                     ],
                   ),
                 ),
@@ -459,6 +498,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
           ],
         ),
       ),
+      )
     );
   }
 }
