@@ -1,28 +1,10 @@
 import 'dart:io';
-
 import 'package:NoneBotGUI/utils/core.dart';
 import 'package:NoneBotGUI/utils/manage.dart';
+import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
-import 'package:NoneBotGUI/utils/global.dart';
 import 'package:window_manager/window_manager.dart';
-
-// void main() {
-//   runApp(
-//     const MyApp(),
-//   );
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       home: ManagePlugin(),
-//     );
-//   }
-// }
 
 class ManagePlugin extends StatefulWidget {
   const ManagePlugin({super.key});
@@ -32,6 +14,14 @@ class ManagePlugin extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<ManagePlugin> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,64 +73,119 @@ class _HomeScreenState extends State<ManagePlugin> {
           ],
         ),
       ),
-      body: getPluginList().isEmpty
-          ? const Center(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('你还没有安装任何插件'),
-                    SizedBox(height: 3),
-                    Text('你可以前往插件商店来安装'),
-                  ]),
-            )
-          : ListView.builder(
-              itemCount: getPluginList().length,
-              itemBuilder: (context, index) =>
-                  pluginManageDialog(context, index),
-            ),
+      body: Container(
+          margin: const EdgeInsets.all(16),
+          child: Column(
+            children: <Widget>[
+              _selectedIndex == 0
+                  ? getPluginList().isEmpty
+                      ? const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('还没有安装任何插件'),
+                              SizedBox(height: 3),
+                              Text('你可以前往插件商店进行安装'),
+                              SizedBox(height: 3),
+                            ],
+                          ),
+                        )
+                      : ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: getPluginList().length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Divider();
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return ListTile(
+                              title: Text(getPluginList()[index]),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons
+                                        .do_not_disturb_on_total_silence_rounded),
+                                    tooltip: '禁用',
+                                    onPressed: () {
+                                      setState(() {
+                                        Plugin.disable(getPluginList()[index]);
+                                      });
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    tooltip: '卸载',
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return uninstallDialog(
+                                              context, index);
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        )
+                  : File('${Bot.path()}/.disabled_plugins')
+                          .readAsStringSync()
+                          .isEmpty
+                      ? const Center(
+                          child: Text('空空如也...'),
+                        )
+                      : ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: getDisabledPluginList().length,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Divider();
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return ListTile(
+                              title: Text(getDisabledPluginList()[index]),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                        Icons.open_in_browser_rounded),
+                                    tooltip: '启用',
+                                    onPressed: () {
+                                      setState(() {
+                                        Plugin.enable(
+                                            getDisabledPluginList()[index]);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        )
+            ],
+          )),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.open_in_browser_rounded),
+            label: '已启用的插件',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.do_not_disturb_on_total_silence_rounded),
+            label: '已禁用的插件',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: (UserConfig.colorMode() == 'light')
+            ? const Color.fromRGBO(238, 109, 109, 1)
+            : const Color.fromRGBO(127, 86, 151, 1),
+        onTap: _onItemTapped,
+      ),
     );
   }
 }
-
-Card pluginManageDialog(BuildContext context, int index) => Card(
-      child: SizedBox(
-        height: 70,
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                ' ${getPluginList()[index]}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            Expanded(
-              child: Flexible(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      IconButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                uninstallDialog(context, index),
-                          );
-                        },
-                        tooltip: '卸载插件',
-                        icon: const Icon(Icons.delete_rounded),
-                        iconSize: 25,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
 
 AlertDialog uninstallDialog(BuildContext context, int index) {
   String name = getPluginList()[index];
