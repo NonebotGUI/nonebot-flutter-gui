@@ -67,11 +67,15 @@ Future<String> getnbcliver() async {
 createLog(path) {
   File stdout = File('$path/nbgui_stdout.log');
   File stderr = File('$path/nbgui_stderr.log');
+  File disable = File('$path/.disabled_plugins');
   if (!stdout.existsSync()) {
     stdout.createSync();
   }
   if (!stderr.existsSync()) {
     stderr.createSync();
+  }
+  if (!disable.existsSync()) {
+    disable.createSync();
   }
 }
 
@@ -84,13 +88,34 @@ clearLog(path) async {
 }
 
 ///从pyproject.toml中读取插件列表
-getPluginList() {
+List getPluginList() {
   File pyprojectFile = File('${Bot.path()}/pyproject.toml');
-  String pyproject = pyprojectFile.readAsStringSync();
-  var toml = TomlDocument.parse(pyproject).toMap();
+  String pyprojectContent = pyprojectFile.readAsStringSync();
+  List<String> linesWithoutComments = pyprojectContent
+      .split('\n')
+      .map((line) {
+        int commentIndex = line.indexOf('#');
+        if (commentIndex != -1) {
+          return line.substring(0, commentIndex).trim();
+        }
+        return line;
+      })
+      .where((line) => line.isNotEmpty)
+      .toList();
+  String pyprojectWithoutComments = linesWithoutComments.join('\n');
+  // 解析 TOML 文件
+  var toml = TomlDocument.parse(pyprojectWithoutComments).toMap();
   var nonebot = toml['tool']['nonebot'];
   List pluginsList = nonebot['plugins'];
+
   return pluginsList;
+}
+
+getDisabledPluginList() {
+  File disable = File('${Bot.path()}/.disabled_plugins');
+  String content = disable.readAsStringSync();
+  List disabledPlugins = content.split('\n');
+  return disabledPlugins;
 }
 
 ///获取协议端文件名

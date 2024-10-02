@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:NoneBotGUI/utils/core.dart';
 import 'package:NoneBotGUI/utils/global.dart';
 import 'package:NoneBotGUI/utils/userConfig.dart';
+import 'package:toml/toml.dart';
 
 class Bot {
   static final File _configFile = File('$userDir/bots/$gOnOpen.json');
@@ -42,27 +44,16 @@ class Bot {
     return jsonMap['pid'].toString();
   }
 
-  /// 获取Bot的Python Pid
-  static String pypid(path) {
+  /// 直接抓取Bot日志的的Python Pid
+  static pypid(path) {
     File file = File('$path/nbgui_stdout.log');
     RegExp regex = RegExp(r'Started server process \[(\d+)\]');
     Match? match =
         regex.firstMatch(file.readAsStringSync(encoding: systemEncoding));
     if (match != null && match.groupCount >= 1) {
       String pid = match.group(1)!;
-      Bot.setPyPid(pid);
       return pid;
-    } else {
-      Bot.setPyPid("Null");
-      return "Null";
     }
-  }
-
-  /// 设置Bot的Python Pid
-  static void setPyPid(pid) {
-    Map<String, dynamic> jsonMap = _config();
-    jsonMap['pypid'] = pid;
-    _configFile.writeAsStringSync(jsonEncode(jsonMap));
   }
 
   /// 唤起Bot进程
@@ -107,13 +98,11 @@ class Bot {
     botInfo['pid'] = 'Null';
     cfgFile.writeAsStringSync(json.encode(botInfo));
     //如果平台为Windows则释放端口
-    //有bug,先注释掉（
-    //   if (Platform.isWindows) {
-    //     await Process.start(
-    //         "taskkill.exe", ['/f', '/pid', Bot.pypid(Bot.path()).toString()],
-    //         runInShell: true);
-    //   }
-    //   setPyPid('Null');
+    if (Platform.isWindows) {
+      await Process.start(
+          "taskkill.exe", ['/f', '/pid', Bot.pypid(Bot.path()).toString()],
+          runInShell: true);
+    }
   }
 
   ///重命名Bot
@@ -359,5 +348,64 @@ class Cli {
       String cmd = '${UserConfig.nbcliPath()} self update';
       return cmd;
     }
+  }
+}
+
+///插件
+class Plugin {
+  ///禁用插件
+  static disable(name) {
+    File disable = File('${Bot.path()}/.disabled_plugins');
+    File pyprojectFile = File('${Bot.path()}/pyproject.toml');
+    String pyprojectContent = pyprojectFile.readAsStringSync();
+    List<String> linesWithoutComments = pyprojectContent
+        .split('\n')
+        .map((line) {
+          int commentIndex = line.indexOf('#');
+          if (commentIndex != -1) {
+            return line.substring(0, commentIndex).trim();
+          }
+          return line;
+        })
+        .where((line) => line.isNotEmpty)
+        .toList();
+    String pyprojectWithoutComments = linesWithoutComments.join('\n');
+    var toml = TomlDocument.parse(pyprojectWithoutComments).toMap();
+    var nonebot = toml['tool']['nonebot'];
+    List pluginsList = nonebot['plugins'];
+
+    // 移除指定的插件
+    pluginsList.remove(name);
+    nonebot['plugins'] = pluginsList;
+    String updatedTomlContent = TomlDocument.fromMap(toml).toString();
+
+    pyprojectFile.writeAsStringSync(updatedTomlContent);
+    if (disable.readAsStringSync().isEmpty) {
+      disable.writeAsStringSync(name);
+    } else {
+      disable.writeAsStringSync('${disable.readAsStringSync()}\n$name');
+    }
+  }
+
+  ///启用插件
+  static enable(name) {
+    File disable = File('${Bot.path()}/.disabled_plugins');
+    File pyprojectFile = File('${Bot.path()}/pyproject.toml');
+    String pyprojectContent = pyprojectFile.readAsStringSync();
+    var toml = TomlDocument.parse(pyprojectContent).toMap();
+    var nonebot = toml['tool']['nonebot'];
+    List pluginsList = nonebot['plugins'];
+
+    if (!pluginsList.contains(name)) {
+      pluginsList.add(name);
+    }
+
+    nonebot['plugins'] = pluginsList;
+    String updatedTomlContent = TomlDocument.fromMap(toml).toString();
+    pyprojectFile.writeAsStringSync(updatedTomlContent);
+    String disabled = disable.readAsStringSync();
+    List<String> disabledList = disabled.split('\n');
+    disabledList.remove(name);
+    disable.writeAsStringSync(disabledList.join('\n'));
   }
 }
