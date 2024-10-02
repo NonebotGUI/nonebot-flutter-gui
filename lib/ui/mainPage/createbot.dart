@@ -19,8 +19,8 @@ class _MyCustomFormState extends State<CreateBot> {
   final _outputController = StreamController<String>.broadcast();
   final ScrollController _scrollController = ScrollController();
 
-  void _executeCommands(
-      path, name, driver, template, pluginDir, venv, installDep) async {
+  void _executeCommands(path, name, driver, adapters, template, pluginDir, venv,
+      installDep) async {
     _output.clear();
 
     List<String> commands = [
@@ -30,7 +30,7 @@ class _MyCustomFormState extends State<CreateBot> {
       DeployBot.createVENV(path, name, venv),
       'echo 开始安装依赖...',
       DeployBot.install(path, name, venv, installDep),
-      DeployBot.writePyProject(path, name, template, pluginDir),
+      DeployBot.writePyProject(path, name, adapters, template, pluginDir),
       DeployBot.writeENV(path, name, 8080, dropDownValue, driver),
       DeployBot.writebot(name, path, "default", "none", "none"),
       'echo 安装完成，可退出'
@@ -439,8 +439,8 @@ class _MyCustomFormState extends State<CreateBot> {
               dropDownValue,
               dropDownValuePluginDir,
             );
-            _executeCommands(
-                path, name, driver, template, pluginDir, venv, installDep);
+            _executeCommands(path, name, driver, adapter, template, pluginDir,
+                venv, installDep);
             showDialog(
               context: context,
               barrierDismissible: false,

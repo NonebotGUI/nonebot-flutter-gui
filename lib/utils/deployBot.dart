@@ -154,10 +154,7 @@ class DeployBot {
   }
 
   ///写入pyproject.toml
-  static writePyProject(path, name, template, pluginDir) {
-    File file = File('$userDir/cache_adapters.txt');
-    String adapters = file.readAsStringSync();
-
+  static writePyProject(path, name, adapters, template, pluginDir) {
     RegExp regex = RegExp(r'\(([^)]+)\)');
     Iterable<Match> matches = regex.allMatches(adapters);
     String adapterlist = '';
