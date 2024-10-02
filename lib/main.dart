@@ -33,14 +33,14 @@ void main() async {
   MainApp.nbLog = '[INFO]Welcome to NoneBot GUI!';
   MainApp.protocolLog = '[INFO]Welcome to NoneBot GUI!';
   MainApp.barExtended = false;
-  MainApp.version = 'v1.0.0';
-  // FlutterError.onError = (FlutterErrorDetails details) async {
-  //   DateTime now = DateTime.now();
-  //   String timestamp = now.toIso8601String();
-  //   String errorMessage = '[ERROR]$timestamp -${details.exception.toString()}\n\n';
-  //   final errorFile = File('$userDir/error.log');
-  //   await errorFile.writeAsString(errorMessage, mode: FileMode.append);
-  // };
+  MainApp.version = 'v1.1.0';
+  FlutterError.onError = (FlutterErrorDetails details) async {
+    DateTime now = DateTime.now();
+    String timestamp = now.toIso8601String();
+    String errorMessage = '[ERROR]$timestamp -${details.exception.toString()}\n\n';
+    final errorFile = File('$userDir/error.log');
+    await errorFile.writeAsString(errorMessage, mode: FileMode.append);
+  };
   WindowOptions windowOptions = const WindowOptions(
     size: Size(1280, 730),
     center: true,
@@ -178,7 +178,8 @@ class _HomeScreenState extends State<HomeScreen>
     if (menuItem.key == 'show') {
       windowManager.show();
     } else if (menuItem.key == 'exit') {
-      exit(0);
+      windowManager.show();
+      _exitConfirmDialog(context);
     }
   }
 
@@ -856,10 +857,52 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  void _exitConfirmDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('退出'),
+          content: const Text('确定要退出NoneBotGUI吗？这将会停止所有Bot'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('取消'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('确定'),
+              onPressed: () {
+                //退出时更新所有的Bot.json
+                Directory('$userDir/bots')
+                    .listSync(recursive: false)
+                    .forEach((entity) {
+                  if (entity is File && entity.path.endsWith('.json')) {
+                    updateJsonFile(entity);
+                  }
+                });
+                exit(0);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void updateJsonFile(File file) {
+    String contents = file.readAsStringSync();
+    Map<String, dynamic> jsonMap = json.decode(contents);
+    jsonMap['isrunning'] = 'false';
+    jsonMap['pid'] = 'Null';
+    jsonMap['protocolPid'] = 'Null';
+    jsonMap['protcolIsRunning'] = false;
+    file.writeAsStringSync(json.encode(jsonMap));
+  }
+
   @override
   void onWindowFocus() {
-    // Make sure to call once.
     setState(() {});
-    // do something
   }
 }
