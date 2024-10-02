@@ -370,23 +370,23 @@ class _MyCustomFormState extends State<ManageBot> {
                               width: size.width * 0.65,
                               height: size.height * 0.75,
                               child: Card(
-                              color: const Color.fromARGB(255, 31, 28, 28),
-                              child: SingleChildScrollView(
-                                controller: _scrollController,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: RichText(
-                                    text: TextSpan(
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'JetBrainsMono',
+                                color: const Color.fromARGB(255, 31, 28, 28),
+                                child: SingleChildScrollView(
+                                  controller: _scrollController,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: RichText(
+                                      text: TextSpan(
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'JetBrainsMono',
+                                        ),
+                                        children: _logSpans(MainApp.nbLog),
                                       ),
-                                      children: _logSpans(MainApp.nbLog),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
                             ),
                             Positioned(
                               bottom: 10,
@@ -402,7 +402,8 @@ class _MyCustomFormState extends State<ManageBot> {
                                 },
                                 mini: true,
                                 backgroundColor: Colors.grey[800],
-                                child: const Icon(Icons.arrow_downward),
+                                child: const Icon(Icons.arrow_downward,
+                                    color: Colors.white),
                               ),
                             ),
                           ],

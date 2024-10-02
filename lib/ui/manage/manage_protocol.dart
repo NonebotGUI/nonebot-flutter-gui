@@ -29,7 +29,6 @@ class _MyCustomFormState extends State<ManageProtocol> {
     _scrollToBottom();
   }
 
-
   // 鼠标滚轮无动作10秒自动滚动到底部
   void _startScrollToBottomTimer() {
     _scrollTimer?.cancel();
@@ -46,7 +45,6 @@ class _MyCustomFormState extends State<ManageProtocol> {
       );
     }
   }
-
 
   void _startRefreshing() {
     if (_timer != null) {
@@ -87,8 +85,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
   }
 
   void _reloadConfig() {
-    setState(() {
-    });
+    setState(() {});
   }
 
   String protocolCMD = Protocol.cmd();
@@ -96,15 +93,15 @@ class _MyCustomFormState extends State<ManageProtocol> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      body: NotificationListener(
-        onNotification: (ScrollNotification notification) {
-          if (notification is UserScrollNotification ||
-              notification is ScrollUpdateNotification) {
-            _startScrollToBottomTimer();
-          }
-          return false;
-        },
-        child: Container(
+        body: NotificationListener(
+      onNotification: (ScrollNotification notification) {
+        if (notification is UserScrollNotification ||
+            notification is ScrollUpdateNotification) {
+          _startScrollToBottomTimer();
+        }
+        return false;
+      },
+      child: Container(
         padding: const EdgeInsets.all(8),
         child: Row(
           children: <Widget>[
@@ -320,22 +317,21 @@ class _MyCustomFormState extends State<ManageProtocol> {
                               width: size.width * 0.65,
                               height: size.height * 0.75,
                               child: Card(
-                              color: const Color.fromARGB(255, 31, 28, 28),
-                              child: SingleChildScrollView(
-                                controller: _scrollController,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Text(
-                                    MainApp.protocolLog,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'JetBrainsMono',
+                                color: const Color.fromARGB(255, 31, 28, 28),
+                                child: SingleChildScrollView(
+                                  controller: _scrollController,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                      MainApp.protocolLog,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'JetBrainsMono',
+                                      ),
                                     ),
                                   ),
-
                                 ),
                               ),
-                            ),
                             ),
                             Positioned(
                               bottom: 10,
@@ -357,7 +353,6 @@ class _MyCustomFormState extends State<ManageProtocol> {
                           ],
                         ),
                       )
-
                     ],
                   ),
                 ),
@@ -498,8 +493,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
           ],
         ),
       ),
-      )
-    );
+    ));
   }
 }
 
