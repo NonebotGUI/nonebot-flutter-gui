@@ -467,14 +467,18 @@ class _HomeScreenState extends State<HomeScreen>
                         ? IconButton(
                             icon: const Icon(Icons.rectangle_outlined),
                             color: Colors.white,
-                            onPressed: () => appWindow.restore(),
+                            onPressed: () => setState(() {
+                              appWindow.restore();
+                            }),
                             iconSize: 20,
                             tooltip: "恢复大小",
                           )
                         : IconButton(
                             icon: const Icon(Icons.rectangle_outlined),
                             color: Colors.white,
-                            onPressed: () => appWindow.maximize(),
+                            onPressed: () => setState(() {
+                              appWindow.maximize();
+                            }),
                             iconSize: 20,
                             tooltip: "最大化",
                           ),

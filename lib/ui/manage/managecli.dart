@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:NoneBotGUI/ui/manage/adapter.dart';
 import 'package:NoneBotGUI/ui/manage/driver.dart';
+import 'package:NoneBotGUI/ui/manage/env.dart';
 import 'package:NoneBotGUI/ui/manage/manage_cli.dart';
 import 'package:NoneBotGUI/ui/manage/manage_plugin.dart';
 import 'package:NoneBotGUI/ui/manage/plugin.dart';
@@ -187,6 +188,19 @@ class _HomeScreenState extends State<manageCli> {
             ],
           ),
           const VerticalDivider(thickness: 1, width: 1),
+          Expanded(
+            child: IndexedStack(
+              index: _selectedIndex,
+              children: const <Widget>[
+                PluginStore(),
+                AdapterStore(),
+                DriverStore(),
+                ManagePlugin(),
+                ManageCli(),
+                EditEnv(),
+              ],
+            ),
+          )
         ],
       )
     );

@@ -100,60 +100,18 @@ class _MyHomePageState extends State<PluginStore> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: Row(
-          children: [
-            Expanded(
-              child: MoveWindow(
-                child: AppBar(
-                  title: TextField(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
+          child: TextField(
                     controller: _searchController,
                     decoration: const InputDecoration(
-                      hintText: '搜索插件...',
+                      hintText: ' 搜索插件...',
                       hintStyle: TextStyle(color: Colors.white),
                     ),
                     style: const TextStyle(color: Colors.white),
                     onChanged: _searchPlugins,
                   ),
-                  actions: <Widget>[
-                    IconButton(
-                      icon: const Icon(Icons.remove_rounded),
-                      color: Colors.white,
-                      onPressed: () => appWindow.minimize(),
-                      iconSize: 20,
-                      tooltip: "最小化",
-                    ),
-                    appWindow.isMaximized
-                        ? IconButton(
-                            icon: const Icon(Icons.rectangle_outlined),
-                            color: Colors.white,
-                            onPressed: () => setState(() {
-                              appWindow.restore();
-                            }),
-                            iconSize: 20,
-                            tooltip: "恢复大小",
-                          )
-                        : IconButton(
-                            icon: const Icon(Icons.rectangle_outlined),
-                            color: Colors.white,
-                            onPressed: () => setState(() {
-                              appWindow.maximize();
-                            }),
-                            iconSize: 20,
-                            tooltip: "最大化",
-                          ),
-                    IconButton(
-                      icon: const Icon(Icons.close_rounded),
-                      color: Colors.white,
-                      onPressed: () => windowManager.hide(),
-                      iconSize: 20,
-                      tooltip: "关闭",
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+        )
       ),
       body: data.isEmpty
           ? Center(
