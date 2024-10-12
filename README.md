@@ -10,8 +10,8 @@ _✨ 新一代 NoneBot 图形化界面 ✨_
 <a href="./LICENSE">
     <img src="https://img.shields.io/github/license/XTxiaoting14332/nonebot-flutter-gui.svg" alt="license">
 </a>
-<a href="https://github.com/NoneBotGUI/nonebot-flutter-gui/actions/workflows/build.yml">
-  <img src="https://github.com/NoneBotGUI/nonebot-flutter-gui/actions/workflows/build.yml/badge.svg?event=workflow_run" alt="Build" />
+<a href="https://github.com/NoneBotGUI/nonebot-flutter-gui/actions/workflows/publish.yml">
+  <img src="https://github.com/NoneBotGUI/nonebot-flutter-gui/actions/workflows/publish.yml/badge.svg?event=workflow_run" alt="Build" />
 </a>
 <a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=d5JPzIUg6qjJo3E0Zz9vBeUuYNTW3ooC&authKey=xm%2F53DWfXOoz7Is3Llbc9r9E%2FB7AkSV8ERCXf7hI3e%2Fb6ra5gEhoJIfiCzZz6rCz&noverify=0&group_code=972526136">
   <img src="https://img.shields.io/badge/QQ%E7%BE%A4-972526136-orange?style=flat-square" alt="QQ Chat Group">
