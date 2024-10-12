@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:NoneBotGUI/ui/manage/managecli.dart';
 import 'package:NoneBotGUI/utils/core.dart';
 import 'package:NoneBotGUI/utils/manage.dart';
 import 'package:NoneBotGUI/utils/userConfig.dart';

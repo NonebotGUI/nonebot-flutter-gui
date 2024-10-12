@@ -11,22 +11,6 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
-// void main() {
-//   runApp(
-//     const MyApp(),
-//   );
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       home: manageCli(),
-//     );
-//   }
-// }
 
 class manageCli extends StatefulWidget {
   const manageCli({super.key});
@@ -37,6 +21,8 @@ class manageCli extends StatefulWidget {
 
 class _HomeScreenState extends State<manageCli> {
   final myController = TextEditingController();
+  int _selectedIndex = 0;
+  String _appBarTitle = '管理Bot';
 
   @override
   Widget build(BuildContext context) {
@@ -64,14 +50,18 @@ class _HomeScreenState extends State<manageCli> {
                         ? IconButton(
                             icon: const Icon(Icons.rectangle_outlined),
                             color: Colors.white,
-                            onPressed: () => appWindow.restore(),
+                            onPressed: () => setState(() {
+                              appWindow.restore();
+                            }),
                             iconSize: 20,
                             tooltip: "恢复大小",
                           )
                         : IconButton(
                             icon: const Icon(Icons.rectangle_outlined),
                             color: Colors.white,
-                            onPressed: () => appWindow.maximize(),
+                            onPressed: () => setState(() {
+                              appWindow.maximize();
+                            }),
                             iconSize: 20,
                             tooltip: "最大化",
                           ),
@@ -89,152 +79,116 @@ class _HomeScreenState extends State<manageCli> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 80,
-              child: InkWell(
-                child: const Card(
-                  child: Row(
-                    children: <Widget>[
-                      Text('  插件商店'),
-                      Icon(Icons.keyboard_arrow_right_rounded)
-                    ],
-                  ),
+      body: Row(
+        children: <Widget>[
+          NavigationRail(
+            useIndicator: false,
+            selectedIconTheme: IconThemeData(
+                color: UserConfig.colorMode() == 'light'
+                    ? const Color.fromRGBO(238, 109, 109, 1)
+                    : const Color.fromRGBO(127, 86, 151, 1),
+                size: 25),
+            selectedLabelTextStyle: TextStyle(
+                color: UserConfig.colorMode() == 'light'
+                    ? const Color.fromRGBO(238, 109, 109, 1)
+                    : const Color.fromRGBO(127, 86, 151, 1)),
+            unselectedIconTheme: IconThemeData(
+                size: 25,
+                color:
+                    UserConfig.colorMode() == 'light' ? Colors.grey[900] : Colors.grey[200]),
+            elevation: 2,
+            minExtendedWidth: 200,
+            indicatorShape: const RoundedRectangleBorder(),
+            onDestinationSelected: (int index) {
+              setState(() {
+                _selectedIndex = index;
+                switch (index) {
+                  case 0:
+                    _appBarTitle = '插件商店';
+                    break;
+                  case 1:
+                    _appBarTitle = '适配器商店';
+                    break;
+                  case 2:
+                    _appBarTitle = '驱动器商店';
+                    break;
+                  case 3:
+                    _appBarTitle = '管理插件';
+                    break;
+                  case 4:
+                    _appBarTitle = '管理cli本体';
+                    break;
+                  case 5:
+                    _appBarTitle = 'env配置';
+                    break;
+                  default:
+                    _appBarTitle = 'Null';
+                    break;
+                }
+              });
+            },
+            selectedIndex: _selectedIndex,
+            extended: true,
+            destinations: <NavigationRailDestination>[
+              NavigationRailDestination(
+                icon: Icon(
+                  _selectedIndex == 0
+                      ? Icons.storefront_rounded
+                      : Icons.storefront_outlined,
                 ),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PluginStore(),
-                  ),
-                ),
+                label: const Text('插件商店'),
+                padding: const EdgeInsets.fromLTRB(0, 15, 0, 15)
               ),
-            ),
-            const SizedBox(
-              height: 4,
-            ),
-            SizedBox(
-              height: 80,
-              child: InkWell(
-                child: const Card(
-                  child: Row(
-                    children: <Widget>[
-                      Text('  管理插件'),
-                      Icon(Icons.keyboard_arrow_right_rounded)
-                    ],
-                  ),
+              NavigationRailDestination(
+                icon: Icon(
+                  _selectedIndex == 1
+                      ? Icons.storefront_rounded
+                      : Icons.storefront_outlined,
                 ),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ManagePlugin(),
-                  ),
-                ),
+                label: const Text('适配器商店'),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 15)
               ),
-            ),
-            const SizedBox(
-              height: 4,
-            ),
-            SizedBox(
-              height: 80,
-              child: InkWell(
-                child: const Card(
-                  child: Row(
-                    children: <Widget>[
-                      Text('  适配器商店'),
-                      Icon(Icons.keyboard_arrow_right_rounded)
-                    ],
-                  ),
+              NavigationRailDestination(
+                icon: Icon(
+                  _selectedIndex == 2
+                      ? Icons.storefront_rounded
+                      : Icons.storefront_outlined,
                 ),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AdapterStore(),
-                  ),
-                ),
+                label: const Text('驱动器商店'),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 15)
               ),
-            ),
-            const SizedBox(
-              height: 4,
-            ),
-            SizedBox(
-              height: 80,
-              child: InkWell(
-                child: const Card(
-                  child: Row(
-                    children: <Widget>[
-                      Text('  驱动器商店'),
-                      Icon(Icons.keyboard_arrow_right_rounded)
-                    ],
-                  ),
+              NavigationRailDestination(
+                icon: Icon(
+                  _selectedIndex == 3
+                      ? Icons.extension_rounded
+                      : Icons.extension_outlined,
                 ),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const DriverStore(),
-                  ),
-                ),
+                label: const Text('管理插件'),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 15)
               ),
-            ),
-            SizedBox(
-              height: 80,
-              child: InkWell(
-                child: const Card(
-                  child: Row(
-                    children: <Widget>[
-                      Text('  管理nb-cli本体'),
-                      Icon(Icons.keyboard_arrow_right_rounded)
-                    ],
-                  ),
+              NavigationRailDestination(
+                icon: Icon(
+                  _selectedIndex == 4
+                      ? Icons.settings_applications_rounded
+                      : Icons.settings_applications_outlined,
                 ),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ManageCli(),
-                  ),
-                ),
+                label: const Text('管理cli本体'),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 15)
               ),
-            ),
-            const SizedBox(
-              height: 4,
-            ),
-            SizedBox(
-              height: 80,
-              child: InkWell(
-                child: const Card(
-                  child: Row(
-                    children: <Widget>[
-                      Text('  生成机器人的入口文件(bot.py)  '),
-                      Icon(
-                        Icons.file_open_rounded,
-                        size: 20,
-                      )
-                    ],
-                  ),
+              NavigationRailDestination(
+                icon: Icon(
+                  _selectedIndex == 5
+                      ? Icons.file_copy_rounded
+                      : Icons.file_copy_outlined,
                 ),
-                onTap: () {
-                  Process.start(
-                    UserConfig.nbcliPath(),
-                    ['generate'],
-                    runInShell: true,
-                    workingDirectory: Bot.path(),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('已生成'),
-                      duration: Duration(seconds: 3),
-                    ),
-                  );
-                },
+                label: const Text('env配置'),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 15)
               ),
-            ),
-            const SizedBox(
-              height: 4,
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+          const VerticalDivider(thickness: 1, width: 1),
+        ],
+      )
     );
   }
 }
