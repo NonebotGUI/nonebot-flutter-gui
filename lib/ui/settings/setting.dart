@@ -18,6 +18,12 @@ class Settings extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<Settings> {
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void _selectPy() async {
     final result = await FilePicker.platform.pickFiles();
 

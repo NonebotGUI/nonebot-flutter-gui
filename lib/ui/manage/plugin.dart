@@ -1,16 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:NoneBotGUI/utils/global.dart';
 import 'package:NoneBotGUI/utils/manage.dart';
 import 'package:NoneBotGUI/utils/userConfig.dart';
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:NoneBotGUI/assets/my_flutter_app_icons.dart';
 import 'package:flutter/services.dart';
-
-import 'package:window_manager/window_manager.dart';
 
 class PluginStore extends StatefulWidget {
   const PluginStore({super.key});
@@ -48,6 +44,7 @@ class _MyHomePageState extends State<PluginStore> {
 
   @override
   void dispose() {
+    pluginOutput.dispose();
     pluginOutputController.close();
     super.dispose();
   }

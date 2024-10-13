@@ -21,6 +21,12 @@ class _HomeScreenState extends State<BroadcastDetail> {
     fetchData();
   }
 
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   String md = '';
   Future<void> fetchData() async {
     final response = await http.get(Uri.parse(

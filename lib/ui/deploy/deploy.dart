@@ -17,6 +17,13 @@ class Deploy extends StatefulWidget {
 }
 
 class _DeployState extends State<Deploy> {
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+
   final _output = TextEditingController();
   final _outputController = StreamController<String>.broadcast();
   late String dropDownValueDL = FastDeploy.dlLink.first;

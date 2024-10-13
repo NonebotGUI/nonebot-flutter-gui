@@ -11,6 +11,12 @@ class StdErr extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<StdErr> {
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

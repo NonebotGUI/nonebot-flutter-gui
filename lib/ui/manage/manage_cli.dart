@@ -27,6 +27,12 @@ class _MyCustomFormState extends State<ManageCli> {
 //屎山
 //别骂了别骂了😭😭😭
 
+
+  @override
+  void dispose() {
+    packageOutput.dispose();
+    super.dispose();
+  }
   final packageOutput = TextEditingController();
   void managePackage(manage, name) async {
     packageOutput.clear();

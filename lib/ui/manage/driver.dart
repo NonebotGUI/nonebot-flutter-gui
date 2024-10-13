@@ -3,29 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:NoneBotGUI/utils/manage.dart';
 import 'package:NoneBotGUI/utils/userConfig.dart';
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:NoneBotGUI/assets/my_flutter_app_icons.dart';
 import 'package:flutter/services.dart';
-
-import 'package:NoneBotGUI/utils/global.dart';
-import 'package:window_manager/window_manager.dart';
-
-// void main() {
-//   runApp(const MyApp());
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       home: DriverStore(),
-//     );
-//   }
-// }
 
 class DriverStore extends StatefulWidget {
   const DriverStore({super.key});
@@ -63,6 +44,7 @@ class _MyHomePageState extends State<DriverStore> {
 
   @override
   void dispose() {
+    _searchController.dispose();
     driverOutputController.close();
     super.dispose();
   }

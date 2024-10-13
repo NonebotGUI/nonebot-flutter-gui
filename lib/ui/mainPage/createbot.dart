@@ -15,6 +15,7 @@ class CreateBot extends StatefulWidget {
 }
 
 class _MyCustomFormState extends State<CreateBot> {
+
   final _output = TextEditingController();
   final _outputController = StreamController<String>.broadcast();
   final ScrollController _scrollController = ScrollController();
@@ -150,7 +151,6 @@ class _MyCustomFormState extends State<CreateBot> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.;
     myController.dispose();
     super.dispose();
   }

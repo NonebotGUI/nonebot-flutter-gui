@@ -1,12 +1,9 @@
-import 'dart:io';
-
 import 'package:NoneBotGUI/ui/manage/adapter.dart';
 import 'package:NoneBotGUI/ui/manage/driver.dart';
 import 'package:NoneBotGUI/ui/manage/env.dart';
 import 'package:NoneBotGUI/ui/manage/manage_cli.dart';
 import 'package:NoneBotGUI/ui/manage/manage_plugin.dart';
 import 'package:NoneBotGUI/ui/manage/plugin.dart';
-import 'package:NoneBotGUI/utils/manage.dart';
 import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +19,11 @@ class manageCli extends StatefulWidget {
 class _HomeScreenState extends State<manageCli> {
   final myController = TextEditingController();
   int _selectedIndex = 0;
-  String _appBarTitle = '管理Bot';
+  @override
+  void dispose() {
+    myController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,29 +104,6 @@ class _HomeScreenState extends State<manageCli> {
               onDestinationSelected: (int index) {
                 setState(() {
                   _selectedIndex = index;
-                  switch (index) {
-                    case 0:
-                      _appBarTitle = '插件商店';
-                      break;
-                    case 1:
-                      _appBarTitle = '适配器商店';
-                      break;
-                    case 2:
-                      _appBarTitle = '驱动器商店';
-                      break;
-                    case 3:
-                      _appBarTitle = '管理插件';
-                      break;
-                    case 4:
-                      _appBarTitle = '管理cli本体';
-                      break;
-                    case 5:
-                      _appBarTitle = 'env配置';
-                      break;
-                    default:
-                      _appBarTitle = 'Null';
-                      break;
-                  }
                 });
               },
               selectedIndex: _selectedIndex,

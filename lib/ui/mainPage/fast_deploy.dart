@@ -21,6 +21,11 @@ class _HomeScreenState extends State<FastDeployList> {
     fetchData();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future<void> fetchData() async {
     final response = await http
         .get(Uri.parse('https://api.nbgui.top/api/nbgui/deploy/list'));

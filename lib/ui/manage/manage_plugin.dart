@@ -19,7 +19,10 @@ class _HomeScreenState extends State<ManagePlugin> {
       _selectedIndex = index;
     });
   }
-
+  @override
+  void dispose() {
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
