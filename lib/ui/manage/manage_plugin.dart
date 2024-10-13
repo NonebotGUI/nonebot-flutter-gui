@@ -3,6 +3,7 @@ import 'package:NoneBotGUI/utils/core.dart';
 import 'package:NoneBotGUI/utils/manage.dart';
 import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:flutter/material.dart';
+
 class ManagePlugin extends StatefulWidget {
   const ManagePlugin({super.key});
 
