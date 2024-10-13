@@ -108,9 +108,7 @@ class _MyHomePageState extends State<DriverStore> {
               controller: _searchController,
               decoration: const InputDecoration(
                 hintText: ' 搜索驱动器...',
-                hintStyle: TextStyle(color: Colors.white),
               ),
-              style: const TextStyle(color: Colors.white),
               onChanged: _searchDrivers,
             ),
           )),

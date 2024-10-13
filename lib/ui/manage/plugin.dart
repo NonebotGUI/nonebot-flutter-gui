@@ -103,9 +103,7 @@ class _MyHomePageState extends State<PluginStore> {
               controller: _searchController,
               decoration: const InputDecoration(
                 hintText: ' 搜索插件...',
-                hintStyle: TextStyle(color: Colors.white),
               ),
-              style: const TextStyle(color: Colors.white),
               onChanged: _searchPlugins,
             ),
           )),

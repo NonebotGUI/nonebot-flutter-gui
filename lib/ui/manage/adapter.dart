@@ -108,9 +108,7 @@ class _MyHomePageState extends State<AdapterStore> {
               controller: _searchController,
               decoration: const InputDecoration(
                 hintText: ' 搜索适配器...',
-                hintStyle: TextStyle(color: Colors.white),
               ),
-              style: const TextStyle(color: Colors.white),
               onChanged: _searchAdapters,
             ),
           )),
