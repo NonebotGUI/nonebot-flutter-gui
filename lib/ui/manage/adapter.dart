@@ -117,20 +117,19 @@ class _MyHomePageState extends State<AdapterStore> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
-          child: TextField(
-                    controller: _searchController,
-                    decoration: const InputDecoration(
-                      hintText: ' 搜索适配器...',
-                      hintStyle: TextStyle(color: Colors.white),
-                    ),
-                    style: const TextStyle(color: Colors.white),
-                    onChanged: _searchAdapters,
-                  ),
-        )
-      ),
+          preferredSize: const Size.fromHeight(50),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
+            child: TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                hintText: ' 搜索适配器...',
+                hintStyle: TextStyle(color: Colors.white),
+              ),
+              style: const TextStyle(color: Colors.white),
+              onChanged: _searchAdapters,
+            ),
+          )),
       body: data.isEmpty
           ? Center(
               child: Column(

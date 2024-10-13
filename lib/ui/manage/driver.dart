@@ -119,20 +119,19 @@ class _MyHomePageState extends State<DriverStore> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
-          child: TextField(
-                    controller: _searchController,
-                    decoration: const InputDecoration(
-                      hintText: ' 搜索驱动器...',
-                      hintStyle: TextStyle(color: Colors.white),
-                    ),
-                    style: const TextStyle(color: Colors.white),
-                    onChanged: _searchDrivers,
-                  ),
-        )
-      ),
+          preferredSize: const Size.fromHeight(50),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
+            child: TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                hintText: ' 搜索驱动器...',
+                hintStyle: TextStyle(color: Colors.white),
+              ),
+              style: const TextStyle(color: Colors.white),
+              onChanged: _searchDrivers,
+            ),
+          )),
       body: data.isEmpty
           ? Center(
               child: Column(
