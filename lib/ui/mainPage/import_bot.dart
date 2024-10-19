@@ -10,10 +10,6 @@ class ImportBot extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<ImportBot> {
-
-
-
-  
   String name = 'ImportedBot';
   final myController = TextEditingController();
   final myCmdController = TextEditingController();

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:NoneBotGUI/utils/core.dart';
 import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:NoneBotGUI/utils/global.dart';
@@ -18,7 +17,6 @@ class Settings extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<Settings> {
-
   @override
   void dispose() {
     super.dispose();
@@ -81,11 +79,9 @@ class _HomeScreenState extends State<Settings> {
 
   ///检查更新
   Future<void> check() async {
-    //如果“检查更新”为开启则检查
-    if (UserConfig.checkUpdate()) {
       try {
         final response = await http.get(Uri.parse(
-            'https://api.github.com/repos/NoneBotGUI/nonebot-flutter-gui/releases/latest'));
+            'https://api.github.com/repos/NonebotGUI/nonebot-flutter-gui/releases/latest'));
         if (response.statusCode == 200) {
           final jsonData = jsonDecode(response.body);
           final tagName = jsonData['tag_name'];
@@ -138,7 +134,6 @@ class _HomeScreenState extends State<Settings> {
         ));
       }
     }
-  }
 
   @override
   Widget build(BuildContext context) {

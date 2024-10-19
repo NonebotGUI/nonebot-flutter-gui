@@ -80,6 +80,9 @@ class _MyCustomFormState extends State<ManageProtocol> {
     if (_timer != null) {
       _timer?.cancel();
     }
+    if (_scrollTimer != null) {
+      _scrollTimer?.cancel();
+    }
   }
 
   void _reloadConfig() {

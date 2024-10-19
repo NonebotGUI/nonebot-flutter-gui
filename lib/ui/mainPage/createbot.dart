@@ -15,7 +15,6 @@ class CreateBot extends StatefulWidget {
 }
 
 class _MyCustomFormState extends State<CreateBot> {
-
   final _output = TextEditingController();
   final _outputController = StreamController<String>.broadcast();
   final ScrollController _scrollController = ScrollController();

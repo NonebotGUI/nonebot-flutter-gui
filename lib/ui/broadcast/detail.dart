@@ -21,7 +21,6 @@ class _HomeScreenState extends State<BroadcastDetail> {
     fetchData();
   }
 
-
   @override
   void dispose() {
     super.dispose();
