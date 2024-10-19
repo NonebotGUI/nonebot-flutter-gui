@@ -53,7 +53,7 @@ _✨ 新一代 NoneBot 图形化界面 ✨_
 请使用以下命令安装依赖(以 Debian 系为例)
 
 ```bash
-sudo apt-get install appindicator3-0.1 libappindicator3-dev
+sudo apt-get install appindicator3-0.1 libappindicator3-dev libnotify-dev
 ```
 
 
