@@ -22,6 +22,7 @@ import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:watcher/watcher.dart';
 import 'package:NoneBotGUI/utils/userConfig.dart';
+import 'package:local_notifier/local_notifier.dart';
 
 void main() async {
   //初始化程序
@@ -33,11 +34,12 @@ void main() async {
   MainApp.nbLog = '[INFO]Welcome to NoneBot GUI!';
   MainApp.protocolLog = '[INFO]Welcome to NoneBot GUI!';
   MainApp.barExtended = false;
-  MainApp.version = 'v1.1.1+1';
+  MainApp.version = 'v1.1.1+2';
   FlutterError.onError = (FlutterErrorDetails details) async {
     DateTime now = DateTime.now();
     String timestamp = now.toIso8601String();
-    String errorMessage = '[ERROR]$timestamp -${details.exception.toString()}\n\n';
+    String errorMessage =
+        '[ERROR]$timestamp -${details.exception.toString()}\n\n';
     final errorFile = File('$userDir/error.log');
     await errorFile.writeAsString(errorMessage, mode: FileMode.append);
   };
@@ -52,6 +54,13 @@ void main() async {
     await windowManager.show();
     await windowManager.focus();
   });
+
+  /// 初始化通知
+  await localNotifier.setup(
+    appName: 'NoneBot GUI',
+  );
+
+  /// 启动主程序
   runApp(
     MaterialApp(
       home: const HomeScreen(),
@@ -171,6 +180,13 @@ class _HomeScreenState extends State<HomeScreen>
     stateInit();
     alwaysRefresh();
     refresh();
+    final notification = LocalNotification(
+      identifier: '114514',
+      title: 'NoneBot GUI',
+      subtitle: '怎么个个都说这个是移动端😭😭😭',
+      body: '我已启动并在后台运行！请通过系统托盘打开主界面。',
+    );
+    notification.show();
   }
 
   @override
