@@ -95,77 +95,91 @@ class _MyHomePageState extends State<PluginStore> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: ' 搜索插件...',
+        appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(50),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
+              child: TextField(
+                controller: _searchController,
+                decoration: const InputDecoration(
+                  hintText: ' 搜索插件...',
+                ),
+                onChanged: _searchPlugins,
               ),
-              onChanged: _searchPlugins,
-            ),
-          )),
-      body: data.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset('lib/assets/loading.gif'),
-                ],
-              ),
-            )
-          : ListView.builder(
-              itemCount: search.length,
-              itemBuilder: (BuildContext context, int index) {
-                final plugins = search[index];
-                return InkWell(
-                  onTap: () {},
-                  child: Card(
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  plugins['name'],
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
+            )),
+        body: data.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('lib/assets/loading.gif'),
+                  ],
+                ),
+              )
+            : Container(
+                margin: const EdgeInsets.fromLTRB(32, 20, 32, 12),
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 3 / 1,
+                  ),
+                  itemCount: search.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final plugins = search[index];
+                    return Card(
+                      child: InkWell(
+                        onTap: () {},
+                        child: Stack(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    plugins['name'],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    plugins['module_name'],
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    plugins['desc'],
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                    overflow: TextOverflow.fade,
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              left: 8,
+                              bottom: 8,
+                              child: Text(
+                                'By ${plugins['author']}',
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey,
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(plugins['module_name']),
-                              ),
-                              const SizedBox(
-                                height: 2,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(plugins['desc']),
-                              ),
-                              const SizedBox(
-                                height: 2,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text('By ${plugins['author']}'),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Flexible(
-                            child: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                            ),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
                                   IconButton(
                                     onPressed: () {
@@ -176,14 +190,15 @@ class _MyHomePageState extends State<PluginStore> {
                                             installingPluginDialog(plugins),
                                       );
                                     },
-                                    tooltip: '安装插件',
+                                    tooltip: '安装适配器',
                                     icon: const Icon(Icons.download_rounded),
                                     iconSize: 25,
                                   ),
                                   IconButton(
                                     onPressed: () {
                                       Clipboard.setData(ClipboardData(
-                                          text: plugins['homepage']));
+                                        text: plugins['homepage'],
+                                      ));
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         const SnackBar(
@@ -199,15 +214,13 @@ class _MyHomePageState extends State<PluginStore> {
                                 ],
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-    );
+                      ),
+                    );
+                  },
+                ),
+              ));
   }
 
   Material installingPluginDialog(Map plugins) {

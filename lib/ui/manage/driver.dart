@@ -100,119 +100,132 @@ class _MyHomePageState extends State<DriverStore> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: ' 搜索驱动器...',
+        appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(50),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
+              child: TextField(
+                controller: _searchController,
+                decoration: const InputDecoration(
+                  hintText: ' 搜索驱动器...',
+                ),
+                onChanged: _searchDrivers,
               ),
-              onChanged: _searchDrivers,
-            ),
-          )),
-      body: data.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset('lib/assets/loading.gif'),
-                ],
-              ),
-            )
-          : ListView.builder(
-              itemCount: search.length,
-              itemBuilder: (BuildContext context, int index) =>
-                  driverList(search[index]),
-            ),
-    );
-  }
-
-  InkWell driverList(drivers) => InkWell(
-        onTap: () {},
-        child: Card(
-          child: Row(
-            children: <Widget>[
-              Expanded(
+            )),
+        body: data.isEmpty
+            ? Center(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        drivers['name'],
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(drivers['module_name']),
-                    ),
-                    const SizedBox(
-                      height: 2,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(drivers['desc']),
-                    ),
-                    const SizedBox(
-                      height: 2,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text('By ${drivers['author']}'),
-                    ),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('lib/assets/loading.gif'),
                   ],
                 ),
-              ),
-              Expanded(
-                child: Flexible(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        IconButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (BuildContext context) =>
-                                  driverInstall(drivers),
-                            );
-                          },
-                          tooltip: '安装适配器',
-                          icon: const Icon(Icons.download_rounded),
-                          iconSize: 25,
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            Clipboard.setData(
-                                ClipboardData(text: drivers['homepage']));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('项目仓库链接已复制到剪贴板'),
-                                duration: Duration(seconds: 3),
-                              ),
-                            );
-                          },
-                          tooltip: '复制仓库地址',
-                          icon: const Icon(MyFlutterApp.github),
-                          iconSize: 25,
-                        ),
-                      ],
-                    ),
+              )
+            : Container(
+                margin: const EdgeInsets.fromLTRB(
+                    32, 20, 32, 12), // 外部容器的 margin，不影响滚动条
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 3 / 1,
                   ),
+                  itemCount: search.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final drivers = search[index];
+                    return Card(
+                      child: InkWell(
+                        onTap: () {},
+                        child: Stack(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    drivers['name'],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    drivers['module_name'],
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    drivers['desc'],
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              left: 8,
+                              bottom: 8,
+                              child: Text(
+                                'By ${drivers['author']}',
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Row(
+                                children: <Widget>[
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (BuildContext context) =>
+                                            driverInstall(drivers),
+                                      );
+                                    },
+                                    tooltip: '安装适配器',
+                                    icon: const Icon(Icons.download_rounded),
+                                    iconSize: 25,
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      Clipboard.setData(ClipboardData(
+                                        text: drivers['homepage'],
+                                      ));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text('项目仓库链接已复制到剪贴板'),
+                                          duration: Duration(seconds: 3),
+                                        ),
+                                      );
+                                    },
+                                    tooltip: '复制仓库地址',
+                                    icon: const Icon(MyFlutterApp.github),
+                                    iconSize: 25,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              ),
-            ],
-          ),
-        ),
-      );
+              ));
+  }
 
   Material driverInstall(drivers) {
     String name = drivers['module_name'];

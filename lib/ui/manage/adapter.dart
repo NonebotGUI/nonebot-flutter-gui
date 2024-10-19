@@ -8,7 +8,6 @@ import 'package:NoneBotGUI/assets/my_flutter_app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:NoneBotGUI/utils/manage.dart';
 
-
 class AdapterStore extends StatefulWidget {
   const AdapterStore({super.key});
 
@@ -96,81 +95,92 @@ class _MyHomePageState extends State<AdapterStore> {
     fetchData();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: ' 搜索适配器...',
+        appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(50),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
+              child: TextField(
+                controller: _searchController,
+                decoration: const InputDecoration(
+                  hintText: ' 搜索适配器...',
+                ),
+                onChanged: _searchAdapters,
               ),
-              onChanged: _searchAdapters,
-            ),
-          )),
-      body: data.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset('lib/assets/loading.gif'),
-                ],
-              ),
-            )
-          : ListView.builder(
-              itemCount: search.length,
-              itemBuilder: (BuildContext context, int index) {
-                final adapters = search[index];
-                return InkWell(
-                  onTap: () {},
-                  child: Card(
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  adapters['name'],
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
+            )),
+        body: data.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('lib/assets/loading.gif'),
+                  ],
+                ),
+              )
+            : Container(
+                margin: const EdgeInsets.fromLTRB(32, 20, 32, 12),
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 3 / 1,
+                  ),
+                  itemCount: search.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final adapters = search[index];
+                    return Card(
+                      child: InkWell(
+                        onTap: () {},
+                        child: Stack(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    adapters['name'],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    adapters['module_name'],
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    adapters['desc'],
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              left: 8,
+                              bottom: 8,
+                              child: Text(
+                                'By ${adapters['author']}',
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey,
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(adapters['module_name']),
-                              ),
-                              const SizedBox(
-                                height: 2,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(adapters['desc']),
-                              ),
-                              const SizedBox(
-                                height: 2,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text('By ${adapters['author']}'),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Flexible(
-                            child: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                            ),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
                                   IconButton(
                                     onPressed: () {
@@ -188,7 +198,8 @@ class _MyHomePageState extends State<AdapterStore> {
                                   IconButton(
                                     onPressed: () {
                                       Clipboard.setData(ClipboardData(
-                                          text: adapters['homepage']));
+                                        text: adapters['homepage'],
+                                      ));
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         const SnackBar(
@@ -204,15 +215,13 @@ class _MyHomePageState extends State<AdapterStore> {
                                 ],
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-    );
+                      ),
+                    );
+                  },
+                ),
+              ));
   }
 
   Material installDialog(Map adapters) {
