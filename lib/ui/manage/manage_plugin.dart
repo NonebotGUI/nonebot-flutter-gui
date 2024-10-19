@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:NoneBotGUI/utils/core.dart';
+import 'package:NoneBotGUI/utils/global.dart';
 import 'package:NoneBotGUI/utils/manage.dart';
 import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:flutter/material.dart';
+import 'package:watcher/watcher.dart';
 
 class ManagePlugin extends StatefulWidget {
   const ManagePlugin({super.key});
@@ -19,20 +22,50 @@ class _HomeScreenState extends State<ManagePlugin> {
       _selectedIndex = index;
     });
   }
+
+  @override
+  void initState() {
+    super.initState();
+    fileListener();
+  }
+
   @override
   void dispose() {
     super.dispose();
+    _subscription?.cancel();
   }
+
+  /// 监听文件变化
+  StreamSubscription<WatchEvent>? _subscription;
+  void fileListener() async {
+    if (gOnOpen.isNotEmpty) {
+      final logWatcher = DirectoryWatcher(Bot.path());
+      _subscription = logWatcher.events.listen((event) async {
+        if (event.path == '${Bot.path()}/pyproject.toml' &&
+            event.type == ChangeType.MODIFY) {
+          setState(() {});
+          ();
+        }
+        if (event.path == '${Bot.path()}/.disabled_plugins' &&
+            event.type == ChangeType.MODIFY) {
+          setState(() {});
+          ();
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          margin: const EdgeInsets.fromLTRB(32, 20, 32, 12),
-          child: Column(
-            children: <Widget>[
-              _selectedIndex == 0
-                  ? getPluginList().isEmpty
-                      ? const Center(
+        margin: const EdgeInsets.fromLTRB(32, 20, 32, 12),
+        child: Column(
+          children: <Widget>[
+            _selectedIndex == 0
+                ? getPluginList().isEmpty
+                    ? const Expanded(
+                        child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -42,9 +75,11 @@ class _HomeScreenState extends State<ManagePlugin> {
                               SizedBox(height: 3),
                             ],
                           ),
-                        )
-                      : ListView.separated(
-                          shrinkWrap: true,
+                        ),
+                      )
+                    : Expanded(
+                        // 使用 Expanded 包裹 ListView
+                        child: ListView.separated(
                           itemCount: getPluginList().length,
                           separatorBuilder: (BuildContext context, int index) {
                             return const Divider();
@@ -82,15 +117,19 @@ class _HomeScreenState extends State<ManagePlugin> {
                               ),
                             );
                           },
-                        )
-                  : File('${Bot.path()}/.disabled_plugins')
-                          .readAsStringSync()
-                          .isEmpty
-                      ? const Center(
+                        ),
+                      )
+                : File('${Bot.path()}/.disabled_plugins')
+                        .readAsStringSync()
+                        .isEmpty
+                    ? const Expanded(
+                        child: Center(
                           child: Text('空空如也...'),
-                        )
-                      : ListView.separated(
-                          shrinkWrap: true,
+                        ),
+                      )
+                    : Expanded(
+                        // 使用 Expanded 包裹 ListView
+                        child: ListView.separated(
                           itemCount: getDisabledPluginList().length,
                           separatorBuilder: (BuildContext context, int index) {
                             return const Divider();
@@ -116,9 +155,11 @@ class _HomeScreenState extends State<ManagePlugin> {
                               ),
                             );
                           },
-                        )
-            ],
-          )),
+                        ),
+                      ),
+          ],
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
