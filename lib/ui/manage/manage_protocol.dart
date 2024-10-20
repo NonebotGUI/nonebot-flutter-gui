@@ -31,7 +31,7 @@ class _MyCustomFormState extends State<ManageProtocol> {
   void _startScrollToBottomTimer() {
     _scrollTimer?.cancel();
     _scrollTimer =
-        Timer(const Duration(seconds: 10), _scrollToBottom); // 20秒后执行
+        Timer(const Duration(seconds: 5), _scrollToBottom);
   }
 
   void _scrollToBottom() {
