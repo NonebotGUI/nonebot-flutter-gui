@@ -137,9 +137,9 @@ class Bot {
   }
 
   ///删除Bot
-  static void delete() {
+  static void delete() async {
+    File('$userDir/bots/$gOnOpen.json').delete();
     gOnOpen = '';
-    _configFile.delete();
   }
 
   ///彻底删除Bot
