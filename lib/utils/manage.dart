@@ -127,7 +127,7 @@ class Bot {
   ///获取stderr.log
   static String stderr() {
     File file = File('${Bot.path()}/nbgui_stderr.log');
-    return file.readAsStringSync();
+    return file.readAsStringSync(encoding: systemEncoding);
   }
 
   ///清空stderr.log
