@@ -314,7 +314,10 @@ class _HomeScreenState extends State<EditEnv> {
                 },
               );
             },
-            child: const Icon(Icons.add),
+            child: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(height: 10),
           FloatingActionButton(
@@ -370,7 +373,10 @@ class _HomeScreenState extends State<EditEnv> {
                 },
               );
             },
-            child: const Icon(Icons.edit),
+            child: const Icon(
+              Icons.edit,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
