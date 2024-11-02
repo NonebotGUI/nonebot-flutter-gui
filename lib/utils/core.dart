@@ -90,7 +90,8 @@ clearLog(path) async {
 ///从pyproject.toml中读取插件列表
 List getPluginList() {
   File pyprojectFile = File('${Bot.path()}/pyproject.toml');
-  String pyprojectContent = pyprojectFile.readAsStringSync();
+  pyprojectFile.writeAsStringSync(pyprojectFile.readAsStringSync().replaceAll('\r\n', '\n').replaceAll('\r', '\n'));
+  String pyprojectContent = pyprojectFile.readAsStringSync(encoding: systemEncoding);
   List<String> linesWithoutComments = pyprojectContent
       .split('\n')
       .map((line) {

@@ -40,17 +40,8 @@ class _HomeScreenState extends State<ManagePlugin> {
   void fileListener() async {
     if (gOnOpen.isNotEmpty) {
       final logWatcher = DirectoryWatcher(Bot.path());
-      _subscription = logWatcher.events.listen((event) async {
-        if (event.path == '${Bot.path()}/pyproject.toml' &&
-            event.type == ChangeType.MODIFY) {
-          setState(() {});
-          ();
-        }
-        if (event.path == '${Bot.path()}/.disabled_plugins' &&
-            event.type == ChangeType.MODIFY) {
-          setState(() {});
-          ();
-        }
+      _subscription = logWatcher.events.listen((event) {
+        setState(() {});
       });
     }
   }
