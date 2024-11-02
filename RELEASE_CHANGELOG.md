@@ -1,5 +1,4 @@
-## 🌈ChangeLog 2024.10.20 🤯
+## 🌈ChangeLog 2024.11.03 🤯
 by @XTxiaoting14332
-修复Windows下stderr页面无法显示的问题
-修复无法删除Bot配置文件的问题
-控制台滚动时间缩短为5s
+修复Windows下插件管理页面爆炸的bug
+env编辑页面图标颜色改成白色

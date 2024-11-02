@@ -171,7 +171,7 @@ jobs:
           tag_name: v${{ env.NBGUI_VERSION }}
           body_path: RELEASE_CHANGELOG.md
           prerelease: false
-          draft: true
+          draft: false
           generate_release_notes: true
           token: ${{ secrets.RELEASE_GITHUB_TOKEN }}
           files: |
