@@ -1,4 +1,3 @@
-## 🌈ChangeLog 2024.11.03 🤯
+## 🌈ChangeLog 2024.12.11 🤯
 by @XTxiaoting14332
-修复Windows下插件管理页面爆炸的bug
-env编辑页面图标颜色改成白色
+将hub.xb6868.com改为hub.myxuebi.top
