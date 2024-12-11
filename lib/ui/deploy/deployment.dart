@@ -27,7 +27,7 @@ class _HomeScreenState extends State<Deployment> {
   final List<String> pluginDir = ['在[bot名称]/[bot名称]下', '在src文件夹下'];
   final List<String> mirror = [
     'https://github.com',
-    'https://hub.xb6868.com',
+    'https://hub.myxuebi.top',
     'https://mirror.ghproxy.com/https://github.com'
   ];
   late String dropDownValue = template.first;
