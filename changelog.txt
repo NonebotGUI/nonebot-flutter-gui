@@ -1,1 +1,2 @@
-将hub.xb6868.com改为hub.myxuebi.top
+Bot路径找不到时弹窗提示
+修复插件启用/禁用后 pyproject.toml 被改格式的问题

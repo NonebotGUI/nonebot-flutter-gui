@@ -34,7 +34,7 @@ void main() async {
   MainApp.nbLog = '[INFO]Welcome to NoneBot GUI!';
   MainApp.protocolLog = '[INFO]Welcome to NoneBot GUI!';
   MainApp.barExtended = false;
-  MainApp.version = 'v1.1.1+5';
+  MainApp.version = 'v1.1.2';
   FlutterError.onError = (FlutterErrorDetails details) async {
     DateTime now = DateTime.now();
     String timestamp = now.toIso8601String();
@@ -734,7 +734,7 @@ class _HomeScreenState extends State<HomeScreen>
                               child: InkWell(
                                 onTap: () {
                                   gOnOpen = '$name.$time';
-                                  if (File(Bot.path()).existsSync()) {
+                                  if (Directory(Bot.path()).existsSync()) {
                                     createLog(path);
                                     setState(() {
                                       loadFileContent();
