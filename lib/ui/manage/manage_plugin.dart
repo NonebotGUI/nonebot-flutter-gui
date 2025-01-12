@@ -27,6 +27,9 @@ class _HomeScreenState extends State<ManagePlugin> {
   void initState() {
     super.initState();
     fileListener();
+    if (File('${Bot.path()}/.disabled_plugins').existsSync()) {
+      File('${Bot.path()}/.disabled_plugins').writeAsStringSync('');
+    }
   }
 
   @override
@@ -120,33 +123,61 @@ class _HomeScreenState extends State<ManagePlugin> {
                       )
                     : Expanded(
                         // 使用 Expanded 包裹 ListView
-                        child: ListView.separated(
-                          itemCount: getDisabledPluginList().length,
-                          separatorBuilder: (BuildContext context, int index) {
-                            return const Divider();
-                          },
-                          itemBuilder: (BuildContext context, int index) {
-                            return ListTile(
-                              title: Text(getDisabledPluginList()[index]),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                        Icons.open_in_browser_rounded),
-                                    tooltip: '启用',
-                                    onPressed: () {
-                                      setState(() {
-                                        Plugin.enable(
-                                            getDisabledPluginList()[index]);
-                                      });
-                                    },
-                                  ),
-                                ],
+                        child: File('${Bot.path()}/.disabled_plugins')
+                                .existsSync()
+                            ? ListView.separated(
+                                itemCount:
+                                    File('${Bot.path()}/.disabled_plugins')
+                                        .readAsStringSync()
+                                        .split('\n')
+                                        .length,
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return const Divider();
+                                },
+                                itemBuilder: (BuildContext context, int index) {
+                                  return ListTile(
+                                    title: Text(
+                                        File('${Bot.path()}/.disabled_plugins')
+                                            .readAsStringSync()
+                                            .split('\n')[index]),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(
+                                              Icons.open_in_browser_rounded),
+                                          tooltip: '启用',
+                                          onPressed: () {
+                                            setState(() {
+                                              Plugin.enable(File(
+                                                      '${Bot.path()}/.disabled_plugins')
+                                                  .readAsStringSync()
+                                                  .split('\n')[index]);
+                                            });
+                                          },
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete),
+                                          tooltip: '卸载',
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return uninstallDialog(
+                                                    context, index);
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              )
+                            : const Center(
+                                child: Text('空空如也...'),
                               ),
-                            );
-                          },
-                        ),
                       ),
           ],
         ),
