@@ -90,8 +90,12 @@ clearLog(path) async {
 ///从pyproject.toml中读取插件列表
 List getPluginList() {
   File pyprojectFile = File('${Bot.path()}/pyproject.toml');
-  pyprojectFile.writeAsStringSync(pyprojectFile.readAsStringSync().replaceAll('\r\n', '\n').replaceAll('\r', '\n'));
-  String pyprojectContent = pyprojectFile.readAsStringSync(encoding: systemEncoding);
+  pyprojectFile.writeAsStringSync(pyprojectFile
+      .readAsStringSync()
+      .replaceAll('\r\n', '\n')
+      .replaceAll('\r', '\n'));
+  String pyprojectContent =
+      pyprojectFile.readAsStringSync(encoding: systemEncoding);
   List<String> linesWithoutComments = pyprojectContent
       .split('\n')
       .map((line) {
@@ -124,13 +128,10 @@ getProtocolFileName() {
   String ucmd = FastDeploy.cmd.replaceAll('./', '').replaceAll('.\\', '');
   List<String> cmdList = ucmd.split(' ').toList();
   String pcmd = '';
-  List<String> args = [];
   if (cmdList.length > 1) {
     pcmd = cmdList[0];
-    args = cmdList.sublist(1);
   } else {
     pcmd = cmdList[0];
-    args = [];
   }
   FastDeploy.protocolFileName = pcmd;
 }

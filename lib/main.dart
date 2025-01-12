@@ -733,13 +733,44 @@ class _HomeScreenState extends State<HomeScreen>
                             return Card(
                               child: InkWell(
                                 onTap: () {
-                                  gOnOpen = "$name.$time";
-                                  createLog(path);
-                                  setState(() {
-                                    loadFileContent();
-                                    _selectedIndex = 1;
-                                    _appBarTitle = Bot.name();
-                                  });
+                                  gOnOpen = '$name.$time';
+                                  if (File(Bot.path()).existsSync()) {
+                                    createLog(path);
+                                    setState(() {
+                                      loadFileContent();
+                                      _selectedIndex = 1;
+                                      _appBarTitle = Bot.name();
+                                    });
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('找不到Bot目录'),
+                                          content: const Text('是否要将该Bot删除？'),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: const Text('取消'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: const Text('确定'),
+                                              onPressed: () {
+                                                Bot.delete();
+                                                Navigator.of(context).pop();
+                                                setState(() {
+                                                  gOnOpen = '';
+                                                  _readConfigFiles();
+                                                });
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  }
                                 },
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
