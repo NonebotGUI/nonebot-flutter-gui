@@ -1,2 +1,5 @@
+2025.3.20
+修复pyproject.toml路径问题
+
 Bot路径找不到时弹窗提示
 修复插件启用禁用后pyproject被改格式的问题
