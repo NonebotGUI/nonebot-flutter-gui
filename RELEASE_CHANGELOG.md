@@ -1,4 +1,3 @@
-## 🌈ChangeLog 2025.01.12 🤯
+## 🌈ChangeLog 2025.03.21 🤯
 by @XTxiaoting14332
-Bot路径找不到时弹窗提示
-修复插件启用/禁用后 pyproject.toml 被改格式的问题
+修复一键部署时填写路径错误的问题
