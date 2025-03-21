@@ -193,7 +193,7 @@ class DeployBot {
     } else if (template == 'simple(插件开发者)') {
       String dir = pluginDir == '在[bot名称]/[bot名称]下'
           ? '"$name/plugins"'
-          : '"/src/plugins"';
+          : '"src/plugins"';
       String pyproject = '''
     [project]
     name = "$name"
