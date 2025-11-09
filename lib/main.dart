@@ -34,7 +34,7 @@ void main() async {
   MainApp.nbLog = '[INFO]Welcome to NoneBot GUI!';
   MainApp.protocolLog = '[INFO]Welcome to NoneBot GUI!';
   MainApp.barExtended = false;
-  MainApp.version = 'v1.1.2+1';
+  MainApp.version = 'v1.1.3';
   FlutterError.onError = (FlutterErrorDetails details) async {
     DateTime now = DateTime.now();
     String timestamp = now.toIso8601String();
@@ -554,12 +554,12 @@ class _HomeScreenState extends State<HomeScreen>
                     _appBarTitle =
                         gOnOpen.isNotEmpty ? Bot.name() : 'NoneBot GUI';
                     break;
-                  case 2:
-                    _appBarTitle = '协议端控制台';
-                    break;
-                  case 3:
-                    _appBarTitle = '快速部署';
-                    break;
+                  // case 2:
+                  //   _appBarTitle = '协议端控制台';
+                  //   break;
+                  // case 3:
+                  //   _appBarTitle = '快速部署';
+                  //   break;
                   case 4:
                     _appBarTitle = '添加Bot';
                     break;
@@ -622,24 +622,24 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
                 label: const Text('Bot控制台'),
               ),
-              NavigationRailDestination(
-                icon: Tooltip(
-                  message: '协议端控制台',
-                  child: Icon(_selectedIndex == 2
-                      ? Icons.connected_tv_rounded
-                      : Icons.connected_tv_outlined),
-                ),
-                label: const Text('协议端控制台'),
-              ),
-              NavigationRailDestination(
-                icon: Tooltip(
-                  message: '快速部署',
-                  child: Icon(_selectedIndex == 3
-                      ? Icons.archive_rounded
-                      : Icons.archive_outlined),
-                ),
-                label: const Text('快速部署'),
-              ),
+              // NavigationRailDestination(
+              //   icon: Tooltip(
+              //     message: '协议端控制台',
+              //     child: Icon(_selectedIndex == 2
+              //         ? Icons.connected_tv_rounded
+              //         : Icons.connected_tv_outlined),
+              //   ),
+              //   label: const Text('协议端控制台'),
+              // ),
+              // NavigationRailDestination(
+              //   icon: Tooltip(
+              //     message: '快速部署',
+              //     child: Icon(_selectedIndex == 3
+              //         ? Icons.archive_rounded
+              //         : Icons.archive_outlined),
+              //   ),
+              //   label: const Text('快速部署'),
+              // ),
               NavigationRailDestination(
                 icon: Tooltip(
                   message: '添加Bot',
