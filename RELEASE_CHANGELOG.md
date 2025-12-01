@@ -1,3 +1,3 @@
-## 🌈ChangeLog 2025.11.09 🤯
+## 🌈ChangeLog 2025.12.01 🤯
 by @XTxiaoting14332
-移除快速部署功能
+修复页面错位问题
