@@ -858,38 +858,6 @@ class _HomeScreenState extends State<HomeScreen>
                           ],
                         ),
                       ),
-                gOnOpen.isNotEmpty
-                    ? checkBotType()
-                        ? const ManageProtocol()
-                        : Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Image.asset('lib/assets/loading.gif'),
-                                const SizedBox(height: 10),
-                                const Text('当前选择的Bot不支持协议端控制台'),
-                              ],
-                            ),
-                          )
-                    : Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Image.asset('lib/assets/loading.gif'),
-                            const SizedBox(height: 10),
-                            const Text('你还没有选择要打开的bot'),
-                          ],
-                        ),
-                      ),
-                FastDeploy.page == 0
-                    ? const FastDeployList()
-                    : FastDeploy.page == 1
-                        ? const Deployment()
-                        : FastDeploy.page == 2
-                            ? const Deploy()
-                            : const Text('Null'),
                 const CreateBot(),
                 const ImportBot(),
                 const BoradcastList(),
