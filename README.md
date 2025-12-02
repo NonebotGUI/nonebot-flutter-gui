@@ -75,7 +75,7 @@ sudo apt-get install appindicator3-0.1 libappindicator3-dev libnotify-dev
 
 ## 📑 TODO List
 
-- [X] 清理史山【完成度:50%】
+- [X] 清理史山【完成度:75%】
 - [X] 重构新的 UI
 - [X] 在主页面直接启动 Bot
 - [X] 检查更新
