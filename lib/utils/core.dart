@@ -123,19 +123,6 @@ getDisabledPluginList() {
   return disabledPlugins;
 }
 
-///获取协议端文件名
-getProtocolFileName() {
-  String ucmd = FastDeploy.cmd.replaceAll('./', '').replaceAll('.\\', '');
-  List<String> cmdList = ucmd.split(' ').toList();
-  String pcmd = '';
-  if (cmdList.length > 1) {
-    pcmd = cmdList[0];
-  } else {
-    pcmd = cmdList[0];
-  }
-  FastDeploy.protocolFileName = pcmd;
-}
-
 //获取extDir
 Future<String?> getExtDir(String fileName, String searchDirectory) async {
   Directory dir = Directory(searchDirectory);
@@ -177,20 +164,11 @@ deleteStderr(dir) {
 ///检查bot的type键
 //适配老东西（
 checkBotType() {
-  File botcfg = File('$userDir/bots/${gOnOpen}.json');
+  File botcfg = File('$userDir/bots/$gOnOpen.json');
   Map<String, dynamic> jsonMap = jsonDecode(botcfg.readAsStringSync());
   if (jsonMap.containsKey('type')) {
     return (jsonMap['type'] == 'deployed') ? true : false;
   } else {
     return false;
-  }
-}
-
-///设置快速部署的路径
-setDeployPath(path, name) {
-  if (Platform.isWindows) {
-    FastDeploy.path = '${path.toString().replaceAll('\\', '\\\\')}\\\\$name';
-  } else if (Platform.isLinux || Platform.isMacOS) {
-    FastDeploy.path = '$path/$name';
   }
 }

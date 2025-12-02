@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:convert'; // 引入 json 库
+import 'package:uuid/uuid.dart'; // 引入 uuid 库
 
 import 'package:NoneBotGUI/utils/global.dart';
 import 'package:NoneBotGUI/utils/userConfig.dart';
@@ -224,185 +226,34 @@ class DeployBot {
     DateTime now = DateTime.now();
     String time =
         "${now.year}年${now.month}月${now.day}日${now.hour}时${now.minute}分${now.second}秒";
-    File cfgFile = File('$userDir/bots/$name.$time.json');
+    var uuid = const Uuid();
+    String id = uuid.v4();
 
+    File cfgFile = File('$userDir/bots/$id.json');
+
+    String botPath;
     if (Platform.isWindows) {
-      String botInfo = '''
-{
-  "name": "$name",
-  "path": "${path.replaceAll('\\', '\\\\')}\\\\$name",
-  "time": "$time",
-  "isrunning": "false",
-  "pid": "Null",
-  "type": "$type",
-  "protocolPath": "$protocolPath",
-  "cmd": "$cmd",
-  "protocolPid": "Null",
-  "protocolIsrunning": false
-
-}
-''';
-      cfgFile.writeAsStringSync(botInfo);
-      String echo = "echo 写入json";
-      return echo;
+      botPath = "${path.replaceAll('\\', '\\\\')}\\\\$name";
+    } else {
+      botPath = "$path/$name";
     }
 
-    if (Platform.isLinux) {
-      String botInfo = '''
-{
-  "name": "$name",
-  "path": "$path/$name",
-  "time": "$time",
-  "isrunning": "false",
-  "pid": "Null",
-  "type": "$type",
-  "protocolPath": "$protocolPath",
-  "cmd": "$cmd",
-  "protocolPid": "Null",
-  "protocolIsrunning": false
-}
-''';
-      cfgFile.writeAsStringSync(botInfo);
-      String echo = "echo 写入json";
-      return echo;
-    }
+    Map<String, dynamic> botInfo = {
+      "id": id,
+      "name": name,
+      "path": botPath,
+      "time": time,
+      "isRunning": false,
+      "pid": "Null",
+      "type": type,
+      "protocolPath": protocolPath ?? "none",
+      "cmd": cmd ?? "none",
+      "protocolPid": "Null",
+      "protocolIsRunning": false,
+      "autoStart": false
+    };
+    cfgFile.writeAsStringSync(jsonEncode(botInfo));
 
-    if (Platform.isMacOS) {
-      String botInfo = '''
-{
-  "name": "$name",
-  "path": "$path/$name",
-  "time": "$time",
-  "isrunning": "false",
-  "pid": "Null",
-  "type": "$type",
-  "protocolPath": "$protocolPath",
-  "cmd": "$cmd",
-  "protocolPid": "Null",
-  "protocolIsrunning": false
-}
-''';
-      cfgFile.writeAsStringSync(botInfo);
-      String echo = "echo 写入json";
-      return echo;
-    }
-  }
-}
-
-///协议端部署相关操作
-class DeployProtocol {
-  ///设置协议端的cmd
-  static setCmd(jsonMap) {
-    if (Platform.isWindows) {
-      FastDeploy.cmd = jsonMap['cmdWin'];
-      if (FastDeploy.needQQ) {
-        FastDeploy.cmd =
-            FastDeploy.cmd.replaceAll('NBGUI.QQNUM', FastDeploy.botQQ);
-      }
-    } else if (Platform.isLinux || Platform.isMacOS) {
-      FastDeploy.cmd = jsonMap['cmd'];
-      if (FastDeploy.needQQ) {
-        FastDeploy.cmd =
-            FastDeploy.cmd.replaceAll('NBGUI.QQNUM', FastDeploy.botQQ);
-      }
-    }
-  }
-
-  ///写入协议端配置文件
-  static Future<void> writeConfig() async {
-    if (FastDeploy.extDir.isEmpty) {
-      print('extDir is null');
-      return;
-    }
-
-    // 配置文件绝对路径
-    String path = '${FastDeploy.extDir}/${FastDeploy.configPath}';
-    File pcfg = File(FastDeploy.needQQ
-        ? path.replaceAll('NBGUI.QQNUM', FastDeploy.botQQ)
-        : path);
-
-    // 将wsPort转为int类型
-    String content = FastDeploy.botConfig
-        .toString()
-        .replaceAll('NBGUI.HOST:NBGUI.PORT',
-            "${FastDeploy.wsHost}:${FastDeploy.wsPort}")
-        .replaceAll('"NBGUI.PORT"', FastDeploy.wsPort)
-        .replaceAll('NBGUI.HOST', FastDeploy.wsHost);
-
-    await pcfg.writeAsString(content);
-
-    if (Platform.isLinux || Platform.isMacOS) {
-      // 给予执行权限
-      await Process.run('chmod', ['+x', FastDeploy.cmd],
-          workingDirectory: FastDeploy.extDir, runInShell: true);
-    }
-  }
-
-  ///写入requirements.txt和pyproject.toml
-  static writeReq(name, adapter, drivers) {
-    drivers = drivers.toLowerCase();
-    String driverlist =
-        drivers.split(',').map((driver) => 'nonebot2[$driver]').join(',');
-    driverlist = driverlist.replaceAll(',', '\n');
-    String reqs = "$driverlist\n$adapter";
-    File('$userDir/requirements.txt').writeAsStringSync(reqs);
-    if (FastDeploy.template == 'bootstrap(初学者或用户)') {
-      String pyproject = '''
-    [project]
-    name = "$name"
-    version = "0.1.0"
-    description = "$name"
-    readme = "README.md"
-    requires-python = ">=3.8, <4.0"
-
-    [tool.nonebot]
-    adapters = [
-        { name = "onebot v11", module_name = "nonebot.adapters.onebot.v11" }
-    ]
-    plugins = []
-    plugin_dirs = []
-    builtin_plugins = ["echo"]
-  ''';
-      File('${FastDeploy.path}/pyproject.toml').writeAsStringSync(pyproject);
-    } else if (FastDeploy.template == 'simple(插件开发者)') {
-      if (FastDeploy.pluginDir == '在src文件夹下') {
-        String pyproject = '''
-    [project]
-    name = "$name"
-    version = "0.1.0"
-    description = "$name"
-    readme = "README.md"
-    requires-python = ">=3.8, <4.0"
-
-    [tool.nonebot]
-    adapters = [
-        { name = "$adapter", module_name = "nonebot.adapters.onebot.v11" }
-    ]
-    plugins = []
-    plugin_dirs = ["src/plugins"]
-    builtin_plugins = ["echo"]
-  ''';
-        File('${FastDeploy.path}/pyproject.toml').writeAsStringSync(pyproject);
-      } else {
-        String pyproject = '''
-    [project]
-    name = "$name"
-    version = "0.1.0"
-    description = "$name"
-    readme = "README.md"
-    requires-python = ">=3.8, <4.0"
-
-    [tool.nonebot]
-    adapters = [
-        { name = "onebot v11", module_name = "nonebot.adapters.onebot.v11" }
-    ]
-    plugins = []
-    plugin_dirs = ["$name/plugins"]
-    builtin_plugins = ["echo"]
-    ''';
-        File('${FastDeploy.path}/pyproject.toml').writeAsStringSync(pyproject);
-      }
-    }
-    return 'echo 写入依赖...';
+    return "echo 写入json";
   }
 }

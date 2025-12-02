@@ -30,8 +30,7 @@ class _MyCustomFormState extends State<ManageBot> {
   // 鼠标滚轮无动作10秒自动滚动到底部
   void _startScrollToBottomTimer() {
     _scrollTimer?.cancel();
-    _scrollTimer =
-        Timer(const Duration(seconds: 5), _scrollToBottom);
+    _scrollTimer = Timer(const Duration(seconds: 5), _scrollToBottom);
   }
 
   void _scrollToBottom() {
@@ -98,7 +97,6 @@ class _MyCustomFormState extends State<ManageBot> {
       onNotification: (ScrollNotification notification) {
         if (notification is UserScrollNotification ||
             notification is ScrollUpdateNotification) {
-          // 如果检测到用户的滚动操作，重置计时器
           _startScrollToBottomTimer();
         }
         return false;
@@ -124,22 +122,25 @@ class _MyCustomFormState extends State<ManageBot> {
                     value: gOnOpen,
                     icon: const Icon(Icons.keyboard_arrow_down_rounded),
                     elevation: 16,
-                    onChanged: (String? value) {
-                      setState(() => gOnOpen = value!);
-                      _reloadConfig();
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        setState(() {
+                          gOnOpen = newValue;
+                          name = Bot.name();
+                        });
+                        _reloadConfig();
+                      }
                     },
-                    items: botList
-                        .map<DropdownMenuItem<String>>(
-                          (String value) => DropdownMenuItem<String>(
-                            value: value,
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(value.replaceAll(
-                                  '.${value.split('.').last}', '')),
-                            ),
-                          ),
-                        )
-                        .toList(),
+                    items: MainApp.botList
+                        .map<DropdownMenuItem<String>>((dynamic bot) {
+                      return DropdownMenuItem<String>(
+                        value: bot['id'],
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(bot['name']),
+                        ),
+                      );
+                    }).toList(),
                   ),
                   SizedBox(height: size.height * 0.05),
                   const Padding(
@@ -207,7 +208,7 @@ class _MyCustomFormState extends State<ManageBot> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        '进程ID(Nonebot)',
+                        '进程ID(NoneBot)',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),

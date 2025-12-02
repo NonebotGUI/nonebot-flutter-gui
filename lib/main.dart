@@ -1,13 +1,9 @@
 import 'dart:io';
 import 'package:NoneBotGUI/utils/global.dart';
 import 'package:NoneBotGUI/ui/broadcast/list.dart';
-import 'package:NoneBotGUI/ui/deploy/deploy.dart';
-import 'package:NoneBotGUI/ui/deploy/deployment.dart';
 import 'dart:convert';
 import 'package:NoneBotGUI/ui/mainPage/createbot.dart';
-import 'package:NoneBotGUI/ui/mainPage/fast_deploy.dart';
 import 'package:NoneBotGUI/ui/mainPage/import_bot.dart';
-import 'package:NoneBotGUI/ui/manage/manage_protocol.dart';
 import 'package:NoneBotGUI/ui/settings/about.dart';
 import 'package:NoneBotGUI/ui/mainPage/manage_bot.dart';
 import 'package:NoneBotGUI/ui/settings/setting.dart';
@@ -23,6 +19,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:watcher/watcher.dart';
 import 'package:NoneBotGUI/utils/userConfig.dart';
 import 'package:local_notifier/local_notifier.dart';
+import 'package:uuid/uuid.dart';
 
 void main() async {
   //初始化程序
@@ -30,7 +27,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   userDir = await nbguiInit();
-  FastDeploy.page = 0;
+
+  // 无痛迁移
+  await migrateBotConfigs();
+
   MainApp.nbLog = '[INFO]Welcome to NoneBot GUI!';
   MainApp.protocolLog = '[INFO]Welcome to NoneBot GUI!';
   MainApp.barExtended = false;
@@ -167,19 +167,13 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    _startWatching();
-    _readConfigFiles().then((_) {
-      setState(() {});
-    });
-    check();
+    MainApp.botList = Bot.loadBots();
     _startRefreshing();
-    deployPageListener();
+    _startWatching();
+    check();
     _init();
     _trayManager.addListener(this);
     windowManager.addListener(this);
-    stateInit();
-    alwaysRefresh();
-    refresh();
     final notification = LocalNotification(
       identifier: '114514',
       title: 'NoneBot GUI',
@@ -226,38 +220,16 @@ class _HomeScreenState extends State<HomeScreen>
     _trayManager.popUpContextMenu();
   }
 
-  void refresh() async {
-    setState(() {
-      _readConfigFiles();
-    });
-  }
-
-  void stateInit() async {
-    Future.delayed(const Duration(seconds: 1));
-    refresh();
-  }
-
-  //使用Watcher监听目录
+  //监听目录
   void _startWatching() async {
-    if (UserConfig.refreshMode() == 'auto') {
-      final watcher = DirectoryWatcher(directoryPath);
-      _subscription = watcher.events.listen((event) {
-        _readConfigFiles();
-        setState(() {});
-      });
-    }
-  }
-
-  void alwaysRefresh() {
-    if (UserConfig.refreshMode() == 'always') {
-      if (_timer != null) {
-        _timer?.cancel();
+    Stream<FileSystemEvent> eventStream = Directory('$userDir/bots/').watch();
+    eventStream.listen((FileSystemEvent event) {
+      if (mounted) {
+        setState(() {
+          MainApp.botList = Bot.loadBots();
+        });
       }
-      _timer = Timer.periodic(const Duration(microseconds: 1500), (timer) {
-        _readConfigFiles();
-        setState(() {});
-      });
-    }
+    });
   }
 
   //监听bot Log
@@ -280,25 +252,9 @@ class _HomeScreenState extends State<HomeScreen>
     _timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
       if (_selectedIndex == 1 || _selectedIndex == 2) {
         loadFileContent();
-        loadProtocolFileContent();
         setState(() {});
       }
     });
-  }
-
-  //监听deployPage
-  void deployPageListener() {
-    if (_timer != null) {
-      _timer?.cancel();
-    }
-    _timer = Timer.periodic(
-      const Duration(seconds: 1),
-      (Timer t) {
-        if (_selectedIndex == 3) {
-          setState(() {});
-        }
-      },
-    );
   }
 
   void loadFileContent() async {
@@ -313,26 +269,6 @@ class _HomeScreenState extends State<HomeScreen>
           final last50Lines =
               lines.length > 250 ? lines.sublist(lines.length - 250) : lines;
           MainApp.nbLog = last50Lines.join('\n');
-          setState(() {});
-        } catch (e) {
-          print('Error: $e');
-        }
-      }
-    }
-  }
-
-  void loadProtocolFileContent() async {
-    if (gOnOpen.isNotEmpty) {
-      String filePath = '${Protocol.path()}/nbgui_stdout.log';
-      File stdoutFile = File(filePath);
-      if (stdoutFile.existsSync()) {
-        try {
-          File file = File(filePath);
-          final lines =
-              await file.readAsLines(encoding: UserConfig.protocolEncoding());
-          final last50Lines =
-              lines.length > 250 ? lines.sublist(lines.length - 250) : lines;
-          MainApp.protocolLog = last50Lines.join('\n');
           setState(() {});
         } catch (e) {
           print('Error: $e');
@@ -402,35 +338,6 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
-  List<String> configFileContentsName = [];
-  List<String> configFileContentsPath = [];
-  List<String> configFileContentsRun = [];
-  List<String> configFileContentsTime = [];
-
-//byd我真是个天才🤓
-  Future<void> _readConfigFiles() async {
-    Directory directory = Directory(configFolder);
-    List<FileSystemEntity> files = await directory.list().toList();
-    configFileContentsName.clear();
-    configFileContentsPath.clear();
-    configFileContentsRun.clear();
-    configFileContentsTime.clear();
-    for (FileSystemEntity file in files) {
-      if (file is File) {
-        String content = file.readAsStringSync();
-        Map<String, dynamic> jsonContent = json.decode(content);
-        configFileContentsName.add(jsonContent['name']);
-        configFileContentsPath.add(jsonContent['path']);
-        configFileContentsRun.add(jsonContent['isrunning']);
-        configFileContentsTime.add(jsonContent['time']);
-        botList = List.generate(
-          configFileContentsName.length,
-          (i) => '${configFileContentsName[i]}.${configFileContentsTime[i]}',
-        );
-      }
-    }
-  }
-
   int _selectedIndex = 0;
   String _appBarTitle = 'NoneBot GUI';
 
@@ -464,8 +371,7 @@ class _HomeScreenState extends State<HomeScreen>
                             color: Colors.white,
                             onPressed: () {
                               setState(() {
-                                _readConfigFiles();
-                                // print(botList);
+                                MainApp.botList = Bot.loadBots();
                               });
                             },
                             iconSize: 20,
@@ -506,17 +412,6 @@ class _HomeScreenState extends State<HomeScreen>
                       tooltip: "关闭",
                     )
                   ],
-                  leading: _selectedIndex == 3 && FastDeploy.page != 0
-                      ? IconButton(
-                          icon: const Icon(Icons.arrow_back),
-                          color: Colors.white,
-                          onPressed: () {
-                            setState(() {
-                              FastDeploy.page--;
-                            });
-                          },
-                        )
-                      : null,
                 ),
               ),
             ),
@@ -554,28 +449,28 @@ class _HomeScreenState extends State<HomeScreen>
                     _appBarTitle =
                         gOnOpen.isNotEmpty ? Bot.name() : 'NoneBot GUI';
                     break;
-                  // case 2:
-                  //   _appBarTitle = '协议端控制台';
-                  //   break;
-                  // case 3:
-                  //   _appBarTitle = '快速部署';
-                  //   break;
-                  case 4:
+                  // 修改索引：添加Bot是第3个图标，索引为2
+                  case 2:
                     _appBarTitle = '添加Bot';
                     break;
-                  case 5:
+                  // 修改索引：导入Bot是第4个图标，索引为3
+                  case 3:
                     _appBarTitle = '导入Bot';
                     break;
-                  case 6:
+                  // 修改索引：公告是第5个图标，索引为4
+                  case 4:
                     _appBarTitle = '公告';
                     break;
-                  case 7:
+                  // 修改索引：设置是第6个图标，索引为5
+                  case 5:
                     _appBarTitle = '设置';
                     break;
-                  case 8:
+                  // 修改索引：关于是第7个图标，索引为6
+                  case 6:
                     _appBarTitle = '关于NoneBot GUI';
                     break;
-                  case 9:
+                  // 修改索引：开源许可证是第8个图标，索引为7
+                  case 7:
                     _appBarTitle = '开源许可证';
                     break;
                   default:
@@ -622,28 +517,11 @@ class _HomeScreenState extends State<HomeScreen>
                 ),
                 label: const Text('Bot控制台'),
               ),
-              // NavigationRailDestination(
-              //   icon: Tooltip(
-              //     message: '协议端控制台',
-              //     child: Icon(_selectedIndex == 2
-              //         ? Icons.connected_tv_rounded
-              //         : Icons.connected_tv_outlined),
-              //   ),
-              //   label: const Text('协议端控制台'),
-              // ),
-              // NavigationRailDestination(
-              //   icon: Tooltip(
-              //     message: '快速部署',
-              //     child: Icon(_selectedIndex == 3
-              //         ? Icons.archive_rounded
-              //         : Icons.archive_outlined),
-              //   ),
-              //   label: const Text('快速部署'),
-              // ),
               NavigationRailDestination(
                 icon: Tooltip(
                   message: '添加Bot',
-                  child: Icon(_selectedIndex == 4
+                  // 修改判断条件
+                  child: Icon(_selectedIndex == 2
                       ? Icons.add_rounded
                       : Icons.add_outlined),
                 ),
@@ -652,7 +530,8 @@ class _HomeScreenState extends State<HomeScreen>
               NavigationRailDestination(
                 icon: Tooltip(
                   message: '导入Bot',
-                  child: Icon(_selectedIndex == 5
+                  // 修改判断条件
+                  child: Icon(_selectedIndex == 3
                       ? Icons.file_download_rounded
                       : Icons.file_download_outlined),
                 ),
@@ -661,7 +540,8 @@ class _HomeScreenState extends State<HomeScreen>
               NavigationRailDestination(
                 icon: Tooltip(
                   message: '公告',
-                  child: Icon(_selectedIndex == 6
+                  // 修改判断条件
+                  child: Icon(_selectedIndex == 4
                       ? Icons.messenger_rounded
                       : Icons.messenger_outline_rounded),
                 ),
@@ -670,7 +550,8 @@ class _HomeScreenState extends State<HomeScreen>
               NavigationRailDestination(
                 icon: Tooltip(
                   message: '设置',
-                  child: Icon(_selectedIndex == 7
+                  // 修改判断条件
+                  child: Icon(_selectedIndex == 5
                       ? Icons.settings_rounded
                       : Icons.settings_outlined),
                 ),
@@ -679,7 +560,8 @@ class _HomeScreenState extends State<HomeScreen>
               NavigationRailDestination(
                 icon: Tooltip(
                   message: '关于',
-                  child: Icon(_selectedIndex == 8
+                  // 修改判断条件
+                  child: Icon(_selectedIndex == 6
                       ? Icons.info_rounded
                       : Icons.info_outlined),
                 ),
@@ -688,7 +570,8 @@ class _HomeScreenState extends State<HomeScreen>
               NavigationRailDestination(
                 icon: Tooltip(
                   message: '开源许可证',
-                  child: Icon(_selectedIndex == 9
+                  // 修改判断条件
+                  child: Icon(_selectedIndex == 7
                       ? Icons.balance_rounded
                       : Icons.balance_outlined),
                 ),
@@ -702,7 +585,7 @@ class _HomeScreenState extends State<HomeScreen>
             child: IndexedStack(
               index: _selectedIndex,
               children: [
-                configFileContentsName.isEmpty
+                MainApp.botList.isEmpty
                     ? const Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -724,16 +607,20 @@ class _HomeScreenState extends State<HomeScreen>
                                   mainAxisSpacing: 2,
                                   childAspectRatio: 6 / 1,
                                   mainAxisExtent: 110),
-                          itemCount: configFileContentsName.length,
+                          itemCount: MainApp.botList.length,
                           itemBuilder: (context, index) {
-                            String name = configFileContentsName[index];
-                            String status = configFileContentsRun[index];
-                            String time = configFileContentsTime[index];
-                            String path = configFileContentsPath[index];
+                            final botInfo = MainApp.botList[index];
+                            String name = botInfo['name'];
+                            bool status = botInfo['isRunning'] ??
+                                botInfo['isrunning'] ??
+                                false;
+                            String time = botInfo['time'];
+                            String path = botInfo['path'];
+
                             return Card(
                               child: InkWell(
                                 onTap: () {
-                                  gOnOpen = '$name.$time';
+                                  gOnOpen = '${botInfo['id']}';
                                   if (Directory(Bot.path()).existsSync()) {
                                     createLog(path);
                                     setState(() {
@@ -762,7 +649,8 @@ class _HomeScreenState extends State<HomeScreen>
                                                 Navigator.of(context).pop();
                                                 setState(() {
                                                   gOnOpen = '';
-                                                  _readConfigFiles();
+                                                  MainApp.botList =
+                                                      Bot.loadBots();
                                                 });
                                               },
                                             ),
@@ -787,7 +675,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     Align(
                                       alignment: Alignment.centerRight,
                                       child: Container(
-                                        child: status == "true"
+                                        child: status
                                             ? IconButton(
                                                 icon: const Icon(
                                                     Icons.stop_rounded),
@@ -831,7 +719,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     Padding(
                                       padding: const EdgeInsets.only(
                                           left: 8, bottom: 8),
-                                      child: status == 'true'
+                                      child: status
                                           ? const Text(
                                               "运行中",
                                               style: TextStyle(
@@ -913,15 +801,66 @@ class _HomeScreenState extends State<HomeScreen>
   void updateJsonFile(File file) {
     String contents = file.readAsStringSync();
     Map<String, dynamic> jsonMap = json.decode(contents);
-    jsonMap['isrunning'] = 'false';
+    jsonMap['isRunning'] = false;
     jsonMap['pid'] = 'Null';
     jsonMap['protocolPid'] = 'Null';
-    jsonMap['protcolIsRunning'] = false;
+    jsonMap['protocolIsRunning'] = false;
     file.writeAsStringSync(json.encode(jsonMap));
   }
 
   @override
   void onWindowFocus() {
     setState(() {});
+  }
+}
+
+/// 无痛迁移
+Future<void> migrateBotConfigs() async {
+  final Directory botsDir = Directory('$userDir/bots');
+  if (!botsDir.existsSync()) return;
+
+  final List<FileSystemEntity> files = botsDir.listSync();
+  const uuid = Uuid();
+
+  for (var entity in files) {
+    if (entity is File && entity.path.endsWith('.json')) {
+      final String filename = entity.uri.pathSegments.last;
+      try {
+        String content = await entity.readAsString();
+        Map<String, dynamic> jsonMap = jsonDecode(content);
+        if (jsonMap.containsKey('id') && filename == '${jsonMap['id']}.json') {
+          continue;
+        }
+
+        String newId = uuid.v4();
+
+        Map<String, dynamic> newJsonMap = {
+          "name": jsonMap['name'] ?? "Unknown",
+          "path": jsonMap['path'] ?? "",
+          "time": jsonMap['time'] ?? "",
+          "id": newId,
+          "isRunning": false,
+          "pid": "Null",
+          "type": jsonMap['type'] ?? "imported",
+          "protocolPath": (jsonMap['protocolPath'] == "null" ||
+                  jsonMap['protocolPath'] == null)
+              ? "none"
+              : jsonMap['protocolPath'],
+          "cmd": jsonMap['cmd'] ?? "none",
+          "protocolPid": "Null",
+          "protocolIsRunning": false,
+          "autoStart": false
+        };
+
+        File newFile = File('${botsDir.path}/$newId.json');
+        await newFile.writeAsString(jsonEncode(newJsonMap));
+
+        await entity.delete();
+
+        print('[Migration] Migrated ${entity.path} to ${newFile.path}');
+      } catch (e) {
+        print('[Migration] Error migrating file ${entity.path}: $e');
+      }
+    }
   }
 }
