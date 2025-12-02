@@ -79,61 +79,60 @@ class _HomeScreenState extends State<Settings> {
 
   ///检查更新
   Future<void> check() async {
-      try {
-        final response = await http.get(Uri.parse(
-            'https://api.github.com/repos/NonebotGUI/nonebot-flutter-gui/releases/latest'));
-        if (response.statusCode == 200) {
-          final jsonData = jsonDecode(response.body);
-          final tagName = jsonData['tag_name'];
-          final changeLog = jsonData['body'];
-          final url = jsonData['html_url'];
-          if (tagName != MainApp.version) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('发现新版本！'),
-              duration: Duration(seconds: 3),
-            ));
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('有新的版本：$tagName'),
-                  content: Text(changeLog),
-                  actions: <Widget>[
-                    TextButton(
-                      child: const Text('复制url'),
-                      onPressed: () {
-                        Clipboard.setData(ClipboardData(text: url));
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text('已复制到剪贴板'),
-                          duration: Duration(seconds: 3),
-                        ));
-                      },
-                    ),
-                    TextButton(
-                      child: const Text('确定'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
-          }
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('检查更新失败（${response.statusCode}）'),
-            duration: const Duration(seconds: 3),
+    try {
+      final response = await http.get(Uri.parse(
+          'https://api.github.com/repos/NonebotGUI/nonebot-flutter-gui/releases/latest'));
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        final tagName = jsonData['tag_name'];
+        final changeLog = jsonData['body'];
+        final url = jsonData['html_url'];
+        if (tagName != MainApp.version) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('发现新版本！'),
+            duration: Duration(seconds: 3),
           ));
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('有新的版本：$tagName'),
+                content: Text(changeLog),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('复制url'),
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: url));
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('已复制到剪贴板'),
+                        duration: Duration(seconds: 3),
+                      ));
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('确定'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         }
-      } catch (e) {
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('错误：$e'),
+          content: Text('检查更新失败（${response.statusCode}）'),
           duration: const Duration(seconds: 3),
         ));
       }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('错误：$e'),
+        duration: const Duration(seconds: 3),
+      ));
     }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -169,40 +168,6 @@ class _HomeScreenState extends State<Settings> {
                 });
               },
               items: colorMode.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-          ),
-          const SizedBox(height: 4),
-          ListTile(
-            title: Row(
-              children: <Widget>[
-                const Text('刷新策略'),
-                const SizedBox(width: 4),
-                IconButton(
-                  icon: const Icon(Icons.help_outline_rounded),
-                  onPressed: () => refreshToolTip(context),
-                  iconSize: 20,
-                )
-              ],
-            ),
-            trailing: DropdownButton<String>(
-              value: dropDownValueRefresh,
-              onChanged: (String? newValue) {
-                setState(() {
-                  dropDownValueRefresh = newValue!;
-                  UserConfig.setRefreshMode(newValue);
-                  Clipboard.setData(ClipboardData(text: userDir));
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('已更改，重启后生效'),
-                    duration: Duration(seconds: 3),
-                  ));
-                });
-              },
-              items: refreshMode.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -306,26 +271,6 @@ class _HomeScreenState extends State<Settings> {
                 });
               },
               items: botEcoding.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-          ),
-          const SizedBox(height: 4),
-          ListTile(
-            title: const Text('协议端控制台编码'),
-            trailing: DropdownButton<String>(
-              value: dropDownValueProtocolEncoding,
-              onChanged: (String? newValue) {
-                setState(() {
-                  dropDownValueProtocolEncoding = newValue!;
-                  UserConfig.setProtocolEncoding(newValue);
-                });
-              },
-              items: protocolEncoding
-                  .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
