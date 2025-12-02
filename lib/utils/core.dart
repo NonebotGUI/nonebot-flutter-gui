@@ -21,7 +21,7 @@ nbguiInit() async {
   {
     "python":"default",
     "nbcli":"default",
-    "color":"light",
+    "color":"dark",
     "checkUpdate": true,
     "encoding": "systemEncoding",
     "httpencoding": "utf8",
