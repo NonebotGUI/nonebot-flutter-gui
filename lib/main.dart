@@ -449,27 +449,21 @@ class _HomeScreenState extends State<HomeScreen>
                     _appBarTitle =
                         gOnOpen.isNotEmpty ? Bot.name() : 'NoneBot GUI';
                     break;
-                  // 修改索引：添加Bot是第3个图标，索引为2
                   case 2:
                     _appBarTitle = '添加Bot';
                     break;
-                  // 修改索引：导入Bot是第4个图标，索引为3
                   case 3:
                     _appBarTitle = '导入Bot';
                     break;
-                  // 修改索引：公告是第5个图标，索引为4
                   case 4:
                     _appBarTitle = '公告';
                     break;
-                  // 修改索引：设置是第6个图标，索引为5
                   case 5:
                     _appBarTitle = '设置';
                     break;
-                  // 修改索引：关于是第7个图标，索引为6
                   case 6:
                     _appBarTitle = '关于NoneBot GUI';
                     break;
-                  // 修改索引：开源许可证是第8个图标，索引为7
                   case 7:
                     _appBarTitle = '开源许可证';
                     break;
@@ -680,7 +674,7 @@ class _HomeScreenState extends State<HomeScreen>
                                                 icon: const Icon(
                                                     Icons.stop_rounded),
                                                 onPressed: () {
-                                                  gOnOpen = '$name.$time';
+                                                  gOnOpen = '${botInfo['id']}';
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(
                                                           const SnackBar(
@@ -698,7 +692,7 @@ class _HomeScreenState extends State<HomeScreen>
                                                 icon: const Icon(
                                                     Icons.play_arrow_rounded),
                                                 onPressed: () {
-                                                  gOnOpen = '$name.$time';
+                                                  gOnOpen = '${botInfo['id']}';
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(
                                                           const SnackBar(
@@ -781,7 +775,6 @@ class _HomeScreenState extends State<HomeScreen>
             TextButton(
               child: const Text('确定'),
               onPressed: () {
-                //退出时更新所有的Bot.json
                 Directory('$userDir/bots')
                     .listSync(recursive: false)
                     .forEach((entity) {
